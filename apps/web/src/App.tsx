@@ -7,6 +7,7 @@ import { MenuSection } from './components/MenuSection';
 import { ThriftSection } from './components/ThriftSection';
 import { LiveSelling } from './components/LiveSelling';
 import { SiteFooter } from './components/SiteFooter';
+import { BackToTop } from './components/BackToTop';
 import { useReveal } from './hooks/motion';
 
 export function App() {
@@ -27,6 +28,7 @@ export function App() {
         <LiveSelling />
       </main>
       <SiteFooter />
+      <BackToTop />
     </>
   );
 }

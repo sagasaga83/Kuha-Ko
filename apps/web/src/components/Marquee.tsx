@@ -1,11 +1,10 @@
-import { formatOpening, site } from '../data/site';
+import { site } from '../data/site';
 
 const items = [
   'Kape ko. Kuha ko.',
   'Something to sip, something to keep',
   `Coffee & thrift in ${site.city}`,
   `Live selling from ${site.liveSellingFrom}`,
-  `Opening ${formatOpening(site.openingDate)}`,
 ];
 
 /** A slow ticker of the taglines. Pauses on hover; holds still with reduced motion. */
