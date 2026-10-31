@@ -12,7 +12,10 @@
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "preview": "npm run preview --workspace @kuhako/web"
+    "preview": "npm run preview --workspace @kuhako/web",
+    "mobile:sync": "turbo run sync --filter=@kuhako/mobile",
+    "mobile:ios": "npm run open:ios --workspace @kuhako/mobile",
+    "mobile:android": "npm run open:android --workspace @kuhako/mobile"
   },
   "devDependencies": {
     "turbo": "2.5.8",

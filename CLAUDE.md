@@ -7,6 +7,7 @@ Kuha Ko is a coffee bar (Kuha Ko Coffee, the owner's) and a thrift boutique (Kuh
 Turborepo monorepo, npm workspaces, React 18 + Vite + TypeScript.
 
 - `apps/web`: the one-page website. Content lives in `src/data/site.ts` (shop details) and `src/data/menu.ts` (drinks); sections are in `src/components/`.
+- `apps/mobile`: the iOS and Android apps (Capacitor 8). They bundle the built `apps/web` site; run `npm run mobile:sync` after site changes. Icons and splash screens come from `apps/mobile/assets/` via `npm run assets --workspace @kuhako/mobile`. Release steps are in `docs/mobile-apps.md`.
 - `packages/tokens`: design tokens. `src/tokens.json` is the source (copied from the Kuha Ko design system); `npm run build` writes `dist/tokens.css` (CSS variables, light + dark) and a typed JS object. Never edit `dist/`.
 - `packages/ui`: brand components (`Wordmark`, `Stamp`, `HangTag`, `MenuItem`, `ClaimBanner`, `SubBrandLabel`, `ButtonLink`, `Eyebrow`) and `styles.css`. Consumed as TypeScript source (no build step).
 - `packages/tsconfig`: shared TypeScript configs.
@@ -16,6 +17,7 @@ Turborepo monorepo, npm workspaces, React 18 + Vite + TypeScript.
 
 - `npm install`, then `npm run dev` (site at http://localhost:5173)
 - `npm run build`, `npm run typecheck`, `npm test` (all through turbo)
+- `npm run mobile:sync`, then `npm run mobile:ios` or `npm run mobile:android` (needs Xcode / Android Studio)
 
 ## Brand rules that matter in code
 
@@ -23,6 +25,7 @@ Turborepo monorepo, npm workspaces, React 18 + Vite + TypeScript.
 - Live-selling claim word: **KUHA KO!** (capitals, one exclamation mark). Pronunciation line: KOO-ha ko, /ˈku.haʔ ko/.
 - Colours only through token variables (`var(--espresso)`, `var(--rust)` …); never hard-code hex in components. `rust` = coffee accent, `sage-ink` = thrift accent, `mustard` only on `board`.
 - Fonts: Fraunces (display), DM Sans (body), Courier Prime (labels, tags). Loaded from Google Fonts in `apps/web/index.html`.
+- The page ground is `canvas` (white). Use `var(--safe-t|r|b|l)` for screen-edge insets, not `env()` directly: the Android app sets `--safe-area-inset-*` instead.
 - Square corners (`radius-sm`), hairlines instead of shadows, no emoji, sentence-case headings, capitals only for labels.
 - Text must keep 4.5:1 contrast in both themes; `packages/tokens` has a test for the main pairs.
 
