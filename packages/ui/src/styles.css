@@ -1,0 +1,203 @@
+/* Kuha Ko components. Every colour, space and radius comes from @kuhako/tokens. */
+
+.kk-wordmark {
+  display: inline-block;
+  font-family: var(--font-display);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.kk-wordmark b { font-weight: 800; }
+.kk-wordmark i { font-weight: 400; font-style: italic; }
+.kk-wordmark--default b { color: var(--espresso); }
+.kk-wordmark--default i { color: var(--rust); }
+.kk-wordmark--reversed b { color: var(--on-board); }
+.kk-wordmark--reversed i { color: var(--mustard); }
+
+.kk-eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--rust);
+}
+
+.kk-stamp__ring { fill: none; stroke: var(--espresso); }
+.kk-stamp__text {
+  fill: var(--espresso);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 3px;
+}
+.kk-stamp__k {
+  fill: var(--rust);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 64px;
+}
+
+/* Hang tag */
+.kk-hangtag {
+  position: relative;
+  width: 170px;
+  box-sizing: border-box;
+  background: var(--kraft);
+  color: var(--espresso);
+  border: 2px solid var(--espresso);
+  border-radius: var(--radius-tag) var(--radius-tag) var(--radius-md) var(--radius-md);
+  padding: 70px var(--space-3) var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.kk-hangtag__hole {
+  position: absolute;
+  left: calc(50% - 12px);
+  top: 24px;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--espresso);
+  background: var(--linen);
+}
+.kk-hangtag__name {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 30px;
+  color: var(--sage-ink);
+}
+.kk-hangtag__shop {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+.kk-hangtag__rule { width: 100%; height: 1px; border: 0; margin: 0; background: var(--espresso); }
+.kk-hangtag__lines { margin: 0; font-family: var(--font-mono); font-size: 15px; line-height: 1.6; }
+.kk-hangtag__note { margin: 0; font-family: var(--font-mono); font-size: 13px; color: var(--ink-muted); }
+
+/* Menu item */
+.kk-menuitem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-block: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+.kk-menuitem__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.kk-menuitem__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-3);
+  align-items: baseline;
+}
+.kk-menuitem__kind,
+.kk-menuitem__price {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.kk-menuitem__price { font-weight: 400; letter-spacing: 1px; text-transform: none; }
+.kk-menuitem__desc { margin: 0; font-size: 15px; line-height: 1.5; }
+.kk-menuitem--paper .kk-menuitem__name { color: var(--espresso); }
+.kk-menuitem--paper .kk-menuitem__kind { color: var(--rust); }
+.kk-menuitem--paper .kk-menuitem__price,
+.kk-menuitem--paper .kk-menuitem__desc { color: var(--ink-muted); }
+.kk-menuitem--board { border-top-color: color-mix(in srgb, var(--on-board) 25%, transparent); }
+.kk-menuitem--board .kk-menuitem__name,
+.kk-menuitem--board .kk-menuitem__price { color: var(--on-board); }
+.kk-menuitem--board .kk-menuitem__kind { color: var(--mustard); }
+.kk-menuitem--board .kk-menuitem__desc { color: var(--on-board); opacity: 0.85; }
+
+/* Claim banner */
+.kk-claim {
+  background: var(--board);
+  border-radius: var(--radius-sm);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-5);
+}
+.kk-claim__word {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(48px, 9vw, 88px);
+  line-height: 1;
+  color: var(--mustard);
+  white-space: nowrap;
+}
+.kk-claim__how { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.kk-claim__eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--mustard);
+}
+.kk-claim__how p:not(.kk-claim__eyebrow) { margin: 0; font-size: 18px; line-height: 1.5; color: var(--on-board); }
+
+/* Sub-brand label */
+.kk-subbrand {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--paper);
+  border: 2px solid;
+  border-radius: var(--radius-sm);
+}
+.kk-subbrand__name { font-family: var(--font-display); font-weight: 600; font-size: 22px; }
+.kk-subbrand__shop { font-family: var(--font-mono); font-weight: 700; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; }
+.kk-subbrand--coffee { border-color: var(--rust); color: var(--rust); }
+.kk-subbrand--thrift { border-color: var(--sage-ink); color: var(--sage-ink); }
+
+/* Buttons */
+.kk-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 2px solid transparent;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.kk-button--primary { background: var(--rust); color: var(--on-rust); }
+.kk-button--primary:hover { background: var(--espresso); color: var(--linen); }
+.kk-button--secondary { background: transparent; color: var(--espresso); border-color: var(--espresso); }
+.kk-button--secondary:hover { background: var(--espresso); color: var(--linen); }
+.kk-button:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .kk-button { transition: none; }
+}

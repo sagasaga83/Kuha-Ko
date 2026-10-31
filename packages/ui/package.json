@@ -1,0 +1,32 @@
+{
+  "name": "@kuhako/ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kuha Ko brand components: wordmark, stamp, hang tag, menu item, claim banner, sub-brand label, buttons.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "dependencies": {
+    "@kuhako/tokens": "*"
+  },
+  "devDependencies": {
+    "@kuhako/tsconfig": "*",
+    "@testing-library/react": "16.3.3",
+    "@types/react": "18.3.31",
+    "@types/react-dom": "18.3.7",
+    "jsdom": "25.0.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "vitest": "2.1.9"
+  }
+}
