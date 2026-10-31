@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { photos } from '../data/photos';
-import { shirts } from '../data/shirts';
+import { shirtsFrom, useCatalog } from '../catalog/catalog';
 import { Photo } from './Photo';
 import { SectionHead } from './SectionHead';
 
@@ -20,6 +20,7 @@ const promises = [
 ];
 
 export function ThriftSection() {
+  const shirts = shirtsFrom(useCatalog().products);
   const track = useRef<HTMLUListElement>(null);
   const [pos, setPos] = useState({ start: true, end: false, progress: 0 });
 
