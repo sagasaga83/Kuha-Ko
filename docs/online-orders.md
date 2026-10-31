@@ -72,9 +72,19 @@ Without the browser key, checkout falls back to "Use my current location" plus a
 
 ### Order emails: Resend
 
-Connected through the Vercel Marketplace (`RESEND_API_KEY`). Then:
-- `vercel env add SHOP_EMAIL production`: where new-order emails go.
-- Receipts to customers need a domain verified in Resend; then set `EMAIL_FROM`, e.g. `Kuha Ko <orders@yourdomain>`. Until then Resend only delivers to the Resend account's own address.
+Connected through the Vercel Marketplace as `kuha-ko-email` (free plan, Tokyo region), sending from **send.kuha-ko.com**: emails come from `orders@send.kuha-ko.com` (`RESEND_API_KEY`, `RESEND_EMAIL_DOMAIN`; set `EMAIL_FROM` to override).
+
+1. Verify the domain: add these records where kuha-ko.com's DNS is managed, then press Verify in the Resend dashboard (open it from the Vercel integration page). Names are relative to kuha-ko.com.
+
+   | Type | Name | Value |
+   |---|---|---|
+   | TXT | `resend._domainkey.send` | the DKIM key shown in Resend (starts `p=MIGfMA0…`) |
+   | CNAME | `rsend.send` | `rsend-apne1.forge.rmta.net` |
+   | CNAME | `send.send` | `send.forge.rmta.net` |
+
+2. `vercel env add SHOP_EMAIL production`: where new-order emails go.
+
+Until the domain is verified, Resend refuses to send; orders still go through and the failure is only logged.
 
 ## For developers
 

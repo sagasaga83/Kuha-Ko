@@ -1,10 +1,17 @@
 // Order emails through Resend (https://resend.com/docs/api-reference/emails/send-email).
-// Needs RESEND_API_KEY. SHOP_EMAIL gets a note for every paid order; the customer
-// gets a receipt if they gave an email. Until EMAIL_FROM is an address on a domain
-// verified in Resend, Resend only delivers to the account owner's own address.
-// Email never blocks an order: failures are logged, not thrown.
+// RESEND_API_KEY and RESEND_EMAIL_DOMAIN come from the Vercel Marketplace integration;
+// mail is sent from orders@<that domain> (override with EMAIL_FROM). The domain must
+// be verified in Resend (DNS records) before mail is delivered.
+// SHOP_EMAIL gets a note for every paid order; the customer gets a receipt if they
+// gave an email. Email never blocks an order: failures are logged, not thrown.
 import { formatPeso } from '../shared/catalog.js';
 import type { OrderView } from '../shared/order.js';
+
+export function fromAddress(env: Record<string, string | undefined> = process.env): string {
+  if (env.EMAIL_FROM) return env.EMAIL_FROM;
+  if (env.RESEND_EMAIL_DOMAIN) return `Kuha Ko <orders@${env.RESEND_EMAIL_DOMAIN}>`;
+  return 'Kuha Ko <onboarding@resend.dev>';
+}
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
@@ -18,7 +25,7 @@ async function send(to: string, subject: string, text: string, html: string): Pr
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
-      body: JSON.stringify({ from: process.env.EMAIL_FROM || 'Kuha Ko <onboarding@resend.dev>', to: [to], subject, text, html }),
+      body: JSON.stringify({ from: fromAddress(), to: [to], subject, text, html }),
       signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) console.error('Resend', res.status, await res.text().catch(() => ''));
