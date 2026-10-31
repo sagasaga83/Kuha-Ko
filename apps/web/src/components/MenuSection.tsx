@@ -1,12 +1,14 @@
 import { useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
 import { MenuItem } from '@kuhako/ui';
 import { addOnsFrom, menuFrom, useCatalog } from '../catalog/catalog';
+import { useShop } from '../shop/Shop';
 import { photos } from '../data/photos';
 import { Photo } from './Photo';
 import { SectionHead } from './SectionHead';
 
 export function MenuSection() {
   const { products } = useCatalog();
+  const shop = useShop();
   const menu = menuFrom(products);
   const addOns = addOnsFrom(products);
   const [active, setActive] = useState(menu[0]?.id ?? '');
@@ -73,6 +75,14 @@ export function MenuSection() {
               {group.drinks.map((d, i) => (
                 <div key={d.name} className="menu__item" style={{ '--i': i } as CSSProperties}>
                   <MenuItem {...d} />
+                  {(() => {
+                    const p = d.id ? products.find((x) => x.id === d.id) : undefined;
+                    return p && shop?.canOrder(p) ? (
+                      <button type="button" className="shop-add" onClick={() => shop.openProduct(p)}>
+                        Add to order<span className="visually-hidden">: {d.name}</span>
+                      </button>
+                    ) : null;
+                  })()}
                 </div>
               ))}
             </div>

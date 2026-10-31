@@ -13,7 +13,8 @@ export const fallbackCatalog: Catalog = {
   deliveryReady: false,
 };
 
-const CatalogContext = createContext<Catalog>(fallbackCatalog);
+/** Exported for tests, which pass a catalog in directly. */
+export const CatalogContext = createContext<Catalog>(fallbackCatalog);
 
 function isCatalog(x: unknown): x is Catalog {
   return typeof x === 'object' && x !== null && Array.isArray((x as Catalog).products) && 'ordering' in x;

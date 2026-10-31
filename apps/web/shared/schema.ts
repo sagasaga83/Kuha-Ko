@@ -73,3 +73,31 @@ export const settingsSchema = z.object({
   ordering: orderingSettingsSchema,
 });
 export type Settings = z.infer<typeof settingsSchema>;
+
+const latLng = { lat: z.number().min(-90).max(90), lng: z.number().min(-180).max(180) };
+
+export const quoteRequestSchema = z.object(latLng);
+
+export const checkoutRequestSchema = z.object({
+  items: z
+    .array(
+      z.object({
+        productId: z.string().min(1).max(60),
+        quantity: z.number().int().min(1).max(20),
+        choices: z.record(z.string().max(40), z.array(z.string().max(40)).max(20)),
+      }),
+    )
+    .min(1, 'Your cart is empty')
+    .max(30),
+  customer: z.object({
+    name: z.string().trim().min(2, 'Add your name').max(80),
+    phone: z.string().trim().min(10, 'Add your mobile number').max(20),
+    email: z.union([z.literal(''), z.string().trim().email('Check your email address').max(120)]).default(''),
+  }),
+  address: z.object({
+    text: z.string().trim().min(5, 'Add your delivery address').max(300),
+    ...latLng,
+    notes: z.string().trim().max(300).default(''),
+  }),
+});
+export type CheckoutRequest = z.infer<typeof checkoutRequestSchema>;

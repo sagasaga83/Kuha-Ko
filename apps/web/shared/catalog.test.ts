@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_SETTINGS, formatPeso, isOrderable, parsePeso, slugify, type Product } from './catalog';
 import { deliveryFee } from './delivery';

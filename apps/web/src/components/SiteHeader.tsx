@@ -2,6 +2,7 @@ import { useEffect, useState, type CSSProperties } from 'react';
 import { Wordmark } from '@kuhako/ui';
 import { currentTheme, setTheme, type Theme } from '../theme';
 import { useScrollSpy, useScrollState } from '../hooks/motion';
+import { CartButton } from '../shop/Shop';
 
 const links = [
   { id: 'menu', label: 'Menu' },
@@ -46,6 +47,7 @@ export function SiteHeader() {
         <a href="#top" className="site-header__home" aria-label="Kuha Ko, back to top" onClick={() => setOpen(false)}>
           <Wordmark size={40} aria-hidden="true" role="presentation" aria-label={undefined} />
         </a>
+        <CartButton />
         <button
           type="button"
           className="nav-toggle"
