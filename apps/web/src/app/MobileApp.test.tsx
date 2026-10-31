@@ -64,4 +64,14 @@ describe('isApp', () => {
     expect(isApp()).toBe(true);
     delete (window as unknown as { Capacitor?: object }).Capacitor;
   });
+
+  it('is true on a phone-sized browser, unless ?web is set', () => {
+    const original = window.matchMedia;
+    window.matchMedia = ((q: string) => ({ matches: true, media: q })) as unknown as typeof window.matchMedia;
+    expect(isApp()).toBe(true);
+    window.history.replaceState(null, '', '/?web');
+    expect(isApp()).toBe(false);
+    window.history.replaceState(null, '', '/');
+    window.matchMedia = original;
+  });
 });
