@@ -1,0 +1,7 @@
+{
+  "extends": "@kuhako/tsconfig/react.json",
+  "compilerOptions": {
+    "types": []
+  },
+  "include": ["src"]
+}

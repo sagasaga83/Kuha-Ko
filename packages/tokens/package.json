@@ -1,0 +1,20 @@
+{
+  "name": "@kuhako/tokens",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kuha Ko design tokens (colour, type, spacing, radius) from the brand guidelines, compiled to CSS variables and a typed JS object.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./tokens.css": "./dist/tokens.css",
+    "./tokens.json": "./src/tokens.json"
+  },
+  "files": ["dist", "src"],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node --test scripts/build.test.mjs"
+  }
+}

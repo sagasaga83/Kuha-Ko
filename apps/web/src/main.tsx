@@ -1,0 +1,15 @@
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import '@kuhako/tokens/tokens.css';
+import '@kuhako/ui/styles.css';
+import './styles/site.css';
+import { App } from './App';
+import { applyStoredTheme } from './theme';
+
+applyStoredTheme();
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);
