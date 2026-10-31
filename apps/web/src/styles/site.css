@@ -595,6 +595,45 @@ body::before {
 }
 .rack__buttons { display: flex; gap: var(--space-2); }
 
+/* Kuha Ko's own shirts, under the rack. */
+.shirts { margin-top: var(--space-6); }
+.shirts__head { max-width: 52ch; margin-left: calc((100% - var(--space-5)) / 4 + var(--space-5)); }
+.shirts__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(28px, 3.6vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.shirts__lede { margin: var(--space-3) 0 0; font-size: 17px; color: var(--ink-muted); }
+.shirts__grid {
+  list-style: none;
+  margin: var(--space-5) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5) var(--space-4);
+}
+.shirts__item .photo { transition: transform 500ms var(--ease-out); }
+.shirts__item:hover .photo { transform: translateY(-6px); }
+.shirts__no {
+  margin: var(--space-3) 0 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--sage-ink);
+}
+.shirts__row { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); margin-top: var(--space-1); }
+.shirts__name { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 22px; line-height: 1.25; }
+.shirts__price { font-family: var(--font-mono); font-size: 14px; color: var(--ink-muted); white-space: nowrap; }
+.shirts__desc { margin: var(--space-2) 0 0; font-size: 15px; color: var(--ink-muted); }
+.shirts__colours { margin: var(--space-2) 0 0; font-family: var(--font-mono); font-size: 14px; }
+@media (max-width: 960px) { .shirts__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 860px) { .shirts__head { margin-left: 0; } }
+@media (max-width: 560px) { .shirts__grid { grid-template-columns: minmax(0, 1fr); } }
+
 .promises {
   list-style: none;
   padding: 0;
