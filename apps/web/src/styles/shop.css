@@ -245,3 +245,44 @@ button.shop-pieces__card { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .shop-toast { transition: none; }
 }
+
+/* Payment method choice at checkout: a list of radio rows, like a bank app. */
+.shop-pay-methods { border: 0; margin: var(--space-4) 0 0; padding: 0; }
+.shop-pay-methods legend { padding: 0; }
+.shop-pay-method {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 56px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-top-width: 0;
+  background: var(--canvas);
+  cursor: pointer;
+}
+.shop-pay-method:first-of-type { border-top-width: 1px; }
+.shop-pay-method:has(input:checked) { background: var(--paper); border-left: 3px solid var(--rust); padding-left: calc(var(--space-3) - 2px); }
+.shop-pay-method input { width: 22px; height: 22px; margin: 0; accent-color: var(--rust); flex: none; }
+.shop-pay-method input:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.shop-pay-method__text { display: grid; gap: 2px; }
+.shop-pay-method__label { font-size: 17px; }
+.shop-pay-method__note { font-size: 13px; color: var(--ink-muted); }
+
+/* Order page: where to pay */
+.order__pay { border: 1px solid var(--line); padding: var(--space-3) var(--space-4) var(--space-4); margin: 0 0 var(--space-4); }
+.order__pay .shop-h { margin-top: var(--space-2); }
+.order__qr {
+  display: block;
+  width: min(280px, 100%);
+  aspect-ratio: 1;
+  object-fit: contain;
+  margin: var(--space-2) auto;
+  border: 1px solid var(--line);
+  padding: var(--space-2);
+}
+.order__gcash { margin: var(--space-2) 0; }
+.order__gcash > div { display: grid; grid-template-columns: 9rem 1fr; gap: var(--space-2); padding: var(--space-2) 0; border-bottom: 1px solid var(--line); align-items: center; }
+.order__gcash dt { color: var(--ink-muted); font-size: 14px; }
+.order__gcash dd { margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+.order__number { font-family: var(--font-mono); font-size: 20px; letter-spacing: 0.02em; }
+.order__ref { margin-top: var(--space-3); }

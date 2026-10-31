@@ -63,9 +63,9 @@ export function lastOrderId(): string | null {
   }
 }
 
-/** Can this product be ordered online right now (priced, on sale, kind open, delivery set up)? */
+/** Can this product be ordered online right now (priced, on sale, kind open, delivery and payment set up)? */
 export function canOrder(p: Product, catalog: Catalog): boolean {
-  return catalog.deliveryReady && isOrderable(p, catalog.ordering);
+  return catalog.deliveryReady && catalog.paymentMethods.length > 0 && isOrderable(p, catalog.ordering);
 }
 
 export function useCart(catalog: Catalog) {

@@ -3,15 +3,17 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Wordmark } from '@kuhako/ui';
 import { adminApi, ApiError } from './api';
+import { OrdersPanel } from './OrdersPanel';
 import { ProductsPanel } from './ProductsPanel';
 import { SettingsPanel } from './SettingsPanel';
 import './admin.css';
 
-type Tab = 'products' | 'settings';
+type Tab = 'orders' | 'products' | 'settings';
+const TAB_LABELS: Record<Tab, string> = { orders: 'Orders', products: 'Products', settings: 'Settings' };
 
 export default function Admin() {
   const [state, setState] = useState<'checking' | 'out' | 'in' | 'offline'>('checking');
-  const [tab, setTab] = useState<Tab>('products');
+  const [tab, setTab] = useState<Tab>('orders');
 
   useEffect(() => {
     document.title = 'Shop admin · Kuha Ko';
@@ -55,7 +57,7 @@ export default function Admin() {
       {state === 'in' ? (
         <>
           <nav className="adm-tabs" aria-label="Admin sections">
-            {(['products', 'settings'] as const).map((t) => (
+            {(['orders', 'products', 'settings'] as const).map((t) => (
               <button
                 key={t}
                 type="button"
@@ -63,11 +65,12 @@ export default function Admin() {
                 aria-current={tab === t ? 'page' : undefined}
                 onClick={() => setTab(t)}
               >
-                {t === 'products' ? 'Products' : 'Settings'}
+                {TAB_LABELS[t]}
               </button>
             ))}
           </nav>
           <main className="adm-main">
+            {tab === 'orders' ? <OrdersPanel onSignedOut={() => setState('out')} /> : null}
             {tab === 'products' ? <ProductsPanel onSignedOut={() => setState('out')} /> : null}
             {tab === 'settings' ? <SettingsPanel onSignedOut={() => setState('out')} /> : null}
           </main>

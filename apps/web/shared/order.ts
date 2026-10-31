@@ -1,6 +1,6 @@
 // Pricing a cart line, shared by the cart (to show totals) and the server (to
 // charge). The server always re-prices from the database; the browser's numbers
-// are only for display.
+// are only for display. Also: payment options, order statuses, the order view.
 import type { Product } from './catalog';
 
 /** One line in the cart: a product, how many, and the chosen option values per group. */
@@ -16,6 +16,17 @@ export interface PricedLine {
   /** What was picked, for receipts: [{ group: 'Size', value: 'M' }] */
   labels: { group: string; value: string }[];
 }
+
+/**
+ * Ways to pay, in the order shown at checkout. Customers pay Kuha Ko directly,
+ * then send the reference number; the shop confirms it in the admin.
+ */
+export const PAYMENT_OPTIONS = [
+  { id: 'gcash', label: 'GCash', note: 'Send to our GCash number' },
+  { id: 'qrph', label: 'QR Ph', note: 'Scan our QR with Maya, GoTyme, MariBank or any bank app' },
+] as const;
+export type PaymentMethod = (typeof PAYMENT_OPTIONS)[number]['id'];
+export const PAYMENT_METHOD_IDS = PAYMENT_OPTIONS.map((o) => o.id) as [PaymentMethod, ...PaymentMethod[]];
 
 export const MAX_QUANTITY = 20;
 export const MAX_LINES = 30;
@@ -63,6 +74,7 @@ export function normalizePhone(text: string): string | null {
 
 export const ORDER_STATUS_LABELS = {
   pending_payment: 'Waiting for payment',
+  awaiting_confirmation: 'Checking your payment',
   paid: 'Paid',
   preparing: 'Preparing',
   out_for_delivery: 'Out for delivery',
@@ -86,7 +98,23 @@ export interface OrderView {
   subtotal: number;
   deliveryFee: number;
   total: number;
-  /** While waiting for payment: where to pay, and until when the items are held. */
-  checkoutUrl: string | null;
+  paymentMethod: PaymentMethod;
+  /** The reference number the customer sent, once they have. */
+  paymentReference: string | null;
+  /** While waiting for payment: where to send it, and until when the items are held. */
+  payTo: PayTo | null;
   holdExpiresAt: string | null;
+}
+
+/** Where to send the money, shown on the order page while it's unpaid. */
+export interface PayTo {
+  gcashName: string;
+  gcashNumber: string;
+  qrUrl: string | null;
+}
+
+/** GCash and bank reference numbers: letters and digits, spaces and dashes ignored. */
+export function normalizeReference(text: string): string | null {
+  const clean = text.replace(/[\s-]/g, '').toUpperCase();
+  return /^[A-Z0-9]{6,30}$/.test(clean) ? clean : null;
 }

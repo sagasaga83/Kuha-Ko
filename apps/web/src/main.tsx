@@ -17,7 +17,7 @@ applyStoredTheme();
 // The shop admin is its own page, loaded only on /admin.
 const Admin = lazy(() => import('./admin/Admin'));
 const isAdminPath = /^\/admin(\/|$)/.test(window.location.pathname);
-// A customer's order page (where PayMongo sends them back), also its own page.
+// A customer's order page (where they pay and follow the order), also its own page.
 const OrderPage = lazy(() => import('./order/OrderPage'));
 const orderId = window.location.pathname.match(/^\/order\/([0-9a-f-]{36})\/?$/)?.[1];
 

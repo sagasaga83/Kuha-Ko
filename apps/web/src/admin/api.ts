@@ -1,4 +1,16 @@
 import type { Product, ProductInput, Settings } from '../../shared/catalog';
+import type { OrderView } from '../../shared/order';
+
+/** An order as the admin sees it (server/orders.ts AdminOrder). */
+export interface AdminOrder extends OrderView {
+  customerPhone: string;
+  customerEmail: string | null;
+  distanceM: number;
+  lat: number;
+  lng: number;
+  referenceAt: string | null;
+}
+export type OrderAction = 'confirm' | 'reject' | 'preparing' | 'out_for_delivery' | 'delivered' | 'cancel';
 
 export class ApiError extends Error {
   constructor(
@@ -34,6 +46,8 @@ export const adminApi = {
   updateProduct: (id: string, p: ProductInput) =>
     call<{ product: Product }>(`/api/admin/products?id=${encodeURIComponent(id)}`, send('PUT', p)),
   deleteProduct: (id: string) => call<{ ok: true }>(`/api/admin/products?id=${encodeURIComponent(id)}`, send('DELETE')),
+  orders: (filter: 'open' | 'all') => call<{ orders: AdminOrder[] }>(`/api/admin/orders?filter=${filter}`),
+  updateOrder: (id: string, action: OrderAction) => call<{ order: OrderView }>('/api/admin/orders', send('POST', { id, action })),
   settings: () => call<{ settings: Settings }>('/api/admin/settings'),
   saveSettings: (s: Settings) => call<{ settings: Settings }>('/api/admin/settings', send('PUT', s)),
 };

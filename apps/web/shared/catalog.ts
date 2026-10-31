@@ -1,8 +1,9 @@
 // The product catalog, shared by the site, the API and the admin page.
 // Money is always whole centavos (₱120 = 12000), never floats.
 // Validation schemas live in ./schema.ts, so the customer bundle doesn't carry zod.
-import type { OrderingSettings, Product, Settings } from './schema';
-export type { DeliverySettings, OptionGroup, OrderingSettings, Product, ProductInput, Settings } from './schema';
+import type { OrderingSettings, PaymentSettings, Product, Settings } from './schema';
+import type { PaymentMethod } from './order';
+export type { DeliverySettings, OptionGroup, OrderingSettings, PaymentSettings, Product, ProductInput, Settings } from './schema';
 
 export const KINDS = ['coffee', 'shirt', 'thrift'] as const;
 export type Kind = (typeof KINDS)[number];
@@ -16,6 +17,7 @@ export const KIND_LABELS: Record<Kind, string> = {
 export const DEFAULT_SETTINGS: Settings = {
   delivery: { origin: null, radiusKm: 8, baseFee: 4900, baseKm: 3, perKm: 1000 },
   ordering: { coffee: false, shirt: false, thrift: false },
+  payment: { gcashName: '', gcashNumber: '', qrUrl: null },
 };
 
 /** What GET /api/catalog returns. */
@@ -24,6 +26,15 @@ export interface Catalog {
   ordering: OrderingSettings;
   /** True once the shop's location is set, so delivery fees can be worked out. */
   deliveryReady: boolean;
+  /** Ways customers can pay right now: GCash once its name and number are set, QR Ph once the QR is uploaded. */
+  paymentMethods: PaymentMethod[];
+}
+
+export function availablePaymentMethods(p: PaymentSettings): PaymentMethod[] {
+  const out: PaymentMethod[] = [];
+  if (p.gcashName && p.gcashNumber) out.push('gcash');
+  if (p.qrUrl) out.push('qrph');
+  return out;
 }
 
 /** ₱120, ₱1,250, ₱99.50 */

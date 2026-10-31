@@ -1,8 +1,8 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_SETTINGS, formatPeso, isOrderable, parsePeso, slugify, type Product } from './catalog';
+import { availablePaymentMethods, DEFAULT_SETTINGS, formatPeso, isOrderable, parsePeso, slugify, type Product } from './catalog';
 import { deliveryFee } from './delivery';
-import { productInputSchema, settingsSchema } from './schema';
+import { checkoutRequestSchema, productInputSchema, settingsSchema } from './schema';
 import { seedProducts } from './seed';
 
 describe('money', () => {
@@ -76,5 +76,29 @@ describe('the catalog', () => {
     expect(slugify('What-a-Steal Spanish Latte')).toBe('what-a-steal-spanish-latte');
     expect(slugify('Café Ñino')).toBe('cafe-nino');
     expect(slugify('  ')).toBe('');
+  });
+});
+
+describe('checkout request', () => {
+  const base = {
+    items: [{ productId: 'the-kuha', quantity: 1, choices: {} }],
+    customer: { name: 'Ana', phone: '09171234567' },
+    address: { text: 'Jaro, Iloilo City', lat: 10.72, lng: 122.56 },
+  };
+  it('needs one of the offered payment methods', () => {
+    for (const m of ['gcash', 'qrph']) {
+      expect(checkoutRequestSchema.safeParse({ ...base, paymentMethod: m }).success).toBe(true);
+    }
+    expect(checkoutRequestSchema.safeParse({ ...base, paymentMethod: 'card' }).success).toBe(false);
+    expect(checkoutRequestSchema.safeParse(base).success).toBe(false);
+  });
+});
+
+describe('payment methods', () => {
+  it('offers GCash once its name and number are set, and QR Ph once the QR is uploaded', () => {
+    expect(availablePaymentMethods({ gcashName: '', gcashNumber: '', qrUrl: null })).toEqual([]);
+    expect(availablePaymentMethods({ gcashName: 'Kuha Ko', gcashNumber: '', qrUrl: null })).toEqual([]);
+    expect(availablePaymentMethods({ gcashName: 'Kuha Ko', gcashNumber: '+639171234567', qrUrl: null })).toEqual(['gcash']);
+    expect(availablePaymentMethods({ gcashName: '', gcashNumber: '', qrUrl: 'https://x/qr.png' })).toEqual(['qrph']);
   });
 });

@@ -11,6 +11,7 @@ export const fallbackCatalog: Catalog = {
   products: seedProducts(),
   ordering: DEFAULT_SETTINGS.ordering,
   deliveryReady: false,
+  paymentMethods: [],
 };
 
 /** Exported for tests, which pass a catalog in directly. */
