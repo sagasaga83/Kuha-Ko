@@ -3,10 +3,11 @@
 // to its path ("/photos/hero.jpg"). Brand rules: real drinks and pieces, daylight,
 // one subject per photo, no stock or AI-made images.
 //
-// TEMPORARY: the coffee slots below use free Unsplash photos (Unsplash licence:
-// free for commercial use, no attribution required) as stand-ins. Each one is
-// marked with `stockSource`. Replace them with photos of Kuha Ko's own drinks
-// before opening, then delete the stock files from public/photos/.
+// TEMPORARY: the coffee slots and the first four rack slots below use free
+// Unsplash photos (Unsplash licence: free for commercial use, no attribution
+// required) as stand-ins. Each one is marked with `stockSource`. Replace them
+// with photos of Kuha Ko's own drinks and pieces before opening, then delete the
+// stock files from public/photos/.
 export interface PhotoSlot {
   /** Path under /public, or null to show the placeholder. */
   src: string | null;
@@ -58,10 +59,34 @@ export const photos: {
     },
   },
   rack: [
-    { src: null, alt: 'A thrifted denim jacket on a hanger', brief: 'Denim jacket on the rack. Show the texture.', ratio: '3 / 4' },
-    { src: null, alt: 'A knit cardigan folded on a table', brief: 'Knit cardigan, folded. Close on the stitch.', ratio: '3 / 4' },
-    { src: null, alt: 'A printed polo shirt on a hanger', brief: 'Printed polo, front on, by the window.', ratio: '3 / 4' },
-    { src: null, alt: 'A pair of trousers with the hang tag showing', brief: 'Trousers with the hang tag in frame.', ratio: '3 / 4' },
+    {
+      src: '/photos/rack/denim-jacket.jpg',
+      alt: 'A faded denim jacket on a wooden hanger against a white wall',
+      brief: 'Denim jacket on the rack. Show the texture.',
+      ratio: '3 / 4',
+      stockSource: 'https://unsplash.com/photos/-sM7LOq1_eU (Logan Weaver)',
+    },
+    {
+      src: '/photos/rack/knit-sweater.jpg',
+      alt: 'A chunky oatmeal knit sweater on a hanger, sleeves rolled',
+      brief: 'Knit cardigan, folded. Close on the stitch.',
+      ratio: '3 / 4',
+      stockSource: 'https://unsplash.com/photos/mavrg7cLwbA (Toa Heftiba)',
+    },
+    {
+      src: '/photos/rack/heart-print-shirt.jpg',
+      alt: 'A blue chambray shirt with a small white heart print on a hanger',
+      brief: 'Printed polo, front on, by the window.',
+      ratio: '3 / 4',
+      stockSource: 'https://unsplash.com/photos/RqYTuWkTdEs (Santhosh Kumar)',
+    },
+    {
+      src: '/photos/rack/jeans-tag.jpg',
+      alt: 'The leather back label on a pair of vintage jeans, clipped to a hanger',
+      brief: 'Trousers with the hang tag in frame.',
+      ratio: '3 / 4',
+      stockSource: 'https://unsplash.com/photos/4v1cMdT1480 (Jimi A.)',
+    },
     { src: null, alt: 'A close-up of a small flaw on a pre-loved piece', brief: 'Flaw close-up. Honesty is part of the brand.', ratio: '3 / 4' },
     { src: null, alt: 'The vintage mirror beside the fitting room', brief: 'The vintage mirror and the fitting room.', ratio: '3 / 4' },
   ],
