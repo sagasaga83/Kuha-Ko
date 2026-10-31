@@ -1,0 +1,9 @@
+{
+  "appId": "com.kuhako.app",
+  "appName": "Kuha Ko",
+  "webDir": "../web/dist",
+  "backgroundColor": "#FFFFFF",
+  "ios": {
+    "contentInset": "never"
+  }
+}
