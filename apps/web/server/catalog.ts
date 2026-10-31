@@ -1,6 +1,6 @@
 import { db } from './db.js';
 import { HttpError } from './http.js';
-import { DEFAULT_SETTINGS, slugify, type Catalog, type Product, type Settings } from '../shared/catalog.js';
+import { availablePaymentMethods, DEFAULT_SETTINGS, slugify, type Catalog, type Product, type Settings } from '../shared/catalog.js';
 import { productInputSchema, settingsSchema } from '../shared/schema.js';
 import type { z } from 'zod';
 
@@ -55,7 +55,12 @@ export async function saveSettings(settings: Settings): Promise<void> {
 
 export async function getCatalog(): Promise<Catalog> {
   const [products, settings] = await Promise.all([listProducts({ activeOnly: true }), getSettings()]);
-  return { products, ordering: settings.ordering, deliveryReady: settings.delivery.origin !== null };
+  return {
+    products,
+    ordering: settings.ordering,
+    deliveryReady: settings.delivery.origin !== null,
+    paymentMethods: availablePaymentMethods(settings.payment),
+  };
 }
 
 type ProductInput = z.infer<typeof productInputSchema>;

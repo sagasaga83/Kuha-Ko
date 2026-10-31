@@ -14,6 +14,7 @@ afterEach(cleanup);
 const open: Catalog = {
   ...fallbackCatalog,
   deliveryReady: true,
+  paymentMethods: ['gcash', 'qrph'],
   ordering: { coffee: true, shirt: false, thrift: false },
   products: fallbackCatalog.products.map((p) =>
     p.id === 'the-kuha'
@@ -50,6 +51,18 @@ describe('ordering in the app layout', () => {
     ]);
   });
 
+  it('offers only the ways to pay that are set up', () => {
+    localStorage.setItem('kuhako-cart', JSON.stringify([{ productId: 'the-kuha', quantity: 1, choices: { temperature: ['hot'], 'add-ons': [] } }]));
+    withShop({ ...open, paymentMethods: ['qrph'] }, <MobileApp />);
+    fireEvent.click(screen.getByRole('button', { name: /View order/ }));
+    fireEvent.click(within(screen.getByRole('dialog', { name: 'Your order' })).getByRole('button', { name: 'Checkout' }));
+    const methods = within(screen.getByRole('dialog', { name: 'Checkout' })).getByRole('group', { name: 'Payment method' });
+    const radios = within(methods).getAllByRole('radio') as HTMLInputElement[];
+    expect(radios).toHaveLength(1);
+    expect(radios[0].value).toBe('qrph');
+    expect(radios[0].checked).toBe(true);
+  });
+
   it('goes from the cart to checkout and checks the details', () => {
     localStorage.setItem('kuhako-cart', JSON.stringify([{ productId: 'the-kuha', quantity: 2, choices: { temperature: ['hot'], 'add-ons': [] } }]));
     withShop(open, <MobileApp />);
@@ -57,7 +70,15 @@ describe('ordering in the app layout', () => {
     const cart = screen.getByRole('dialog', { name: 'Your order' });
     fireEvent.click(within(cart).getByRole('button', { name: 'Checkout' }));
     const checkout = screen.getByRole('dialog', { name: 'Checkout' });
-    fireEvent.click(within(checkout).getByRole('button', { name: 'Continue to payment' }));
+    const methods = within(checkout).getByRole('group', { name: 'Payment method' });
+    expect(within(methods).getAllByRole('radio').map((r) => r.closest('label')?.textContent)).toEqual([
+      'GCashSend to our GCash number',
+      'QR PhScan our QR with Maya, GoTyme, MariBank or any bank app',
+    ]);
+    expect((within(methods).getByRole('radio', { name: /^GCash/ }) as HTMLInputElement).checked).toBe(true);
+    fireEvent.click(within(methods).getByRole('radio', { name: /QR Ph/ }));
+    expect(JSON.parse(localStorage.getItem('kuhako-checkout')!).paymentMethod).toBe('qrph');
+    fireEvent.click(within(checkout).getByRole('button', { name: 'Place order' }));
     expect(within(checkout).getByRole('alert').textContent).toBe('Add your name.');
   });
 
@@ -81,6 +102,8 @@ describe('ordering on the one-page site', () => {
     withShop(fallbackCatalog, <App />);
     expect(screen.queryByRole('button', { name: /Add to order/ })).toBeNull();
     withShop({ ...open, deliveryReady: false }, <App />);
+    expect(screen.queryByRole('button', { name: /Add to order/ })).toBeNull();
+    withShop({ ...open, paymentMethods: [] }, <App />);
     expect(screen.queryByRole('button', { name: /Add to order/ })).toBeNull();
   });
 });

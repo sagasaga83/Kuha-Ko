@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { HttpError, handle, json, readJson } from '../server/http.js';
-import { cancelOrder, getOrderView } from '../server/orders.js';
+import { cancelOrder, getOrderView, submitReference } from '../server/orders.js';
 
 const idOf = (request: Request) => {
   const id = new URL(request.url).searchParams.get('id') ?? '';
@@ -8,17 +8,27 @@ const idOf = (request: Request) => {
   return id;
 };
 
-/** GET /api/order?id=…: the order's status, for the customer's order page. The id is the secret. */
+/** GET /api/order?id=…: the order, and where to pay while it's unpaid. The id is the secret. */
 export const GET = handle(async (request) => {
-  const view = await getOrderView(idOf(request), { sync: true, siteUrl: new URL(request.url).origin });
+  const view = await getOrderView(idOf(request));
   if (!view) throw new HttpError(404, 'We can’t find that order.');
   return json(view);
 });
 
-/** POST /api/order?id=… { action: "cancel" }: cancel an unpaid order and release its items. */
+const action = z.discriminatedUnion('action', [
+  z.object({ action: z.literal('cancel') }),
+  z.object({ action: z.literal('reference'), reference: z.string().max(60) }),
+]);
+
+/**
+ * POST /api/order?id=…
+ *   { action: "reference", reference }: "I've paid", with the receipt's reference number
+ *   { action: "cancel" }: cancel before paying, and release the items
+ */
 export const POST = handle(async (request) => {
   const id = idOf(request);
-  await readJson(request, z.object({ action: z.literal('cancel') }));
-  await cancelOrder(id);
-  return json(await getOrderView(id, { sync: false }));
+  const body = await readJson(request, action);
+  if (body.action === 'cancel') await cancelOrder(id);
+  else await submitReference(id, body.reference, new URL(request.url).origin);
+  return json(await getOrderView(id));
 });

@@ -1,16 +1,27 @@
-// Orders: quote → checkout (hold stock, PayMongo session) → paid (webhook or sync)
-// → delivered. Unpaid orders hold their stock for HOLD_MINUTES, then are expired
-// and the stock goes back on sale.
+// Orders, paid straight to Kuha Ko's GCash or QR Ph:
+//   checkout → pending_payment (stock held HOLD_MINUTES; the order page shows where to pay)
+//   customer sends the reference → awaiting_confirmation (stock stays held)
+//   shop confirms in the admin → paid → preparing → out_for_delivery → delivered
+//   shop can't find the payment → cancelled, stock back on sale
+// Unpaid orders past their hold expire and their stock goes back on sale.
 import { randomInt } from 'node:crypto';
 import { db } from './db.js';
 import { HttpError } from './http.js';
 import { getSettings, rowToProduct } from './catalog.js';
 import { roadDistance, type LatLng } from './distance.js';
-import { sendOrderEmails } from './email.js';
-import { createCheckoutSession, expireCheckoutSession, getCheckoutSession, PayMongoError, type CheckoutSession } from './paymongo.js';
-import { formatPeso, isOrderable, type DeliverySettings } from '../shared/catalog.js';
+import { sendPaymentToCheck, sendReceipt } from './email.js';
+import { availablePaymentMethods, isOrderable, type DeliverySettings } from '../shared/catalog.js';
 import { deliveryFee } from '../shared/delivery.js';
-import { normalizePhone, priceLine, type OrderStatus, type OrderView, type PricedLine } from '../shared/order.js';
+import {
+  ORDER_STATUS_LABELS,
+  normalizePhone,
+  normalizeReference,
+  priceLine,
+  type OrderStatus,
+  type OrderView,
+  type PaymentMethod,
+  type PricedLine,
+} from '../shared/order.js';
 import type { CheckoutRequest } from '../shared/schema.js';
 
 export const HOLD_MINUTES = 30;
@@ -50,11 +61,15 @@ function newCode(): string {
   return `KK-${Array.from({ length: 5 }, () => abc[randomInt(abc.length)]).join('')}`;
 }
 
-export async function createOrder(req: CheckoutRequest, siteUrl: string): Promise<{ orderId: string; checkoutUrl: string }> {
+/** Places an order and holds its stock. The customer then pays on the order page. */
+export async function createOrder(req: CheckoutRequest): Promise<{ orderId: string }> {
   const sql = db();
   await releaseExpired();
   const settings = await getSettings();
 
+  if (!availablePaymentMethods(settings.payment).includes(req.paymentMethod)) {
+    throw new HttpError(409, 'That way to pay isn’t available right now. Please choose another.');
+  }
   const phone = normalizePhone(req.customer.phone);
   if (!phone) throw new HttpError(400, 'Check your mobile number: it should look like 0917 123 4567.');
 
@@ -81,25 +96,23 @@ export async function createOrder(req: CheckoutRequest, siteUrl: string): Promis
   const total = subtotal + q.fee;
 
   // Create the order and hold its stock in one transaction.
-  let orderId = '';
-  let code = '';
-  for (let attempt = 0; attempt < 5 && !orderId; attempt++) {
-    code = newCode();
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const code = newCode();
     const id = crypto.randomUUID();
     try {
       await sql.transaction([
         sql`INSERT INTO orders (id, code, customer_name, customer_phone, customer_email, address, address_lat, address_lng, address_notes,
-                                distance_m, subtotal, delivery_fee, total, hold_expires_at)
+                                distance_m, subtotal, delivery_fee, total, payment_method, hold_expires_at)
             VALUES (${id}, ${code}, ${req.customer.name}, ${phone}, ${req.customer.email || null}, ${req.address.text},
                     ${req.address.lat}, ${req.address.lng}, ${req.address.notes}, ${q.distanceM}, ${subtotal}, ${q.fee}, ${total},
-                    now() + make_interval(mins => ${HOLD_MINUTES}))`,
+                    ${req.paymentMethod}, now() + make_interval(mins => ${HOLD_MINUTES}))`,
         ...lines.map(
           (l) => sql`INSERT INTO order_items (order_id, product_id, name, choices, unit_price, quantity, line_total)
                      VALUES (${id}, ${l.productId}, ${l.name}, ${JSON.stringify(l.labels)}::jsonb, ${l.unitPrice}, ${l.quantity}, ${l.unitPrice * l.quantity})`,
         ),
         sql`SELECT reserve_stock(${id})`,
       ]);
-      orderId = id;
+      return { orderId: id };
     } catch (err) {
       const msg = err instanceof Error ? err.message : '';
       const taken = msg.match(/out_of_stock:([a-z0-9-]+)/);
@@ -110,143 +123,150 @@ export async function createOrder(req: CheckoutRequest, siteUrl: string): Promis
       if (!/orders_code_key/.test(msg)) throw err; // a code clash: try another code
     }
   }
-  if (!orderId) throw new HttpError(500, 'Could not create the order. Please try again.');
-
-  let session: CheckoutSession;
-  try {
-    session = await createCheckoutSession({
-      orderId,
-      code,
-      lines: [
-        ...lines.map((l) => ({
-          name: l.name,
-          amount: l.unitPrice,
-          quantity: l.quantity,
-          description: l.labels.map((x) => x.value).join(', ') || undefined,
-        })),
-        { name: 'Delivery', amount: q.fee, quantity: 1, description: `${(q.distanceM / 1000).toFixed(1)} km` },
-      ],
-      customer: { name: req.customer.name, phone, email: req.customer.email || null },
-      successUrl: `${siteUrl}/order/${orderId}`,
-      cancelUrl: `${siteUrl}/order/${orderId}?payment=cancelled`,
-    });
-  } catch (err) {
-    await sql`SELECT release_order(${orderId}, 'cancelled')`;
-    if (err instanceof HttpError) throw err;
-    console.error(err);
-    throw new HttpError(502, 'We couldn’t open the payment page. Your cart is saved; please try again.');
-  }
-  await sql`UPDATE orders SET checkout_session_id = ${session.id}, checkout_url = ${session.checkoutUrl}, updated_at = now() WHERE id = ${orderId}`;
-  return { orderId, checkoutUrl: session.checkoutUrl };
+  throw new HttpError(500, 'Could not create the order. Please try again.');
 }
 
-/** Records a payment. Safe to call more than once (webhook retries, page syncs). */
-export async function markPaid(orderId: string, payment: NonNullable<CheckoutSession['paid']>, siteUrl: string): Promise<void> {
+/** The customer has paid and sends the reference number from their GCash or bank receipt. */
+export async function submitReference(orderId: string, reference: string, siteUrl: string): Promise<void> {
+  const ref = normalizeReference(reference);
+  if (!ref) throw new HttpError(400, 'Check the reference number: it’s the letters and numbers on your payment receipt.');
+  await releaseExpired();
   const sql = db();
-  const [order] = await sql`SELECT id, status, total FROM orders WHERE id = ${orderId}`;
-  if (!order) {
-    console.error(`payment ${payment.id} for unknown order ${orderId}`);
-    return;
-  }
-  const notes: string[] = [];
-  if (payment.amount !== order.total) {
-    notes.push(`Paid ${formatPeso(payment.amount)} but the order total is ${formatPeso(order.total as number)}. Check in PayMongo.`);
-  }
-
-  let changed = false;
-  if (order.status === 'pending_payment') {
-    const rows = await sql`
-      UPDATE orders SET status = 'paid', paid_at = now(), payment_id = ${payment.id}, payment_method = ${payment.method},
-        hold_expires_at = NULL, attention = ${notes.join(' ') || null}, updated_at = now()
-      WHERE id = ${orderId} AND status = 'pending_payment' RETURNING id`;
-    changed = rows.length > 0;
-  } else if (order.status === 'expired' || order.status === 'cancelled') {
-    // Paid after the hold was released: take the stock again if it's still there.
-    try {
-      await sql.transaction([
-        sql`UPDATE orders SET status = 'paid', paid_at = now(), payment_id = ${payment.id}, payment_method = ${payment.method},
-              attention = ${[...notes, 'Paid after the 30-minute hold ran out; the items were still available.'].join(' ')}, updated_at = now()
-            WHERE id = ${orderId} AND status IN ('expired', 'cancelled')`,
-        sql`SELECT reserve_stock(${orderId})`,
-      ]);
-    } catch {
-      await sql`
-        UPDATE orders SET status = 'paid', paid_at = now(), payment_id = ${payment.id}, payment_method = ${payment.method},
-          attention = ${[...notes, 'Paid after the hold ran out, and an item had already sold. Contact the customer and refund in PayMongo.'].join(' ')},
-          updated_at = now()
-        WHERE id = ${orderId} AND status IN ('expired', 'cancelled')`;
+  const rows = await sql`
+    UPDATE orders SET status = 'awaiting_confirmation', payment_reference = ${ref}, reference_at = now(),
+      hold_expires_at = NULL, updated_at = now()
+    WHERE id = ${orderId} AND status = 'pending_payment'
+    RETURNING id`;
+  if (!rows[0]) {
+    const [o] = await sql`SELECT status FROM orders WHERE id = ${orderId}`;
+    if (!o) throw new HttpError(404, 'We can’t find that order.');
+    if (o.status === 'expired') {
+      throw new HttpError(409, 'This order wasn’t paid within 30 minutes, so the items went back on sale. If you already paid, message us with your reference number.');
     }
-    changed = true;
+    throw new HttpError(409, 'We already have the payment details for this order.');
   }
-
-  if (changed) {
-    const view = await getOrderView(orderId, { sync: false });
-    const [c] = await sql`SELECT customer_phone, customer_email FROM orders WHERE id = ${orderId}`;
-    if (view) await sendOrderEmails(view, { phone: c.customer_phone as string, email: (c.customer_email as string | null) ?? null }, siteUrl);
-  }
-}
-
-/** Checks PayMongo directly, in case the webhook is late or not set up. */
-async function syncPayment(orderId: string, sessionId: string, siteUrl: string): Promise<void> {
-  try {
-    const s = await getCheckoutSession(sessionId);
-    if (s.paid) await markPaid(orderId, s.paid, siteUrl);
-  } catch (err) {
-    console.error('sync payment', err);
-  }
+  const view = await getOrderView(orderId);
+  const [c] = await sql`SELECT customer_phone FROM orders WHERE id = ${orderId}`;
+  if (view) await sendPaymentToCheck(view, c.customer_phone as string, siteUrl);
 }
 
 /** Expires unpaid orders past their hold and puts their stock back. */
 export async function releaseExpired(): Promise<void> {
   const sql = db();
   const due = await sql`
-    SELECT id, checkout_session_id FROM orders
-    WHERE status = 'pending_payment' AND hold_expires_at < now()
-    ORDER BY hold_expires_at LIMIT 20`;
-  for (const o of due) {
-    try {
-      const sessionId = o.checkout_session_id as string | null;
-      if (sessionId && !(await expireCheckoutSession(sessionId))) continue; // paid or paying: leave it for the webhook
-      await sql`SELECT release_order(${o.id as string}, 'expired')`;
-    } catch (err) {
-      console.error('release expired order', o.id, err);
-    }
-  }
+    SELECT id FROM orders WHERE status = 'pending_payment' AND hold_expires_at < now()
+    ORDER BY hold_expires_at LIMIT 50`;
+  for (const o of due) await sql`SELECT release_order(${o.id as string}, 'expired')`;
 }
 
-/** The customer cancels an unpaid order from the order page. */
+/** The customer cancels before sending a payment reference. */
 export async function cancelOrder(orderId: string): Promise<void> {
   const sql = db();
-  const [o] = await sql`SELECT status, checkout_session_id FROM orders WHERE id = ${orderId}`;
+  const [o] = await sql`SELECT status FROM orders WHERE id = ${orderId}`;
   if (!o) throw new HttpError(404, 'We can’t find that order.');
   if (o.status !== 'pending_payment') throw new HttpError(409, 'This order can’t be cancelled here. Please message us.');
-  if (o.checkout_session_id) {
-    let ok = false;
-    try {
-      ok = await expireCheckoutSession(o.checkout_session_id as string);
-    } catch (err) {
-      if (!(err instanceof PayMongoError)) throw err;
-    }
-    if (!ok) throw new HttpError(409, 'A payment for this order is going through, so it can’t be cancelled. Please message us.');
-  }
   await sql`SELECT release_order(${orderId}, 'cancelled')`;
 }
 
-export async function getOrderView(orderId: string, opts: { sync: boolean; siteUrl?: string }): Promise<OrderView | null> {
+// ---- Admin -------------------------------------------------------------
+
+export const ADMIN_ACTIONS = ['confirm', 'reject', 'preparing', 'out_for_delivery', 'delivered', 'cancel'] as const;
+export type AdminAction = (typeof ADMIN_ACTIONS)[number];
+
+/** Which statuses each action can move an order from. */
+const FROM: Record<AdminAction, OrderStatus[]> = {
+  confirm: ['awaiting_confirmation', 'pending_payment'],
+  reject: ['awaiting_confirmation', 'pending_payment'],
+  preparing: ['paid'],
+  out_for_delivery: ['paid', 'preparing'],
+  delivered: ['paid', 'preparing', 'out_for_delivery'],
+  cancel: ['paid', 'preparing', 'out_for_delivery'],
+};
+
+export async function adminUpdateOrder(orderId: string, action: AdminAction, siteUrl: string): Promise<OrderView> {
+  const sql = db();
+  const [o] = await sql`SELECT status FROM orders WHERE id = ${orderId}`;
+  if (!o) throw new HttpError(404, 'That order no longer exists.');
+  if (!FROM[action].includes(o.status as OrderStatus)) {
+    throw new HttpError(409, `This order is “${ORDER_STATUS_LABELS[o.status as OrderStatus]}”, so it can’t be changed that way. Reload the orders.`);
+  }
+  if (action === 'reject') {
+    // Payment not found: cancel and put the items back on sale.
+    await sql`SELECT release_order(${orderId}, 'cancelled')`;
+  } else if (action === 'confirm') {
+    const rows = await sql`
+      UPDATE orders SET status = 'paid', paid_at = now(), hold_expires_at = NULL, updated_at = now()
+      WHERE id = ${orderId} AND status IN ('awaiting_confirmation', 'pending_payment') RETURNING id`;
+    if (rows[0]) {
+      const view = await getOrderView(orderId);
+      const [c] = await sql`SELECT customer_email FROM orders WHERE id = ${orderId}`;
+      if (view && c.customer_email) await sendReceipt(view, c.customer_email as string, siteUrl);
+    }
+  } else {
+    // Delivery steps, or cancelling a paid order (refund by hand; stock is not put back
+    // automatically because the item may already be packed or delivered).
+    const next = action === 'cancel' ? 'cancelled' : action;
+    await sql`UPDATE orders SET status = ${next}, updated_at = now() WHERE id = ${orderId} AND status = ANY(${FROM[action]})`;
+  }
+  const view = await getOrderView(orderId);
+  if (!view) throw new HttpError(404, 'That order no longer exists.');
+  return view;
+}
+
+export interface AdminOrder extends OrderView {
+  customerPhone: string;
+  customerEmail: string | null;
+  distanceM: number;
+  lat: number;
+  lng: number;
+  referenceAt: string | null;
+}
+
+/** Orders for the admin: the ones needing action first, then the latest. */
+export async function listOrders(filter: 'open' | 'all'): Promise<AdminOrder[]> {
+  await releaseExpired();
+  const sql = db();
+  const orders =
+    filter === 'open'
+      ? await sql`SELECT * FROM orders WHERE status IN ('pending_payment', 'awaiting_confirmation', 'paid', 'preparing', 'out_for_delivery')
+                  ORDER BY CASE status WHEN 'awaiting_confirmation' THEN 0 WHEN 'paid' THEN 1 WHEN 'preparing' THEN 2
+                                       WHEN 'out_for_delivery' THEN 3 ELSE 4 END, created_at DESC LIMIT 200`
+      : await sql`SELECT * FROM orders ORDER BY created_at DESC LIMIT 200`;
+  if (orders.length === 0) return [];
+  const items = await sql`SELECT * FROM order_items WHERE order_id = ANY(${orders.map((o) => o.id)}) ORDER BY id`;
+  const iso = (v: unknown) => (v ? new Date(v as string).toISOString() : null);
+  return orders.map((o) => ({
+    ...toView(
+      o,
+      items.filter((i) => i.order_id === o.id),
+      null,
+    ),
+    customerPhone: o.customer_phone as string,
+    customerEmail: (o.customer_email as string | null) ?? null,
+    distanceM: o.distance_m as number,
+    lat: o.address_lat as number,
+    lng: o.address_lng as number,
+    referenceAt: iso(o.reference_at),
+  }));
+}
+
+// ---- Views -------------------------------------------------------------
+
+export async function getOrderView(orderId: string): Promise<OrderView | null> {
   const sql = db();
   if (!/^[0-9a-f-]{36}$/.test(orderId)) return null;
   let [o] = await sql`SELECT * FROM orders WHERE id = ${orderId}`;
   if (!o) return null;
-  if (opts.sync && o.status === 'pending_payment' && o.checkout_session_id && opts.siteUrl) {
-    await syncPayment(orderId, o.checkout_session_id as string, opts.siteUrl);
-    if (new Date(o.hold_expires_at as string) < new Date()) await releaseExpired();
+  if (o.status === 'pending_payment' && new Date(o.hold_expires_at as string) < new Date()) {
+    await releaseExpired();
     [o] = await sql`SELECT * FROM orders WHERE id = ${orderId}`;
   }
   const items = await sql`SELECT * FROM order_items WHERE order_id = ${orderId} ORDER BY id`;
-  return toView(o, items);
+  const payTo = o.status === 'pending_payment' ? (await getSettings()).payment : null;
+  return toView(o, items, payTo);
 }
 
-export function toView(o: Row, items: Row[]): OrderView {
+export function toView(o: Row, items: Row[], payTo: OrderView['payTo']): OrderView {
   const iso = (v: unknown) => (v ? new Date(v as string).toISOString() : null);
   const pending = o.status === 'pending_payment';
   return {
@@ -268,7 +288,9 @@ export function toView(o: Row, items: Row[]): OrderView {
     subtotal: o.subtotal as number,
     deliveryFee: o.delivery_fee as number,
     total: o.total as number,
-    checkoutUrl: pending ? ((o.checkout_url as string | null) ?? null) : null,
+    paymentMethod: ((o.payment_method as string | null) ?? 'gcash') as PaymentMethod,
+    paymentReference: (o.payment_reference as string | null) ?? null,
+    payTo: pending && payTo ? { gcashName: payTo.gcashName, gcashNumber: payTo.gcashNumber, qrUrl: payTo.qrUrl } : null,
     holdExpiresAt: pending ? iso(o.hold_expires_at) : null,
   };
 }

@@ -2,8 +2,9 @@
 // RESEND_API_KEY and RESEND_EMAIL_DOMAIN come from the Vercel Marketplace integration;
 // mail is sent from orders@<that domain> (override with EMAIL_FROM). The domain must
 // be verified in Resend (DNS records) before mail is delivered.
-// SHOP_EMAIL gets a note for every paid order; the customer gets a receipt if they
-// gave an email. Email never blocks an order: failures are logged, not thrown.
+// SHOP_EMAIL gets a note when a customer sends a payment reference to check; the
+// customer gets a receipt (if they gave an email) once the shop confirms it.
+// Email never blocks an order: failures are logged, not thrown.
 import { formatPeso } from '../shared/catalog.js';
 import type { OrderView } from '../shared/order.js';
 
@@ -34,7 +35,7 @@ async function send(to: string, subject: string, text: string, html: string): Pr
   }
 }
 
-function lines(order: OrderView) {
+function lines(order: OrderView, totalLabel: string) {
   const items = order.items.map((i) => {
     const opts = i.choices.map((c) => c.value).join(', ');
     return { text: `${i.quantity} × ${i.name}${opts ? ` (${opts})` : ''}`, amount: formatPeso(i.lineTotal) };
@@ -42,7 +43,7 @@ function lines(order: OrderView) {
   const totals = [
     { text: 'Subtotal', amount: formatPeso(order.subtotal) },
     { text: 'Delivery', amount: formatPeso(order.deliveryFee) },
-    { text: 'Total paid', amount: formatPeso(order.total) },
+    { text: totalLabel, amount: formatPeso(order.total) },
   ];
   const textBlock = [...items, ...totals].map((l) => `${l.text}  ${l.amount}`).join('\n');
   const row = (l: { text: string; amount: string }, bold = false) =>
@@ -54,29 +55,33 @@ function lines(order: OrderView) {
 const wrap = (body: string) =>
   `<div style="font:15px/1.6 Helvetica,Arial,sans-serif;color:#3B2A20;max-width:520px">${body}</div>`;
 
-export async function sendOrderEmails(order: OrderView, contact: { phone: string; email: string | null }, siteUrl: string): Promise<void> {
-  const { textBlock, htmlBlock } = lines(order);
-  const link = `${siteUrl}/order/${order.id}`;
-  const jobs: Promise<void>[] = [];
+const METHOD = { gcash: 'GCash', qrph: 'QR Ph' } as const;
 
+/** To the shop: a customer says they've paid; check the reference in GCash or the bank app. */
+export async function sendPaymentToCheck(order: OrderView, phone: string, siteUrl: string): Promise<void> {
   const shop = process.env.SHOP_EMAIL;
-  if (shop) {
-    const subject = `New order ${order.code}: ${formatPeso(order.total)}`;
-    const text = `New paid order ${order.code}\n\n${textBlock}\n\nDeliver to: ${order.customerName}, ${contact.phone}\n${order.address}${order.addressNotes ? `\nNotes: ${order.addressNotes}` : ''}\n\nManage it at ${siteUrl}/admin`;
-    const html = wrap(
-      `<p><strong>New paid order ${esc(order.code)}</strong></p>${htmlBlock}<p><strong>Deliver to</strong><br>${esc(order.customerName)}, ${esc(contact.phone)}<br>${esc(order.address)}${order.addressNotes ? `<br>Notes: ${esc(order.addressNotes)}` : ''}</p><p><a href="${esc(siteUrl)}/admin">Open the shop admin</a></p>`,
-    );
-    jobs.push(send(shop, subject, text, html));
+  if (!shop) {
+    console.warn(`email skipped (SHOP_EMAIL not set): payment to check for ${order.code}`);
+    return;
   }
+  const { textBlock, htmlBlock } = lines(order, 'Total to check');
+  const method = METHOD[order.paymentMethod] ?? order.paymentMethod;
+  const subject = `Check payment: ${order.code}, ${formatPeso(order.total)} by ${method}`;
+  const text = `${order.customerName} says they paid ${formatPeso(order.total)} by ${method}.\nReference: ${order.paymentReference}\n\nFind it in your ${method === 'GCash' ? 'GCash' : 'GCash or bank'} app, then confirm it in the admin: ${siteUrl}/admin\n\n${textBlock}\n\nDeliver to: ${order.customerName}, ${phone}\n${order.address}${order.addressNotes ? `\nNotes: ${order.addressNotes}` : ''}`;
+  const html = wrap(
+    `<p><strong>${esc(order.customerName)}</strong> says they paid <strong>${esc(formatPeso(order.total))}</strong> by ${esc(method)}.</p><p style="font-size:18px">Reference: <strong style="font-family:Courier,monospace">${esc(order.paymentReference ?? '')}</strong></p><p>Find it in your app, then <a href="${esc(siteUrl)}/admin">confirm it in the admin</a>.</p>${htmlBlock}<p><strong>Deliver to</strong><br>${esc(order.customerName)}, ${esc(phone)}<br>${esc(order.address)}${order.addressNotes ? `<br>Notes: ${esc(order.addressNotes)}` : ''}</p>`,
+  );
+  await send(shop, subject, text, html);
+}
 
-  if (contact.email) {
-    const subject = `Kuha Ko order ${order.code}: thank you`;
-    const text = `Salamat, ${order.customerName}!\n\nWe’ve got your order ${order.code} and payment.\n\n${textBlock}\n\nDelivering to: ${order.address}\n\nFollow your order: ${link}\n\nKuha Ko · Iloilo City`;
-    const html = wrap(
-      `<p>Salamat, ${esc(order.customerName)}!</p><p>We’ve got your order <strong>${esc(order.code)}</strong> and payment.</p>${htmlBlock}<p>Delivering to: ${esc(order.address)}</p><p><a href="${esc(link)}">Follow your order</a></p><p style="color:#5E4B3C">Kuha Ko · Iloilo City</p>`,
-    );
-    jobs.push(send(contact.email, subject, text, html));
-  }
-
-  await Promise.all(jobs);
+/** To the customer, once the shop has confirmed their payment. */
+export async function sendReceipt(order: OrderView, email: string, siteUrl: string): Promise<void> {
+  const { textBlock, htmlBlock } = lines(order, 'Total paid');
+  const link = `${siteUrl}/order/${order.id}`;
+  const subject = `Kuha Ko order ${order.code}: payment received`;
+  const text = `Salamat, ${order.customerName}!\n\nWe’ve received your payment for order ${order.code}.\n\n${textBlock}\n\nDelivering to: ${order.address}\n\nFollow your order: ${link}\n\nKuha Ko · Iloilo City`;
+  const html = wrap(
+    `<p>Salamat, ${esc(order.customerName)}!</p><p>We’ve received your payment for order <strong>${esc(order.code)}</strong>.</p>${htmlBlock}<p>Delivering to: ${esc(order.address)}</p><p><a href="${esc(link)}">Follow your order</a></p><p style="color:#5E4B3C">Kuha Ko · Iloilo City</p>`,
+  );
+  await send(email, subject, text, html);
 }

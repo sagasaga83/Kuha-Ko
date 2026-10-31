@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { formatPeso } from '../../shared/catalog';
-import { normalizePhone } from '../../shared/order';
+import { PAYMENT_OPTIONS, normalizePhone, type PaymentMethod } from '../../shared/order';
+import { useCatalog } from '../catalog/catalog';
 import { AddressPicker, type Pin } from './AddressPicker';
 import { rememberOrder, type Cart } from './cart';
 
@@ -13,12 +14,16 @@ interface Details {
   address: string;
   notes: string;
   pin: Pin | null;
+  paymentMethod: PaymentMethod;
 }
 
 function readDetails(): Details {
-  const blank = { name: '', phone: '', email: '', address: '', notes: '', pin: null };
+  const blank: Details = { name: '', phone: '', email: '', address: '', notes: '', pin: null, paymentMethod: 'gcash' };
   try {
-    return { ...blank, ...JSON.parse(localStorage.getItem(DETAILS) ?? '{}') };
+    const saved = { ...blank, ...JSON.parse(localStorage.getItem(DETAILS) ?? '{}') };
+    // A method we no longer offer falls back to the default.
+    if (!PAYMENT_OPTIONS.some((o) => o.id === saved.paymentMethod)) saved.paymentMethod = blank.paymentMethod;
+    return saved;
   } catch {
     return blank;
   }
@@ -37,7 +42,11 @@ async function postJson(url: string, body: unknown) {
 }
 
 export function Checkout({ cart, onBack }: { cart: Cart; onBack: () => void }) {
+  const { paymentMethods } = useCatalog();
+  const options = PAYMENT_OPTIONS.filter((o) => paymentMethods.includes(o.id));
   const [d, setD] = useState<Details>(readDetails);
+  // The remembered choice may not be offered any more.
+  const method = options.some((o) => o.id === d.paymentMethod) ? d.paymentMethod : (options[0]?.id ?? d.paymentMethod);
   const [quote, setQuote] = useState<QuoteState>({ state: 'none' });
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -46,7 +55,7 @@ export function Checkout({ cart, onBack }: { cart: Cart; onBack: () => void }) {
   // Remember details on this device for next time (not the pin: people order from different places).
   useEffect(() => {
     try {
-      localStorage.setItem(DETAILS, JSON.stringify({ name: d.name, phone: d.phone, email: d.email, address: d.address, notes: d.notes, pin: d.pin }));
+      localStorage.setItem(DETAILS, JSON.stringify({ name: d.name, phone: d.phone, email: d.email, address: d.address, notes: d.notes, pin: d.pin, paymentMethod: d.paymentMethod }));
     } catch {
       // ignore
     }
@@ -83,6 +92,7 @@ export function Checkout({ cart, onBack }: { cart: Cart; onBack: () => void }) {
         items: cart.lines.map(({ productId, quantity, choices }) => ({ productId, quantity, choices })),
         customer: { name: d.name, phone: d.phone, email: d.email },
         address: { text: d.address, lat: d.pin.lat, lng: d.pin.lng, notes: d.notes },
+        paymentMethod: method,
       });
       if (!r.ok) {
         setError(r.data?.error ?? 'Something went wrong. Please try again.');
@@ -90,7 +100,7 @@ export function Checkout({ cart, onBack }: { cart: Cart; onBack: () => void }) {
         return;
       }
       rememberOrder(r.data.orderId);
-      window.location.assign(r.data.checkoutUrl);
+      window.location.assign(`/order/${r.data.orderId}`);
     } catch {
       setError('Check your connection and try again.');
       setBusy(false);
@@ -146,6 +156,25 @@ export function Checkout({ cart, onBack }: { cart: Cart; onBack: () => void }) {
         />
       </label>
 
+      <fieldset className="shop-pay-methods">
+        <legend className="shop-h">Payment method</legend>
+        {options.map((o) => (
+          <label key={o.id} className="shop-pay-method">
+            <input
+              type="radio"
+              name="payment-method"
+              value={o.id}
+              checked={method === o.id}
+              onChange={() => set({ paymentMethod: o.id })}
+            />
+            <span className="shop-pay-method__text">
+              <span className="shop-pay-method__label">{o.label}</span>
+              {o.note ? <span className="shop-pay-method__note">{o.note}</span> : null}
+            </span>
+          </label>
+        ))}
+      </fieldset>
+
       <dl className="shop-totals">
         <div>
           <dt>Items</dt>
@@ -183,9 +212,11 @@ export function Checkout({ cart, onBack }: { cart: Cart; onBack: () => void }) {
       ) : null}
 
       <button type="submit" className="kk-button kk-button--primary shop-pay" disabled={busy}>
-        {busy ? 'Opening payment…' : fee === null ? 'Continue to payment' : `Pay ${formatPeso(cart.subtotal + fee)}`}
+        {busy ? 'Placing your order…' : fee === null ? 'Place order' : `Place order · ${formatPeso(cart.subtotal + fee)}`}
       </button>
-      <p className="shop-note shop-center">Pay with GCash, Maya or QR Ph (GoTyme, MariBank and any bank app) on PayMongo’s secure page.</p>
+      <p className="shop-note shop-center">
+        Next you’ll see where to send {options.find((o) => o.id === method)?.label ?? 'your'} payment. We hold your items for 30 minutes.
+      </p>
     </form>
   );
 }

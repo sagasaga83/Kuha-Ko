@@ -1,19 +1,29 @@
-// /order/:id: the customer's order, where PayMongo sends them back after paying.
-// Checks every few seconds while payment is pending.
-import { useCallback, useEffect, useState } from 'react';
+// /order/:id: the customer's order. While unpaid it shows where to send the money
+// (Kuha Ko's GCash or QR Ph) and takes the reference number; then it follows the
+// shop's confirmation and the delivery. Checks for updates every few seconds.
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { Wordmark } from '@kuhako/ui';
 import { formatPeso } from '../../shared/catalog';
-import { ORDER_STATUS_LABELS, type OrderView } from '../../shared/order';
+import { ORDER_STATUS_LABELS, normalizeReference, type OrderView } from '../../shared/order';
 import { clearStoredCart, lastOrderId } from '../shop/cart';
 import '../styles/shop.css';
 
 const STEPS = ['paid', 'preparing', 'out_for_delivery', 'delivered'] as const;
+const FINAL = ['delivered', 'cancelled', 'expired'];
+
+/** 09171234567 shown as 0917 123 4567. */
+function prettyPhone(e164: string): string {
+  const local = e164.replace(/^\+63/, '0');
+  return local.length === 11 ? `${local.slice(0, 4)} ${local.slice(4, 7)} ${local.slice(7)}` : local;
+}
 
 export default function OrderPage({ id }: { id: string }) {
   const [order, setOrder] = useState<OrderView | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
-  const cancelled = new URLSearchParams(window.location.search).get('payment') === 'cancelled';
+  const [reference, setReference] = useState('');
+  const [copied, setCopied] = useState(false);
+  const [, tick] = useState(0);
 
   const load = useCallback(async () => {
     try {
@@ -21,7 +31,6 @@ export default function OrderPage({ id }: { id: string }) {
       const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.error ?? 'We can’t find that order.');
       setOrder(data);
-      setError('');
       return data as OrderView;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Check your connection.');
@@ -32,45 +41,66 @@ export default function OrderPage({ id }: { id: string }) {
   useEffect(() => {
     document.title = 'Your order · Kuha Ko';
     let stop = false;
-    let tries = 0;
-    const tick = async () => {
+    const poll = async () => {
       const o = await load();
-      tries++;
-      // While waiting for payment, keep checking (quickly at first, then slower).
-      if (!stop && o?.status === 'pending_payment') window.setTimeout(tick, tries < 20 ? 3000 : 15000);
-      // Delivered orders don't change; others check now and then.
-      else if (!stop && o && o.status !== 'delivered' && o.status !== 'cancelled' && o.status !== 'expired') window.setTimeout(tick, 60000);
+      if (stop || !o || FINAL.includes(o.status)) return;
+      // Waiting on the shop: check often. Otherwise now and then.
+      window.setTimeout(poll, o.status === 'awaiting_confirmation' ? 10000 : 30000);
     };
-    tick();
+    poll();
+    // Keep the "held for N minutes" line current.
+    const t = window.setInterval(() => tick((n) => n + 1), 30000);
     return () => {
       stop = true;
+      window.clearInterval(t);
     };
   }, [load]);
 
   useEffect(() => {
-    if (order && order.status !== 'pending_payment' && order.status !== 'cancelled' && order.status !== 'expired' && lastOrderId() === order.id) {
-      clearStoredCart();
-    }
+    if (order && !['pending_payment', 'cancelled', 'expired'].includes(order.status) && lastOrderId() === order.id) clearStoredCart();
   }, [order]);
 
-  const cancel = async () => {
+  const post = async (body: unknown) => {
     setBusy(true);
+    setError('');
     try {
       const res = await fetch(`/api/order?id=${encodeURIComponent(id)}`, {
         method: 'POST',
         headers: { 'content-type': 'application/json', accept: 'application/json' },
-        body: JSON.stringify({ action: 'cancel' }),
+        body: JSON.stringify(body),
       });
       const data = await res.json().catch(() => null);
-      if (!res.ok) setError(data?.error ?? 'Could not cancel.');
+      if (!res.ok) setError(data?.error ?? 'Something went wrong. Please try again.');
       else setOrder(data);
+    } catch {
+      setError('Check your connection and try again.');
     } finally {
       setBusy(false);
     }
   };
 
-  const minutesLeft = order?.holdExpiresAt ? Math.max(0, Math.round((Date.parse(order.holdExpiresAt) - Date.now()) / 60000)) : null;
+  const sendReference = (e: FormEvent) => {
+    e.preventDefault();
+    if (!normalizeReference(reference)) {
+      setError('Check the reference number: it’s the letters and numbers on your payment receipt.');
+      return;
+    }
+    post({ action: 'reference', reference });
+  };
+
+  const copyNumber = async (n: string) => {
+    try {
+      await navigator.clipboard.writeText(n.replace(/^\+63/, '0'));
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard blocked: the number is on screen to copy by hand.
+    }
+  };
+
+  const minutesLeft = order?.holdExpiresAt ? Math.max(0, Math.ceil((Date.parse(order.holdExpiresAt) - Date.now()) / 60000)) : null;
   const stepIndex = order ? STEPS.indexOf(order.status as (typeof STEPS)[number]) : -1;
+  const payTo = order?.payTo;
 
   return (
     <div className="order">
@@ -89,31 +119,99 @@ export default function OrderPage({ id }: { id: string }) {
         <main>
           <p className="order__code">Order {order.code}</p>
           <h1 className="order__status" aria-live="polite">
-            {order.status === 'paid' ? `Salamat, ${order.customerName.split(' ')[0]}! We’ve got your order.` : ORDER_STATUS_LABELS[order.status]}
+            {order.status === 'pending_payment'
+              ? `Pay ${formatPeso(order.total)} to finish your order`
+              : order.status === 'paid'
+                ? `Salamat, ${order.customerName.split(' ')[0]}! Payment received.`
+                : ORDER_STATUS_LABELS[order.status]}
           </h1>
 
-          {order.status === 'pending_payment' ? (
-            <div className="order__box">
-              <p>
-                {cancelled ? 'Payment wasn’t finished. ' : 'Checking your payment… '}
-                {minutesLeft !== null ? `We’re holding your items for ${minutesLeft} more ${minutesLeft === 1 ? 'minute' : 'minutes'}.` : null}
-              </p>
-              <div className="order__actions">
-                {order.checkoutUrl ? (
-                  <a className="kk-button kk-button--primary" href={order.checkoutUrl}>
-                    Pay now
+          {order.status === 'pending_payment' && payTo ? (
+            <section className="order__pay" aria-labelledby="pay-title">
+              <h2 id="pay-title" className="shop-h">
+                {order.paymentMethod === 'qrph' ? 'Scan to pay' : 'Send by GCash'}
+              </h2>
+              {order.paymentMethod === 'qrph' && payTo.qrUrl ? (
+                <>
+                  <img className="order__qr" src={payTo.qrUrl} alt={`Kuha Ko’s QR Ph code. Pay ${formatPeso(order.total)}.`} />
+                  <p className="shop-note">
+                    Open GCash, Maya, GoTyme, MariBank or your bank app, scan this code (or save it and upload it in the app), and pay{' '}
+                    <strong>exactly {formatPeso(order.total)}</strong>.
+                  </p>
+                  <a className="shop-link" href={payTo.qrUrl} download={`kuha-ko-qr-${order.code}.png`} target="_blank" rel="noreferrer">
+                    Save QR
                   </a>
+                </>
+              ) : (
+                <dl className="order__gcash">
+                  <div>
+                    <dt>GCash number</dt>
+                    <dd>
+                      <span className="order__number">{prettyPhone(payTo.gcashNumber)}</span>
+                      <button type="button" className="shop-link" onClick={() => copyNumber(payTo.gcashNumber)}>
+                        {copied ? 'Copied' : 'Copy number'}
+                      </button>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Account name</dt>
+                    <dd>{payTo.gcashName}</dd>
+                  </div>
+                  <div>
+                    <dt>Amount</dt>
+                    <dd className="order__number">{formatPeso(order.total)}</dd>
+                  </div>
+                </dl>
+              )}
+              <p className="shop-note">
+                Add <strong>{order.code}</strong> in the message, if your app has one.
+                {minutesLeft !== null ? ` We’re holding your items for ${minutesLeft} more ${minutesLeft === 1 ? 'minute' : 'minutes'}.` : ''}
+              </p>
+
+              <form className="order__ref" onSubmit={sendReference} noValidate>
+                <label className="shop-field">
+                  <span>Reference number from your receipt</span>
+                  <input
+                    value={reference}
+                    onChange={(e) => setReference(e.target.value)}
+                    inputMode="text"
+                    autoCapitalize="characters"
+                    autoComplete="off"
+                    placeholder="e.g. 1012 345 678912"
+                    maxLength={60}
+                  />
+                  <small>After paying, your app shows a reference number (GCash: “Ref No.”). Type it here so we can find your payment.</small>
+                </label>
+                {error ? (
+                  <p className="shop-error" role="alert">
+                    {error}
+                  </p>
                 ) : null}
-                <button type="button" className="shop-link" onClick={cancel} disabled={busy}>
-                  {busy ? 'Cancelling…' : 'Cancel order'}
+                <button type="submit" className="kk-button kk-button--primary shop-pay" disabled={busy}>
+                  {busy ? 'Sending…' : 'I’ve paid'}
                 </button>
-              </div>
-            </div>
+              </form>
+              <button type="button" className="shop-link" onClick={() => post({ action: 'cancel' })} disabled={busy}>
+                Cancel order
+              </button>
+            </section>
+          ) : null}
+
+          {order.status === 'awaiting_confirmation' ? (
+            <p className="order__box">
+              Thanks! We’re checking your payment (reference <strong>{order.paymentReference}</strong>). This page updates by itself once
+              it’s confirmed, usually within a few minutes during shop hours.
+            </p>
           ) : null}
           {order.status === 'expired' ? (
-            <p className="order__box">This order wasn’t paid within 30 minutes, so the items went back on sale. You can order again from the menu.</p>
+            <p className="order__box">
+              This order wasn’t paid within 30 minutes, so the items went back on sale. If you already paid, message us with your reference
+              number and order {order.code}.
+            </p>
           ) : null}
-          {order.status === 'cancelled' ? <p className="order__box">This order was cancelled. Nothing was charged.</p> : null}
+          {order.status === 'cancelled' ? (
+            <p className="order__box">This order was cancelled. If you paid for it, message us with order {order.code} and we’ll sort out a refund.</p>
+          ) : null}
 
           {stepIndex >= 0 ? (
             <ol className="order__steps">
@@ -164,7 +262,7 @@ export default function OrderPage({ id }: { id: string }) {
             ) : null}
           </p>
           <p className="shop-note">Keep this page: it’s the link to your order. Questions? Message Kuha Ko with your order number.</p>
-          {error ? <p className="shop-error">{error}</p> : null}
+          {error && order.status !== 'pending_payment' ? <p className="shop-error">{error}</p> : null}
           <a className="shop-link" href="/">
             ← Back to Kuha Ko
           </a>

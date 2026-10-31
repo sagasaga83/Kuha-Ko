@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
 import type { Product } from './catalog';
-import { defaultChoices, lineKey, normalizePhone, priceLine } from './order';
+import { defaultChoices, lineKey, normalizePhone, normalizeReference, priceLine } from './order';
 import { seedProducts } from './seed';
 
 const kuha: Product = {
@@ -58,5 +58,17 @@ describe('phone numbers', () => {
     expect(normalizePhone('033 123 4567')).toBeNull();
     expect(normalizePhone('0917123456')).toBeNull();
     expect(normalizePhone('hello')).toBeNull();
+  });
+});
+
+describe('payment reference numbers', () => {
+  it('accepts GCash and bank references, ignoring spaces and dashes', () => {
+    expect(normalizeReference('1012 345 678912')).toBe('1012345678912');
+    expect(normalizeReference(' ab12-cd34-ef ')).toBe('AB12CD34EF');
+  });
+  it('rejects anything too short or with other characters', () => {
+    expect(normalizeReference('12345')).toBeNull();
+    expect(normalizeReference('')).toBeNull();
+    expect(normalizeReference('ref#123456')).toBeNull();
   });
 });

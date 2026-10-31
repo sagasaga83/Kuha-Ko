@@ -1,6 +1,7 @@
 // Validation for catalog data, used by the API and the admin page (not the customer site).
 import { z } from 'zod';
 import { KINDS } from './catalog.js';
+import { PAYMENT_METHOD_IDS } from './order.js';
 
 const centavos = z.number().int().min(0).max(10_000_000);
 
@@ -68,9 +69,20 @@ export const orderingSettingsSchema = z.object({
 });
 export type OrderingSettings = z.infer<typeof orderingSettingsSchema>;
 
+/** Where customers send payment. Empty until set: ordering stays off. */
+export const paymentSettingsSchema = z.object({
+  gcashName: z.string().trim().max(60),
+  /** 09XXXXXXXXX or +639XXXXXXXXX; '' when not set. */
+  gcashNumber: z.string().trim().max(20),
+  /** The shop's QR Ph code image (uploaded in admin), or null. */
+  qrUrl: z.string().max(500).nullable(),
+});
+export type PaymentSettings = z.infer<typeof paymentSettingsSchema>;
+
 export const settingsSchema = z.object({
   delivery: deliverySettingsSchema,
   ordering: orderingSettingsSchema,
+  payment: paymentSettingsSchema,
 });
 export type Settings = z.infer<typeof settingsSchema>;
 
@@ -99,5 +111,6 @@ export const checkoutRequestSchema = z.object({
     ...latLng,
     notes: z.string().trim().max(300).default(''),
   }),
+  paymentMethod: z.enum(PAYMENT_METHOD_IDS, { message: 'Choose how to pay' }),
 });
 export type CheckoutRequest = z.infer<typeof checkoutRequestSchema>;
