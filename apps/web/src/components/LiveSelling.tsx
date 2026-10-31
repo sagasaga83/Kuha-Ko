@@ -11,7 +11,7 @@ export function LiveSelling() {
         <SectionHead
           id="live-title"
           accent="thrift"
-          label={`From ${site.liveSellingFrom}`}
+          label="Kuha Ko Thrift"
           title="Live selling"
           lede="Before the shop opens, Kuha Ko Thrift sells online. Join the lives on our Facebook page and claim a piece in the comments."
         />

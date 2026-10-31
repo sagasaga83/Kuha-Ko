@@ -5,7 +5,7 @@ export const site = {
   city: 'Iloilo City',
   /** Grand opening; the lease starts the same day. Not shown on the site for now. */
   openingDate: '2027-06-22',
-  /** When live selling starts on the thrift page. */
+  /** When live selling starts on the thrift page. Not shown on the site for now. */
   liveSellingFrom: 'November 2026',
   address: null as string | null,
   hours: null as string | null,
