@@ -31,16 +31,11 @@ describe('the Kuha Ko site', () => {
     render(<App />);
     expect(screen.getByText('First comment gets it.')).toBeTruthy();
   });
-
-  it('counts down to opening day', () => {
-    render(<App />);
-    expect(screen.getByRole('timer').getAttribute('aria-label')).toMatch(/^Opening in: \d+ days$/);
-  });
 });
 
 describe('Photo', () => {
   it('shows the shot brief until a photo is added', () => {
-    render(<Photo slot={photos.hero} />);
+    render(<Photo slot={{ ...photos.hero, src: null }} />);
     expect(screen.getByText(photos.hero.brief)).toBeTruthy();
     expect(screen.queryByRole('img')).toBeNull();
   });

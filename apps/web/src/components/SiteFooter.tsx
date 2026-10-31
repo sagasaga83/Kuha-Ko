@@ -1,12 +1,11 @@
 import type { CSSProperties } from 'react';
 import { Wordmark } from '@kuhako/ui';
-import { formatOpening, site } from '../data/site';
+import { site } from '../data/site';
 import { photos } from '../data/photos';
 import { Photo } from './Photo';
 
 export function SiteFooter() {
   const cols = [
-    { label: 'Opening', value: formatOpening(site.openingDate) },
     { label: 'Visit', value: site.address ?? `${site.city}. Exact spot announced soon.` },
     { label: 'Hours', value: site.hours ?? 'Announced before opening day.' },
     {

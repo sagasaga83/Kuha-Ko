@@ -2,6 +2,11 @@
 // until you add a real photo: put the file in apps/web/public/photos/ and set `src`
 // to its path ("/photos/hero.jpg"). Brand rules: real drinks and pieces, daylight,
 // one subject per photo, no stock or AI-made images.
+//
+// TEMPORARY: the coffee slots below use free Unsplash photos (Unsplash licence:
+// free for commercial use, no attribution required) as stand-ins. Each one is
+// marked with `stockSource`. Replace them with photos of Kuha Ko's own drinks
+// before opening, then delete the stock files from public/photos/.
 export interface PhotoSlot {
   /** Path under /public, or null to show the placeholder. */
   src: string | null;
@@ -11,6 +16,8 @@ export interface PhotoSlot {
   brief: string;
   /** Width / height, as CSS aspect-ratio. */
   ratio: string;
+  /** Set while a slot uses a temporary stock photo: where it came from. */
+  stockSource?: string;
 }
 
 export const photos: {
@@ -21,27 +28,31 @@ export const photos: {
   shop: PhotoSlot;
 } = {
   hero: {
-    src: null,
-    alt: 'An iced latte on the Kuha Ko counter by the window, with the thrift racks behind it',
+    src: '/photos/hero-iced-latte.jpg',
+    alt: 'An iced latte in a tall glass on a wooden table',
+    stockSource: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c',
     brief: 'The Kuha, iced, on the counter. Racks soft in the background.',
     ratio: '4 / 5',
   },
   menu: {
     classics: {
-      src: null,
-      alt: 'A latte with poured foam on a wooden counter',
+      src: '/photos/classics-latte.jpg',
+      alt: 'A latte with leaf latte art in a white cup on a wooden table',
+      stockSource: 'https://images.unsplash.com/photo-1534778101976-62847782c213',
       brief: 'The Kuha, hot, top-down on wood.',
       ratio: '4 / 5',
     },
     'sweet-finds': {
-      src: null,
-      alt: 'A Spanish latte and a tablea mocha side by side',
+      src: '/photos/sweet-finds-glass-latte.jpg',
+      alt: 'A milky latte with latte art in a clear glass on wood',
+      stockSource: 'https://images.unsplash.com/photo-1570968915860-54d5c301fa9f',
       brief: 'Spanish latte and tablea mocha, side by side in daylight.',
       ratio: '4 / 5',
     },
     'not-coffee': {
-      src: null,
-      alt: 'A matcha latte next to a cup of tablea chocolate',
+      src: '/photos/not-coffee-matcha.jpg',
+      alt: 'A matcha latte with latte art in a white cup',
+      stockSource: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7',
       brief: 'Green Tag Matcha and Hand-Me-Down Chocolate.',
       ratio: '4 / 5',
     },

@@ -84,16 +84,6 @@ export function useScrollState() {
   return state;
 }
 
-/** The current time, updated every `ms`. */
-export function useNow(ms = 1000) {
-  const [now, setNow] = useState(() => Date.now());
-  useEffect(() => {
-    const t = window.setInterval(() => setNow(Date.now()), ms);
-    return () => window.clearInterval(t);
-  }, [ms]);
-  return now;
-}
-
 /** True once the element has been on screen (and stays true while it is). */
 export function useInView<T extends Element>(ref: RefObject<T>, rootMargin = '0px') {
   const [inView, setInView] = useState(false);

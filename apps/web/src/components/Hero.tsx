@@ -1,9 +1,8 @@
 import type { CSSProperties } from 'react';
 import { Stamp } from '@kuhako/ui';
-import { formatOpening, site } from '../data/site';
+import { site } from '../data/site';
 import { photos } from '../data/photos';
 import { Photo } from './Photo';
-import { Countdown } from './Countdown';
 
 export function Hero() {
   return (
@@ -26,8 +25,7 @@ export function Hero() {
             </span>
           </h1>
           <p className="hero__lede hero__in" style={{ '--d': 3 } as CSSProperties}>
-            My coffee. My find. A coffee bar and a thrift boutique under one roof, opening{' '}
-            <strong>{formatOpening(site.openingDate)}</strong>.
+            My coffee. My find. A coffee bar and a thrift boutique under one roof in {site.city}.
           </p>
           <div className="hero__links hero__in" style={{ '--d': 4 } as CSSProperties}>
             <a className="text-link" href="#menu">
@@ -36,9 +34,6 @@ export function Hero() {
             <a className="text-link" href="#live">
               Join the live selling
             </a>
-          </div>
-          <div className="hero__in" style={{ '--d': 5 } as CSSProperties}>
-            <Countdown to={site.openingDate} label="Opening in" />
           </div>
         </div>
         <div className="hero__media">
