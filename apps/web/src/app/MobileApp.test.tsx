@@ -58,11 +58,11 @@ describe('the app layout', () => {
 });
 
 describe('isApp', () => {
-  it('is false on the website and true inside Capacitor', () => {
+  it('is false on a desktop browser and true with ?app', () => {
     expect(isApp()).toBe(false);
-    (window as unknown as { Capacitor: object }).Capacitor = { isNativePlatform: () => true };
+    window.history.replaceState(null, '', '/?app');
     expect(isApp()).toBe(true);
-    delete (window as unknown as { Capacitor?: object }).Capacitor;
+    window.history.replaceState(null, '', '/');
   });
 
   it('is true on a phone-sized browser, unless ?web is set', () => {
