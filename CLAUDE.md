@@ -7,7 +7,7 @@ Kuha Ko is a coffee bar (Kuha Ko Coffee, the owner's) and a thrift boutique (Kuh
 Turborepo monorepo, npm workspaces, React 18 + Vite + TypeScript.
 
 - `apps/web`: the one-page website. Content lives in `src/data/site.ts` (shop details) and `src/data/menu.ts` (drinks); sections are in `src/components/`.
-- `apps/mobile`: the iOS and Android apps (Capacitor 8). They bundle the built `apps/web` site; run `npm run mobile:sync` after site changes. Icons and splash screens come from `apps/mobile/assets/` via `npm run assets --workspace @kuhako/mobile`. Release steps are in `docs/mobile-apps.md`.
+- `apps/mobile`: the iOS and Android apps (Capacitor 8). They bundle the built `apps/web` site; run `npm run mobile:sync` after site changes. Icons and splash screens come from `apps/mobile/assets/` via `npm run assets --workspace @kuhako/mobile`. In the apps the site switches to an iOS-style tab layout (`src/app/`; preview with `?app`). Release steps are in `docs/mobile-apps.md`.
 - `packages/tokens`: design tokens. `src/tokens.json` is the source (copied from the Kuha Ko design system); `npm run build` writes `dist/tokens.css` (CSS variables, light + dark) and a typed JS object. Never edit `dist/`.
 - `packages/ui`: brand components (`Wordmark`, `Stamp`, `HangTag`, `MenuItem`, `ClaimBanner`, `SubBrandLabel`, `ButtonLink`, `Eyebrow`) and `styles.css`. Consumed as TypeScript source (no build step).
 - `packages/tsconfig`: shared TypeScript configs.

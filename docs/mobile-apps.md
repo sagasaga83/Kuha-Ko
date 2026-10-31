@@ -34,6 +34,12 @@ Run `mobile:sync` after **every** website change. The apps only get new content 
 
 Icons and splash screens come from `apps/mobile/assets/`. After changing those images, run `npm run assets --workspace @kuhako/mobile`.
 
+## The app layout
+
+Inside the apps, the site shows an app layout instead of the long web page: a tab bar (Home, Menu, Thrift, Live, Visit), large titles that shrink into the top bar as you scroll, grouped lists, a segmented control for the menu groups and appearance, and a sheet for each shirt. It uses the same data files as the website (`menu.ts`, `site.ts`, `photos.ts`, `shirts.ts`), so content changes show up in both. The code is in `apps/web/src/app/` and `apps/web/src/styles/app.css`.
+
+To preview it in a browser, add `?app` to the address (`http://localhost:5173/?app`), or `?app=menu`, `?app=thrift`, `?app=live` or `?app=visit` to open on that tab. Use the browser's phone view for the right size.
+
 ## Try it on a phone
 
 - **iPhone:** `npm run mobile:ios`. In Xcode, select the App target → Signing & Capabilities → choose your team. Plug in the phone, pick it in the device menu, press Run.
