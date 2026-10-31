@@ -34,7 +34,7 @@ The section "Name & stress marks" has the full rules for italics, bold, underlin
 
 ## Colour
 
-- Build every layout on `linen` with `espresso` text. Raise panels with `paper`; use `kraft` for anything that is real paper (tags, sleeves, bags).
+- Build every print layout on `linen` with `espresso` text. The website sits on `canvas` (plain white; the evening brown in the dark theme), with `linen` for photo placeholders and soft panels. Raise panels with `paper`; use `kraft` for anything that is real paper (tags, sleeves, bags).
 - Use one accent per piece: `rust` for coffee, `sage-ink` for thrift. The shared shop uses `espresso` alone, with `rust` for prices.
 - `mustard` appears only on `board`: the live-selling claim and small highlights. Never set `mustard` text on `linen`.
 - `sage` is a fill colour only. For thrift text, use `sage-ink`.
@@ -150,6 +150,7 @@ Kuha Ko talks like a friend behind the counter: warm, local, a little playful an
 ## Colour tokens
 | Token | Light | Dark | Use |
 |---|---|---|---|
+| canvas | #FFFFFF | #1E1611 | The website page ground: plain white in Linen, the evening brown in Evening. Linen stays the ground for print, signs and photo placeholders. |
 | linen | #F3EBDD | #1E1611 | Page, menu and wall background. The default ground for everything. |
 | paper | #FBF7EF | #2A201A | Raised panels on linen: cards, menu panels, the inside of a stamp. |
 | kraft | #E8D9BF | #6B5642 | Paper bags, hang tags and cup sleeves. Text on kraft is espresso or ink-muted; rust and sage-ink only at 24px and larger. |

@@ -1,42 +1,89 @@
-import { Eyebrow, MenuItem } from '@kuhako/ui';
+import { useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
+import { MenuItem } from '@kuhako/ui';
 import { addOns, menu } from '../data/menu';
+import { photos } from '../data/photos';
+import { Photo } from './Photo';
+import { SectionHead } from './SectionHead';
 
 export function MenuSection() {
+  const [active, setActive] = useState(menu[0].id);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+  const group = menu.find((g) => g.id === active) ?? menu[0];
+
+  const onKey = (e: KeyboardEvent, i: number) => {
+    const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+    if (!step) return;
+    e.preventDefault();
+    const next = (i + step + menu.length) % menu.length;
+    setActive(menu[next].id);
+    tabs.current[next]?.focus();
+  };
+
   return (
-    <section id="menu" className="section menu-band" aria-labelledby="menu-title">
+    <section id="menu" className="section" aria-labelledby="menu-title">
       <div className="container">
-        <div className="menu-band__head">
-          <Eyebrow className="menu-band__eyebrow">Kuha Ko Coffee</Eyebrow>
-          <h2 id="menu-title" className="section__title menu-band__title">
-            The menu
-          </h2>
-          <p className="section__lede menu-band__lede">
-            Espresso drinks named after the racks, hot or iced. Prices go up when we open.
-          </p>
-        </div>
-        <div className="menu-band__groups">
-          {menu.map((group) => (
-            <section key={group.id} className="menu-group" aria-labelledby={`menu-${group.id}`}>
-              <h3 id={`menu-${group.id}`} className="menu-group__title">
-                {group.title}
-              </h3>
-              <p className="menu-group__subtitle">{group.subtitle}</p>
-              {group.drinks.map((d) => (
-                <MenuItem key={d.name} tone="board" {...d} />
-              ))}
-            </section>
-          ))}
-        </div>
-        <div className="addons">
-          <p className="addons__title">Add-ons</p>
-          <ul className="addons__list">
-            {addOns.map((a) => (
-              <li key={a.name}>
-                <span>{a.name}</span>
-                <span className="addons__price">{a.price ?? 'Price at opening'}</span>
-              </li>
+        <SectionHead
+          id="menu-title"
+          accent="coffee"
+          label="Kuha Ko Coffee"
+          title="The menu"
+          lede="Espresso drinks named after the racks, hot or iced. Prices go up when we open."
+        />
+        <div className="menu" data-reveal>
+          <div className="menu__media">
+            {menu.map((g) => (
+              <div key={g.id} className={`menu__photo${g.id === active ? ' is-active' : ''}`}>
+                {photos.menu[g.id] ? <Photo slot={photos.menu[g.id]} /> : null}
+              </div>
             ))}
-          </ul>
+          </div>
+          <div className="menu__list">
+            <div className="tabs" role="tablist" aria-label="Menu groups">
+              {menu.map((g, i) => (
+                <button
+                  key={g.id}
+                  ref={(el) => (tabs.current[i] = el)}
+                  type="button"
+                  role="tab"
+                  id={`tab-${g.id}`}
+                  aria-selected={g.id === active}
+                  aria-controls={`panel-${g.id}`}
+                  tabIndex={g.id === active ? 0 : -1}
+                  className="tabs__tab"
+                  onClick={() => setActive(g.id)}
+                  onKeyDown={(e) => onKey(e, i)}
+                >
+                  {g.title}
+                  <span className="tabs__count">{g.drinks.length}</span>
+                </button>
+              ))}
+            </div>
+            <div
+              key={group.id}
+              className="menu__panel"
+              role="tabpanel"
+              id={`panel-${group.id}`}
+              aria-labelledby={`tab-${group.id}`}
+            >
+              <p className="menu__subtitle">{group.subtitle}</p>
+              {group.drinks.map((d, i) => (
+                <div key={d.name} className="menu__item" style={{ '--i': i } as CSSProperties}>
+                  <MenuItem {...d} />
+                </div>
+              ))}
+            </div>
+            <div className="addons">
+              <p className="label">Add-ons</p>
+              <ul className="addons__list">
+                {addOns.map((a) => (
+                  <li key={a.name}>
+                    <span>{a.name}</span>
+                    <span className="addons__price">{a.price ?? 'Price at opening'}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </section>

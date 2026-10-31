@@ -1,37 +1,50 @@
-import { ButtonLink, Eyebrow, HangTag, Stamp } from '@kuhako/ui';
+import type { CSSProperties } from 'react';
+import { Stamp } from '@kuhako/ui';
 import { formatOpening, site } from '../data/site';
+import { photos } from '../data/photos';
+import { Photo } from './Photo';
+import { Countdown } from './Countdown';
 
 export function Hero() {
   return (
-    <section id="top" className="hero">
-      <div className="container hero__inner">
+    <section id="top" className="hero" aria-labelledby="hero-title">
+      <div className="container hero__grid">
         <div className="hero__copy">
-          <Eyebrow>Coffee &amp; thrift · {site.city}</Eyebrow>
-          <h1 className="hero__title">
-            Kape ko. <em>Kuha ko.</em>
+          <p className="label hero__in" style={{ '--d': 0 } as CSSProperties}>
+            Coffee &amp; thrift · {site.city}
+          </p>
+          <h1 id="hero-title" className="hero__title">
+            <span className="hero__line">
+              <span className="hero__in" style={{ '--d': 1 } as CSSProperties}>
+                Kape ko.
+              </span>
+            </span>
+            <span className="hero__line">
+              <em className="hero__in" style={{ '--d': 2 } as CSSProperties}>
+                Kuha ko.
+              </em>
+            </span>
           </h1>
-          <p className="hero__lede">
+          <p className="hero__lede hero__in" style={{ '--d': 3 } as CSSProperties}>
             My coffee. My find. A coffee bar and a thrift boutique under one roof, opening{' '}
             <strong>{formatOpening(site.openingDate)}</strong>.
           </p>
-          <div className="hero__actions">
-            <ButtonLink href="#menu">See the menu</ButtonLink>
-            <ButtonLink href="#live" variant="secondary">
+          <div className="hero__links hero__in" style={{ '--d': 4 } as CSSProperties}>
+            <a className="text-link" href="#menu">
+              See the menu
+            </a>
+            <a className="text-link" href="#live">
               Join the live selling
-            </ButtonLink>
+            </a>
           </div>
-          <p className="hero__note">Live selling on {site.facebook.name} starts {site.liveSellingFrom}.</p>
+          <div className="hero__in" style={{ '--d': 5 } as CSSProperties}>
+            <Countdown to={site.openingDate} label="Opening in" />
+          </div>
         </div>
-        <div className="hero__rail" aria-hidden="true">
-          <span className="hero__bar" />
-          <div className="hero__tag hero__tag--1">
-            <HangTag number="0001" size="M" note="one of one" />
-          </div>
-          <div className="hero__tag hero__tag--2">
-            <HangTag number="0002" size="S" note="denim" />
-          </div>
-          <div className="hero__stamp">
-            <Stamp size={150} />
+        <div className="hero__media">
+          <Photo slot={photos.hero} className="hero__photo" eager />
+          <div className="hero__stamp" aria-hidden="true">
+            <Stamp size={132} />
           </div>
         </div>
       </div>

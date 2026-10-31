@@ -85,7 +85,7 @@
 .kk-hangtag__lines { margin: 0; font-family: var(--font-mono); font-size: 15px; line-height: 1.6; }
 .kk-hangtag__note { margin: 0; font-family: var(--font-mono); font-size: 13px; color: var(--ink-muted); }
 
-/* Menu item */
+/* Menu item: name and price on one line, then the kind and a one-line description. */
 .kk-menuitem {
   display: flex;
   flex-direction: column;
@@ -93,23 +93,22 @@
   padding-block: var(--space-3);
   border-top: 1px solid var(--line);
 }
+.kk-menuitem__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+}
 .kk-menuitem__name {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 24px;
-  line-height: 1.2;
+  font-size: 20px;
+  line-height: 1.25;
   text-wrap: balance;
 }
-.kk-menuitem__meta {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-1) var(--space-3);
-  align-items: baseline;
-}
-.kk-menuitem__kind,
-.kk-menuitem__price {
+.kk-menuitem__kind {
   margin: 0;
   font-family: var(--font-mono);
   font-size: 13px;
@@ -117,11 +116,16 @@
   letter-spacing: 2px;
   text-transform: uppercase;
 }
-.kk-menuitem__price { font-weight: 400; letter-spacing: 1px; text-transform: none; }
+.kk-menuitem__price {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  white-space: nowrap;
+}
 .kk-menuitem__desc { margin: 0; font-size: 15px; line-height: 1.5; }
 .kk-menuitem--paper .kk-menuitem__name { color: var(--espresso); }
-.kk-menuitem--paper .kk-menuitem__kind { color: var(--rust); }
-.kk-menuitem--paper .kk-menuitem__price,
+.kk-menuitem--paper .kk-menuitem__price { color: var(--rust); }
+.kk-menuitem--paper .kk-menuitem__kind,
 .kk-menuitem--paper .kk-menuitem__desc { color: var(--ink-muted); }
 .kk-menuitem--board { border-top-color: color-mix(in srgb, var(--on-board) 25%, transparent); }
 .kk-menuitem--board .kk-menuitem__name,
@@ -133,7 +137,7 @@
 .kk-claim {
   background: var(--board);
   border-radius: var(--radius-sm);
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-5);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
