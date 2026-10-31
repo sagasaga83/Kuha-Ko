@@ -760,6 +760,7 @@ p { text-wrap: pretty; }
   }
   .marquee__track { animation: none !important; flex-wrap: wrap; width: auto; }
   .marquee__row[aria-hidden] { display: none; }
+  .marquee__row li[aria-hidden] { display: none; }
   .marquee__row { flex-wrap: wrap; justify-content: center; }
   .photo--placeholder::after { display: none; }
 }
