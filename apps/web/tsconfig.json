@@ -1,4 +1,4 @@
 {
   "extends": "@kuhako/tsconfig/react.json",
-  "include": ["src", "vite.config.ts"]
+  "include": ["src", "shared", "vite.config.ts"]
 }

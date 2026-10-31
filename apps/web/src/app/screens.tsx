@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { ClaimBanner, Wordmark } from '@kuhako/ui';
-import { menu, addOns, type Drink } from '../data/menu';
+import type { Drink } from '../data/menu';
 import { photos } from '../data/photos';
-import { shirts, type Shirt } from '../data/shirts';
+import type { Shirt } from '../data/shirts';
+import { addOnsFrom, menuFrom, shirtsFrom, useCatalog } from '../catalog/catalog';
 import { site } from '../data/site';
 import { Photo } from '../components/Photo';
 import { LiveDemo } from '../components/LiveDemo';
@@ -41,8 +42,12 @@ const priceOf = (d: Drink) => {
 };
 
 export function MenuScreen() {
-  const [active, setActive] = useState(menu[0].id);
+  const { products } = useCatalog();
+  const menu = menuFrom(products);
+  const addOns = addOnsFrom(products);
+  const [active, setActive] = useState(menu[0]?.id ?? '');
   const group = menu.find((g) => g.id === active) ?? menu[0];
+  if (!group) return null;
   const photo = photos.menu[group.id];
   return (
     <>
@@ -90,6 +95,7 @@ const promises = [
 ];
 
 export function ThriftScreen() {
+  const shirts = shirtsFrom(useCatalog().products);
   const [open, setOpen] = useState<Shirt | null>(null);
   return (
     <>

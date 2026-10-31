@@ -1,14 +1,18 @@
 import { useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
 import { MenuItem } from '@kuhako/ui';
-import { addOns, menu } from '../data/menu';
+import { addOnsFrom, menuFrom, useCatalog } from '../catalog/catalog';
 import { photos } from '../data/photos';
 import { Photo } from './Photo';
 import { SectionHead } from './SectionHead';
 
 export function MenuSection() {
-  const [active, setActive] = useState(menu[0].id);
+  const { products } = useCatalog();
+  const menu = menuFrom(products);
+  const addOns = addOnsFrom(products);
+  const [active, setActive] = useState(menu[0]?.id ?? '');
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const group = menu.find((g) => g.id === active) ?? menu[0];
+  if (!group) return null;
 
   const onKey = (e: KeyboardEvent, i: number) => {
     const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;

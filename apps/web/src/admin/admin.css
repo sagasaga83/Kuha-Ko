@@ -1,0 +1,158 @@
+/* The shop admin (/admin). Plain and phone-first: the owner runs the shop from a phone.
+   Brand tokens only; square corners and hairlines like the rest of the site. */
+
+.adm {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: var(--safe-t) max(16px, var(--safe-r)) calc(var(--space-6) + var(--safe-b)) max(16px, var(--safe-l));
+}
+
+.adm-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--line);
+}
+.adm-top__brand { color: var(--espresso); text-decoration: none; }
+.adm-top__label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-right: auto;
+}
+
+.adm-tabs { display: flex; gap: var(--space-2); padding: var(--space-3) 0; border-bottom: 1px solid var(--line); }
+.adm-tabs__tab {
+  font: 500 15px/1 var(--font-sans);
+  color: var(--ink-muted);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  cursor: pointer;
+}
+.adm-tabs__tab[aria-current='page'] { color: var(--espresso); border-color: var(--line); background: var(--paper); }
+
+.adm-main { padding-top: var(--space-4); }
+
+.adm-h1 { font: 600 28px/1.15 var(--font-display); margin: 0 0 var(--space-3); }
+.adm-h2 { font: 600 20px/1.2 var(--font-display); margin: 0 0 var(--space-2); padding: 0; }
+.adm-count { font: 400 14px var(--font-mono); color: var(--ink-muted); }
+
+.adm-card { background: var(--canvas); }
+.adm-signin { max-width: 380px; margin: var(--space-6) auto 0; display: grid; gap: var(--space-3); }
+
+.adm-section { margin: var(--space-5) 0; }
+.adm-note { color: var(--ink-muted); font-size: 14px; margin: var(--space-2) 0; }
+.adm-error {
+  color: var(--espresso);
+  background: var(--paper);
+  border-left: 3px solid var(--rust);
+  padding: var(--space-2) var(--space-3);
+  margin: var(--space-3) 0;
+}
+.adm-saved { font: 700 13px var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--sage-ink); }
+
+.adm-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.adm-actions--end { justify-content: flex-end; margin-top: var(--space-4); }
+.adm-actions .kk-button { cursor: pointer; }
+.kk-button:disabled { opacity: 0.6; cursor: default; }
+
+.adm-link {
+  background: none;
+  border: 0;
+  padding: 8px 0;
+  font: 500 15px var(--font-sans);
+  color: var(--rust);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.adm-link--danger { margin-right: auto; }
+
+/* Product list */
+.adm-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.adm-list li { border-bottom: 1px solid var(--line); }
+.adm-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  color: var(--espresso);
+  font: inherit;
+  cursor: pointer;
+}
+.adm-row:hover .adm-row__name { text-decoration: underline; }
+.adm-row__thumb {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+.adm-row__main { flex: 1; display: grid; min-width: 0; }
+.adm-row__name { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.adm-row__status { font-size: 13px; color: var(--sage-ink); }
+.adm-row__status[data-off] { color: var(--ink-muted); }
+.adm-row__price { font-family: var(--font-mono); }
+
+/* Forms */
+.adm-editor__head { margin-bottom: var(--space-3); }
+.adm-field { display: grid; gap: 6px; margin: var(--space-3) 0; }
+.adm-field > span { font-weight: 500; font-size: 15px; }
+.adm-field small { color: var(--ink-muted); font-size: 13px; min-height: 0; }
+.adm input:not([type='checkbox']):not([type='file']),
+.adm select,
+.adm textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  font: 16px/1.4 var(--font-sans); /* 16px stops iOS zooming in */
+  color: var(--espresso);
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+.adm input:focus-visible,
+.adm select:focus-visible,
+.adm textarea:focus-visible,
+.adm button:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.adm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 var(--space-3); }
+.adm-check { display: flex; gap: var(--space-2); align-items: center; padding: 8px 0; cursor: pointer; }
+.adm-check input { width: 20px; height: 20px; accent-color: var(--rust); }
+
+.adm-photo { display: flex; gap: var(--space-3); align-items: center; margin-bottom: var(--space-3); }
+.adm-photo img,
+.adm-photo__empty {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+}
+.adm-photo__empty { display: grid; place-items: center; color: var(--ink-muted); font-size: 13px; }
+.adm-photo__actions { display: grid; gap: var(--space-1); justify-items: start; }
+.adm-file { position: relative; cursor: pointer; }
+.adm-file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+.adm-options { border: 0; border-top: 1px solid var(--line); margin: var(--space-4) 0 0; padding: var(--space-3) 0 0; }
+.adm-group { border: 1px solid var(--line); background: var(--paper); padding: var(--space-3); margin: var(--space-3) 0; }
+.adm-group__head { display: flex; gap: var(--space-2); align-items: center; }
+.adm-value { display: grid; grid-template-columns: 1fr 96px auto; gap: var(--space-2); align-items: center; margin: var(--space-1) 0; }
+
+.adm-table { width: 100%; border-collapse: collapse; margin-top: var(--space-3); caption-side: top; text-align: left; }
+.adm-table th,
+.adm-table td { padding: 8px 0; border-bottom: 1px solid var(--line); }
+.adm-table th { font: 700 12px var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-muted); }
+.adm-table td:last-child,
+.adm-table th:last-child { text-align: right; font-family: var(--font-mono); }
