@@ -18,12 +18,8 @@ export function MenuItem({ name, kind, description, hot, iced, house, tone = 'pa
   const hasPrice = Boolean(hot || iced);
   return (
     <article className={`kk-menuitem kk-menuitem--${tone}`}>
-      <h3 className="kk-menuitem__name">{name}</h3>
-      <div className="kk-menuitem__meta">
-        <p className="kk-menuitem__kind">
-          {kind}
-          {house ? ' · House' : ''}
-        </p>
+      <div className="kk-menuitem__row">
+        <h3 className="kk-menuitem__name">{name}</h3>
         <p className="kk-menuitem__price">
           {hasPrice ? (
             <>
@@ -36,6 +32,10 @@ export function MenuItem({ name, kind, description, hot, iced, house, tone = 'pa
           )}
         </p>
       </div>
+      <p className="kk-menuitem__kind">
+        {kind}
+        {house ? ' · House' : ''}
+      </p>
       <p className="kk-menuitem__desc">{description}</p>
     </article>
   );

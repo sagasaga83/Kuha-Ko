@@ -29,6 +29,10 @@ test('text colours meet 4.5:1 on their grounds in every theme', () => {
   const pairs = [
     ['espresso', 'linen'],
     ['espresso', 'paper'],
+    ['espresso', 'canvas'],
+    ['ink-muted', 'canvas'],
+    ['rust', 'canvas'],
+    ['sage-ink', 'canvas'],
     ['ink-muted', 'linen'],
     ['rust', 'linen'],
     ['sage-ink', 'linen'],
