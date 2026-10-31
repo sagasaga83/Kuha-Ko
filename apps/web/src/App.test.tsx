@@ -3,6 +3,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { App } from './App';
 import { menu } from './data/menu';
 import { photos } from './data/photos';
+import { shirts } from './data/shirts';
 import { Photo } from './components/Photo';
 
 afterEach(cleanup);
@@ -25,6 +26,14 @@ describe('the Kuha Ko site', () => {
     const first = screen.getByRole('tab', { name: new RegExp(menu[0].title) });
     fireEvent.keyDown(first, { key: 'ArrowRight' });
     expect(screen.getByRole('tab', { name: new RegExp(menu[1].title) }).getAttribute('aria-selected')).toBe('true');
+  });
+
+  it('shows every shirt in the thrift section', () => {
+    render(<App />);
+    for (const s of shirts) {
+      expect(screen.getByRole('heading', { name: s.name })).toBeTruthy();
+      expect(screen.getByRole('img', { name: s.photo.alt })).toBeTruthy();
+    }
   });
 
   it('shows the live-selling claim rule', () => {

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { photos } from '../data/photos';
+import { shirts } from '../data/shirts';
 import { Photo } from './Photo';
 import { SectionHead } from './SectionHead';
 
@@ -80,6 +81,31 @@ export function ThriftSection() {
         </div>
       </div>
       <div className="container">
+        <section className="shirts" aria-labelledby="shirts-title">
+          <header className="shirts__head" data-reveal>
+            <h3 id="shirts-title" className="shirts__title">
+              Our own shirts
+            </h3>
+            <p className="shirts__lede">
+              Five designs about the photos we take and the stories we keep. Printed in black or white, on the rack
+              beside the finds.
+            </p>
+          </header>
+          <ul className="shirts__grid">
+            {shirts.map((s, i) => (
+              <li key={s.name} className="shirts__item" data-reveal style={{ '--d': i % 3 } as CSSProperties}>
+                <Photo slot={s.photo} />
+                <p className="shirts__no">Design {String(i + 1).padStart(2, '0')}</p>
+                <div className="shirts__row">
+                  <h4 className="shirts__name">{s.name}</h4>
+                  <span className="shirts__price">{s.price ?? 'Price at opening'}</span>
+                </div>
+                <p className="shirts__desc">{s.description}</p>
+                <p className="shirts__colours">{s.colours.join(' · ')}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
         <ol className="promises">
           {promises.map((p, i) => (
             <li key={p.title} data-reveal style={{ '--d': i } as CSSProperties}>
