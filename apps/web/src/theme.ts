@@ -25,3 +25,19 @@ export function applyStoredTheme() {
     // Fall back to the system setting.
   }
 }
+
+/** The saved choice, or 'system' when the page follows the device setting. */
+export function storedTheme(): Theme | 'system' {
+  const set = document.documentElement.dataset.theme;
+  return set === 'light' || set === 'dark' ? set : 'system';
+}
+
+/** Go back to following the device setting. */
+export function clearTheme() {
+  delete document.documentElement.dataset.theme;
+  try {
+    localStorage.removeItem(KEY);
+  } catch {
+    // Nothing saved to remove.
+  }
+}
