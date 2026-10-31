@@ -29,12 +29,6 @@
       "dependsOn": [
         "^build"
       ]
-    },
-    "sync": {
-      "dependsOn": [
-        "^build"
-      ],
-      "cache": false
     }
   }
 }
