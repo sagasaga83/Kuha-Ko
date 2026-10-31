@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { photos } from '../data/photos';
 import { shirtsFrom, useCatalog } from '../catalog/catalog';
+import { useShop } from '../shop/Shop';
+import { OnlineThrift } from '../shop/OnlineThrift';
 import { Photo } from './Photo';
 import { SectionHead } from './SectionHead';
 
@@ -20,7 +22,9 @@ const promises = [
 ];
 
 export function ThriftSection() {
-  const shirts = shirtsFrom(useCatalog().products);
+  const { products } = useCatalog();
+  const shirts = shirtsFrom(products);
+  const shop = useShop();
   const track = useRef<HTMLUListElement>(null);
   const [pos, setPos] = useState({ start: true, end: false, progress: 0 });
 
@@ -82,6 +86,7 @@ export function ThriftSection() {
         </div>
       </div>
       <div className="container">
+        <OnlineThrift variant="site" />
         <section className="shirts" aria-labelledby="shirts-title">
           <header className="shirts__head" data-reveal>
             <h3 id="shirts-title" className="shirts__title">
@@ -103,6 +108,14 @@ export function ThriftSection() {
                 </div>
                 <p className="shirts__desc">{s.description}</p>
                 <p className="shirts__colours">{s.colours.join(' · ')}</p>
+                {(() => {
+                  const p = products.find((x) => x.id === s.id);
+                  return p && shop?.canOrder(p) ? (
+                    <button type="button" className="shop-add" onClick={() => shop.openProduct(p)}>
+                      Add to order<span className="visually-hidden">: {s.name}</span>
+                    </button>
+                  ) : null;
+                })()}
               </li>
             ))}
           </ul>

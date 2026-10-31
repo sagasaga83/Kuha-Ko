@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { Wordmark } from '@kuhako/ui';
 import { Screen } from './ui';
+import { CartBar } from '../shop/Shop';
 import { HomeScreen, LiveScreen, MenuScreen, ThriftScreen, VisitScreen, type TabId } from './screens';
 
 const tabs: { id: TabId; label: string; icon: ReactNode }[] = [
@@ -113,6 +114,7 @@ export function MobileApp() {
       {screen('thrift', <ThriftScreen />)}
       {screen('live', <LiveScreen />)}
       {screen('visit', <VisitScreen />)}
+      <CartBar />
       <nav className="app-tabbar" role="tablist" aria-label="Sections">
         {tabs.map((t, i) => (
           <button

@@ -1,6 +1,8 @@
 // The Kuha Ko Coffee menu, matching the wall menu. Add prices as strings ("₱120")
 // when they are set; until then the site shows "Price at opening".
 export interface Drink {
+  /** Set when the drink comes from the live catalog. */
+  id?: string;
   name: string;
   kind: string;
   description: string;

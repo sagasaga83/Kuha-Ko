@@ -4,6 +4,8 @@ import type { Drink } from '../data/menu';
 import { photos } from '../data/photos';
 import type { Shirt } from '../data/shirts';
 import { addOnsFrom, menuFrom, shirtsFrom, useCatalog } from '../catalog/catalog';
+import { useShop } from '../shop/Shop';
+import { OnlineThrift } from '../shop/OnlineThrift';
 import { site } from '../data/site';
 import { Photo } from '../components/Photo';
 import { LiveDemo } from '../components/LiveDemo';
@@ -43,6 +45,8 @@ const priceOf = (d: Drink) => {
 
 export function MenuScreen() {
   const { products } = useCatalog();
+  const shop = useShop();
+  const productOf = (id: string) => products.find((p) => p.id === id);
   const menu = menuFrom(products);
   const addOns = addOnsFrom(products);
   const [active, setActive] = useState(menu[0]?.id ?? '');
@@ -65,9 +69,14 @@ export function MenuScreen() {
         </div>
       ) : null}
       <Group header={group.subtitle}>
-        {group.drinks.map((d) => (
+        {group.drinks.map((d) => {
+          const p = d.id ? productOf(d.id) : undefined;
+          const orderable = Boolean(p && shop?.canOrder(p));
+          return (
           <Row
             key={d.name}
+            onClick={orderable && p ? () => shop?.openProduct(p) : undefined}
+            chevron={orderable}
             title={
               <>
                 {d.name}
@@ -77,7 +86,8 @@ export function MenuScreen() {
             subtitle={d.description}
             detail={priceOf(d)}
           />
-        ))}
+          );
+        })}
       </Group>
       <Group header="Add-ons" footer="Prices go up when we open.">
         {addOns.map((a) => (
@@ -95,7 +105,9 @@ const promises = [
 ];
 
 export function ThriftScreen() {
-  const shirts = shirtsFrom(useCatalog().products);
+  const { products } = useCatalog();
+  const shirts = shirtsFrom(products);
+  const shop = useShop();
   const [open, setOpen] = useState<Shirt | null>(null);
   return (
     <>
@@ -109,11 +121,20 @@ export function ThriftScreen() {
           </li>
         ))}
       </ul>
+      <OnlineThrift variant="app" />
       <h2 className="app-section-title">Our own shirts</h2>
       <ul className="app-shirts">
         {shirts.map((s) => (
           <li key={s.name}>
-            <button type="button" className="app-shirts__card" onClick={() => setOpen(s)}>
+            <button
+              type="button"
+              className="app-shirts__card"
+              onClick={() => {
+                const p = products.find((x) => x.id === s.id);
+                if (p && shop?.canOrder(p)) shop.openProduct(p);
+                else setOpen(s);
+              }}
+            >
               <Photo slot={s.photo} />
               <span className="app-shirts__name">{s.name}</span>
               <span className="app-shirts__meta">{s.price ?? 'Price at opening'}</span>

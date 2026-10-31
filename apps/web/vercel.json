@@ -22,6 +22,19 @@
           "value": "noindex, nofollow"
         }
       ]
+    },
+    {
+      "source": "/order/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        }
+      ]
     }
   ],
   "rewrites": [
@@ -31,6 +44,10 @@
     },
     {
       "source": "/admin/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/order/:path*",
       "destination": "/index.html"
     }
   ],

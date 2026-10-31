@@ -5,20 +5,40 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { db } from '../server/db.js';
 
-const dir = fileURLToPath(new URL('./migrations/', import.meta.url));
+/** Splits a migration into statements on `;`, keeping `$$ … $$` function bodies whole. */
+export function splitSql(text: string): string[] {
+  const out: string[] = [];
+  let cur = '';
+  let inDollar = false;
+  for (const line of text.split('\n')) {
+    const code = inDollar ? line : line.replace(/--.*$/, '');
+    for (let i = 0; i < code.length; i++) {
+      if (code.startsWith('$$', i)) {
+        inDollar = !inDollar;
+        cur += '$$';
+        i++;
+      } else if (code[i] === ';' && !inDollar) {
+        if (cur.trim()) out.push(cur.trim());
+        cur = '';
+      } else {
+        cur += code[i];
+      }
+    }
+    cur += '\n';
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
 
 async function main() {
+  const dir = fileURLToPath(new URL('./migrations/', import.meta.url));
   const sql = db();
   await sql`CREATE TABLE IF NOT EXISTS schema_migrations (name text PRIMARY KEY, applied_at timestamptz NOT NULL DEFAULT now())`;
   const done = new Set((await sql`SELECT name FROM schema_migrations`).map((r) => r.name as string));
   const files = readdirSync(dir).filter((f) => f.endsWith('.sql')).sort();
   for (const file of files) {
     if (done.has(file)) continue;
-    const statements = readFileSync(dir + file, 'utf8')
-      .replace(/--.*$/gm, '')
-      .split(';')
-      .map((s) => s.trim())
-      .filter(Boolean);
+    const statements = splitSql(readFileSync(dir + file, 'utf8'));
     // One transaction per file: a failed migration leaves nothing half-applied.
     await sql.transaction([
       ...statements.map((s) => sql.query(s)),
@@ -29,7 +49,9 @@ async function main() {
   console.log('migrations up to date');
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
