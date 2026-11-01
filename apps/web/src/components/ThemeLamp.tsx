@@ -8,35 +8,25 @@ const CLICK_MS = 160;
 const PULL_MS = 1300;
 
 type ViewTransitionDoc = Document & {
-  startViewTransition?: (update: () => void) => { ready: Promise<void> };
+  startViewTransition?: (update: () => void) => { finished: Promise<void> };
 };
 
 /**
- * Switches the theme, spreading the new one out from the bulb when the browser
- * supports view transitions (and motion is allowed); otherwise it just switches.
+ * Switches the theme with a slow, even cross-fade where the browser supports view
+ * transitions (and motion is allowed); otherwise it just switches. No reveal shapes
+ * or quick changes, so nothing flashes (photosensitive epilepsy).
  */
-function switchTheme(next: Theme, from: DOMRect | undefined, apply: () => void) {
+function switchTheme(apply: () => void) {
   const doc = document as ViewTransitionDoc;
-  if (!doc.startViewTransition || !from || prefersReducedMotion()) {
+  if (!doc.startViewTransition || prefersReducedMotion()) {
     apply();
     return;
   }
-  const x = from.left + from.width / 2;
-  const y = from.top + from.height / 2;
-  const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
   const root = document.documentElement;
   root.classList.add('lamp-vt');
-  const vt = doc.startViewTransition(apply);
-  vt.ready
-    .then(() =>
-      root
-        .animate(
-          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
-          { duration: next === 'dark' ? 650 : 550, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)', pseudoElement: '::view-transition-new(root)' },
-        )
-        .finished,
-    )
-    .catch(() => undefined)
+  doc
+    .startViewTransition(apply)
+    .finished.catch(() => undefined)
     .finally(() => root.classList.remove('lamp-vt'));
 }
 
@@ -47,7 +37,6 @@ function switchTheme(next: Theme, from: DOMRect | undefined, apply: () => void) 
 export function ThemeLamp({ className = '', onChange }: { className?: string; onChange?: (theme: Theme) => void }) {
   const [theme, setThemeState] = useState<Theme>('light');
   const [pulling, setPulling] = useState(false);
-  const bulb = useRef<SVGCircleElement>(null);
   const timers = useRef<number[]>([]);
   const id = useId().replace(/:/g, '');
 
@@ -78,7 +67,7 @@ export function ThemeLamp({ className = '', onChange }: { className?: string; on
     timers.current = [
       window.setTimeout(
         () =>
-          switchTheme(next, bulb.current?.getBoundingClientRect(), () => {
+          switchTheme(() => {
             setTheme(next);
             setThemeState(next);
             onChange?.(next);
@@ -119,7 +108,7 @@ export function ThemeLamp({ className = '', onChange }: { className?: string; on
           <path className="lamp__line" d="M20 0 V14" />
           <rect className="lamp__fitting" x="17" y="13.5" width="6" height="5.5" rx="0.6" />
           {/* bulb, half under the shade */}
-          <circle ref={bulb} className="lamp__bulb" cx="20" cy="33" r="4" />
+          <circle className="lamp__bulb" cx="20" cy="33" r="4" />
           {/* enamel bell shade with a flared rim */}
           <path className="lamp__shade" d="M9 31.5 C9 23 13 19 20 19 C27 19 31 23 31 31.5 Z" />
           <path className="lamp__line" d="M6.5 31.5 H33.5" />
