@@ -45,7 +45,7 @@ describe('ordering in the app layout', () => {
     expect(within(sheet).getByRole('button', { name: 'Add to order · ₱140' })).toBeTruthy();
     fireEvent.click(within(sheet).getByRole('radio', { name: /Iced/ }));
     fireEvent.click(within(sheet).getByRole('button', { name: 'Add to order · ₱160' }));
-    expect(screen.getByRole('button', { name: /View order.*1 item · ₱160/ })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /View cart.*1 item · ₱160/ })).toBeTruthy();
     expect(JSON.parse(localStorage.getItem('kuhako-cart')!)).toEqual([
       { productId: 'the-kuha', quantity: 1, choices: { temperature: ['iced'], 'add-ons': [] } },
     ]);
@@ -54,8 +54,8 @@ describe('ordering in the app layout', () => {
   it('offers only the ways to pay that are set up', () => {
     localStorage.setItem('kuhako-cart', JSON.stringify([{ productId: 'the-kuha', quantity: 1, choices: { temperature: ['hot'], 'add-ons': [] } }]));
     withShop({ ...open, paymentMethods: ['qrph'] }, <MobileApp />);
-    fireEvent.click(screen.getByRole('button', { name: /View order/ }));
-    fireEvent.click(within(screen.getByRole('dialog', { name: 'Your order' })).getByRole('button', { name: 'Checkout' }));
+    fireEvent.click(screen.getByRole('button', { name: /View cart/ }));
+    fireEvent.click(within(screen.getByRole('dialog', { name: 'Your cart' })).getByRole('button', { name: 'Checkout' }));
     const methods = within(screen.getByRole('dialog', { name: 'Checkout' })).getByRole('group', { name: 'Payment method' });
     const radios = within(methods).getAllByRole('radio') as HTMLInputElement[];
     expect(radios).toHaveLength(1);
@@ -66,13 +66,13 @@ describe('ordering in the app layout', () => {
   it('goes from the cart to checkout and checks the details', () => {
     localStorage.setItem('kuhako-cart', JSON.stringify([{ productId: 'the-kuha', quantity: 2, choices: { temperature: ['hot'], 'add-ons': [] } }]));
     withShop(open, <MobileApp />);
-    fireEvent.click(screen.getByRole('button', { name: /View order.*2 items · ₱280/ }));
-    const cart = screen.getByRole('dialog', { name: 'Your order' });
+    fireEvent.click(screen.getByRole('button', { name: /View cart.*2 items · ₱280/ }));
+    const cart = screen.getByRole('dialog', { name: 'Your cart' });
     fireEvent.click(within(cart).getByRole('button', { name: 'Checkout' }));
     const checkout = screen.getByRole('dialog', { name: 'Checkout' });
     const methods = within(checkout).getByRole('group', { name: 'Payment method' });
     expect(within(methods).getAllByRole('radio').map((r) => r.closest('label')?.textContent)).toEqual([
-      'GCashSend to our GCash number',
+      'GCashScan our GCash QR in the GCash app',
       'Maya or any bank appScan our QR Ph code with Maya, GCash, GoTyme, MariBank or any bank app',
     ]);
     expect((within(methods).getByRole('radio', { name: /^GCash/ }) as HTMLInputElement).checked).toBe(true);
@@ -85,8 +85,8 @@ describe('ordering in the app layout', () => {
   it('flags cart items that can no longer be ordered', () => {
     localStorage.setItem('kuhako-cart', JSON.stringify([{ productId: 'the-kuha', quantity: 1, choices: { temperature: ['hot'], 'add-ons': [] } }]));
     withShop({ ...open, ordering: { ...open.ordering, coffee: false } }, <MobileApp />);
-    fireEvent.click(screen.getByRole('button', { name: /View order/ }));
-    const cart = screen.getByRole('dialog', { name: 'Your order' });
+    fireEvent.click(screen.getByRole('button', { name: /View cart/ }));
+    const cart = screen.getByRole('dialog', { name: 'Your cart' });
     expect(within(cart).getByText('Can’t be ordered right now')).toBeTruthy();
     expect((within(cart).getByRole('button', { name: /Remove the marked items/ }) as HTMLButtonElement).disabled).toBe(true);
   });

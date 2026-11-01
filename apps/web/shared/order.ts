@@ -22,7 +22,7 @@ export interface PricedLine {
  * then send the reference number; the shop confirms it in the admin.
  */
 export const PAYMENT_OPTIONS = [
-  { id: 'gcash', label: 'GCash', note: 'Send to our GCash number' },
+  { id: 'gcash', label: 'GCash', note: 'Scan our GCash QR in the GCash app' },
   { id: 'qrph', label: 'Maya or any bank app', note: 'Scan our QR Ph code with Maya, GCash, GoTyme, MariBank or any bank app' },
 ] as const;
 export type PaymentMethod = (typeof PAYMENT_OPTIONS)[number]['id'];
@@ -108,8 +108,7 @@ export interface OrderView {
 
 /** Where to send the money, shown on the order page while it's unpaid. */
 export interface PayTo {
-  gcashName: string;
-  gcashNumber: string;
+  gcashQrUrl: string | null;
   qrUrl: string | null;
 }
 

@@ -71,10 +71,9 @@ export type OrderingSettings = z.infer<typeof orderingSettingsSchema>;
 
 /** Where customers send payment. Empty until set: ordering stays off. */
 export const paymentSettingsSchema = z.object({
-  gcashName: z.string().trim().max(60),
-  /** 09XXXXXXXXX or +639XXXXXXXXX; '' when not set. */
-  gcashNumber: z.string().trim().max(20),
-  /** The shop's QR Ph code image (uploaded in admin), or null. */
+  /** The shop's GCash QR code image (uploaded in admin), or null. */
+  gcashQrUrl: z.string().max(500).nullable().default(null),
+  /** The shop's Maya QR Ph code image (uploaded in admin), or null. */
   qrUrl: z.string().max(500).nullable(),
 });
 export type PaymentSettings = z.infer<typeof paymentSettingsSchema>;

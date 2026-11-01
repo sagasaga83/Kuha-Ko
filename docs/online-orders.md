@@ -1,6 +1,6 @@
 # Online orders
 
-Customers will order coffee, Kuha Ko shirts and selected thrift pieces on the website, for delivery within the Iloilo City area, and pay straight to Kuha Ko by GCash or the shop's Maya QR Ph code (which Maya, GCash, GoTyme, MariBank and any bank app can pay). There is no payment gateway: the shop confirms each payment by hand in the admin.
+Customers will order coffee, Kuha Ko shirts and selected thrift pieces on the website, for delivery within the Iloilo City area, and pay straight to Kuha Ko by scanning the shop's GCash QR or Maya QR Ph code (which Maya, GCash, GoTyme, MariBank and any bank app can pay). There is no payment gateway: the shop confirms each payment by hand in the admin.
 
 It is being built in three steps:
 
@@ -25,7 +25,7 @@ Go to `/admin` on the site (for example `https://<your-domain>/admin`) and sign 
 - Untick *Show on the site* to take something off for now; *Delete* removes it for good.
 
 **Settings**
-- *Payment*: your GCash account name and number, and your QR Ph code (screenshot your receive-payment QR from the Maya Business app, then upload it; Maya Business Starter is enough). Customers only see the ways to pay you've set up; with none, nothing can be ordered.
+- *Payment*: your GCash QR (in GCash, tap Receive and save or screenshot it) and your Maya QR Ph code (screenshot your receive-payment QR from the Maya Business app; Maya Business Starter is enough). Upload each one. Customers only see the ways to pay you've set up; with none, nothing can be ordered.
 - *Taking orders*: turn coffee, shirts and thrift on separately. Keep coffee off until opening day.
 - *Delivery*: the shop's location (from Google Maps: long-press the shop, copy the two numbers), how far you deliver, and the fee: a base fee for the first few km, then an amount per km. The table under the fields shows what customers will pay.
 
@@ -35,7 +35,7 @@ Changes reach the website within a minute.
 
 1. The customer taps a drink, shirt or thrift piece (only items with a price, of a kind that's taking orders, show as orderable), picks options, and adds it to their order.
 2. At checkout they give their name and mobile number, search for their place, and drag the pin to their door. The delivery fee is worked out from the road distance from the shop; places outside the delivery area are refused.
-3. They choose GCash or “Maya or any bank app” (QR Ph) and place the order. Their order page (`/order/…`) shows the exact amount and your GCash number or QR code.
+3. They choose GCash or “Maya or any bank app” (QR Ph) and place the order. Their order page (`/order/…`) shows the exact amount and the QR code for the way they chose.
 4. They pay in their app, then type the **reference number** from the receipt and tap *I've paid*. The shop gets an email: "Check payment".
 5. Their items are **held for 30 minutes** until they send the reference, so nobody else can buy the same thrift piece. No reference in time: the order expires and the items go back on sale. Once a reference is sent, the items stay held until you confirm or reject it.
 6. You confirm it under *Orders*, then move it along to delivered. The order page shows each step.
@@ -59,7 +59,7 @@ Then redeploy. Changing `ADMIN_SESSION_SECRET` later signs everyone out; changin
 
 ### Payments
 
-Nothing to sign up for: set your GCash name and number and upload your Maya QR Ph code in `/admin` → Settings → Payment.
+Nothing to sign up for: upload your GCash QR and your Maya QR Ph code in `/admin` → Settings → Payment.
 
 ### Maps: Google Cloud
 

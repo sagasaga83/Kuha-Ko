@@ -1,6 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { availablePaymentMethods, formatPeso, KIND_LABELS, KINDS, parsePeso, type Settings } from '../../shared/catalog';
-import { normalizePhone } from '../../shared/order';
 import { settingsSchema } from '../../shared/schema';
 import { deliveryFee } from '../../shared/delivery';
 import { adminApi, guarded, uploadPhoto } from './api';
@@ -12,8 +11,7 @@ interface Draft {
   baseFee: string;
   baseKm: string;
   perKm: string;
-  gcashName: string;
-  gcashNumber: string;
+  gcashQrUrl: string | null;
   qrUrl: string | null;
 }
 
@@ -24,8 +22,7 @@ const toDraft = (s: Settings): Draft => ({
   baseFee: String(s.delivery.baseFee / 100),
   baseKm: String(s.delivery.baseKm),
   perKm: String(s.delivery.perKm / 100),
-  gcashName: s.payment.gcashName,
-  gcashNumber: s.payment.gcashNumber.replace(/^\+63/, '0'),
+  gcashQrUrl: s.payment.gcashQrUrl,
   qrUrl: s.payment.qrUrl,
 });
 
@@ -46,12 +43,10 @@ function fromDraft(d: Draft): Settings | string {
   const perKm = parsePeso(d.perKm);
   if (baseFee === null || Number.isNaN(baseFee)) return 'Base fee: type an amount like 49.';
   if (perKm === null || Number.isNaN(perKm)) return 'Per km: type an amount like 10.';
-  if (d.gcashNumber.trim() && !normalizePhone(d.gcashNumber)) return 'GCash number: it should look like 0917 123 4567.';
-  if (d.gcashNumber.trim() && !d.gcashName.trim()) return 'GCash: add the account name customers will see when they send money.';
   const parsed = settingsSchema.safeParse({
     ordering: d.ordering,
     delivery: { origin, radiusKm: Number(d.radiusKm), baseFee, baseKm: Number(d.baseKm), perKm },
-    payment: { gcashName: d.gcashName.trim(), gcashNumber: d.gcashNumber.trim(), qrUrl: d.qrUrl },
+    payment: { gcashQrUrl: d.gcashQrUrl, qrUrl: d.qrUrl },
   });
   if (!parsed.success) {
     const i = parsed.error.issues[0];
@@ -65,7 +60,6 @@ export function SettingsPanel({ onSignedOut }: { onSignedOut: () => void }) {
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [qrBusy, setQrBusy] = useState(false);
 
   useEffect(() => {
     guarded(() => adminApi.settings(), onSignedOut)
@@ -124,51 +118,24 @@ export function SettingsPanel({ onSignedOut }: { onSignedOut: () => void }) {
           Customers pay straight to you, then send the reference number; you confirm it under Orders. Set up at least one way to pay
           before taking orders.
         </p>
-        <div className="adm-grid">
-          <label className="adm-field">
-            <span>GCash account name</span>
-            <input value={draft.gcashName} onChange={(e) => set({ gcashName: e.target.value })} placeholder="As it shows in GCash, e.g. KU** KO" maxLength={60} />
-          </label>
-          <label className="adm-field">
-            <span>GCash number</span>
-            <input value={draft.gcashNumber} onChange={(e) => set({ gcashNumber: e.target.value })} inputMode="tel" placeholder="0917 123 4567" maxLength={20} />
-          </label>
-        </div>
-        <div className="adm-photo">
-          {draft.qrUrl ? <img src={draft.qrUrl} alt="Your Maya QR Ph code" /> : <span className="adm-photo__empty">No QR</span>}
-          <div className="adm-photo__actions">
-            <label className="kk-button kk-button--secondary adm-file">
-              {qrBusy ? 'Uploading…' : draft.qrUrl ? 'Change Maya QR Ph code' : 'Add Maya QR Ph code'}
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                disabled={qrBusy}
-                onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-                  setQrBusy(true);
-                  try {
-                    set({ qrUrl: await uploadPhoto(file) });
-                  } catch (err) {
-                    setError(err instanceof Error ? `QR: ${err.message}` : 'QR upload failed.');
-                  } finally {
-                    setQrBusy(false);
-                  }
-                }}
-              />
-            </label>
-            {draft.qrUrl ? (
-              <button type="button" className="adm-link" onClick={() => set({ qrUrl: null })}>
-                Remove QR
-              </button>
-            ) : null}
-            <small className="adm-note">Screenshot or download it from your Maya Business app (any QR Ph code works).</small>
-          </div>
-        </div>
+        <QrField
+          label="GCash QR"
+          hint="In GCash, tap Receive (or QR) and save or screenshot your code."
+          url={draft.gcashQrUrl}
+          onChange={(gcashQrUrl) => set({ gcashQrUrl })}
+          onError={setError}
+        />
+        <QrField
+          label="Maya QR Ph"
+          hint="Screenshot or download it from your Maya Business app (any QR Ph code works)."
+          url={draft.qrUrl}
+          onChange={(qrUrl) => set({ qrUrl })}
+          onError={setError}
+        />
         <p className="adm-note">
           Customers can pay by:{' '}
           {typeof preview !== 'string' && availablePaymentMethods(preview.payment).length
-            ? availablePaymentMethods(preview.payment).map((m) => (m === 'gcash' ? 'GCash' : 'Maya or any bank app (QR Ph)')).join(' and ')
+            ? availablePaymentMethods(preview.payment).map((m) => (m === 'gcash' ? 'GCash QR' : 'Maya or any bank app (QR Ph)')).join(' and ')
             : 'nothing yet, so ordering is off'}
           .
         </p>
@@ -240,5 +207,55 @@ export function SettingsPanel({ onSignedOut }: { onSignedOut: () => void }) {
         </button>
       </div>
     </form>
+  );
+}
+
+/** One payment QR code: preview, upload or change, and remove. */
+function QrField({
+  label,
+  hint,
+  url,
+  onChange,
+  onError,
+}: {
+  label: string;
+  hint: string;
+  url: string | null;
+  onChange: (url: string | null) => void;
+  onError: (message: string) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  return (
+    <div className="adm-photo">
+      {url ? <img src={url} alt={`Your ${label} code`} /> : <span className="adm-photo__empty">No QR</span>}
+      <div className="adm-photo__actions">
+        <label className="kk-button kk-button--secondary adm-file">
+          {busy ? 'Uploading…' : url ? `Change ${label} code` : `Add ${label} code`}
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            disabled={busy}
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              setBusy(true);
+              try {
+                onChange(await uploadPhoto(file));
+              } catch (err) {
+                onError(err instanceof Error ? `${label}: ${err.message}` : `${label} upload failed.`);
+              } finally {
+                setBusy(false);
+              }
+            }}
+          />
+        </label>
+        {url ? (
+          <button type="button" className="adm-link" onClick={() => onChange(null)}>
+            Remove {label}
+          </button>
+        ) : null}
+        <small className="adm-note">{hint}</small>
+      </div>
+    </div>
   );
 }

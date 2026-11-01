@@ -290,7 +290,7 @@ export function toView(o: Row, items: Row[], payTo: OrderView['payTo']): OrderVi
     total: o.total as number,
     paymentMethod: ((o.payment_method as string | null) ?? 'gcash') as PaymentMethod,
     paymentReference: (o.payment_reference as string | null) ?? null,
-    payTo: pending && payTo ? { gcashName: payTo.gcashName, gcashNumber: payTo.gcashNumber, qrUrl: payTo.qrUrl } : null,
+    payTo: pending && payTo ? { gcashQrUrl: payTo.gcashQrUrl, qrUrl: payTo.qrUrl } : null,
     holdExpiresAt: pending ? iso(o.hold_expires_at) : null,
   };
 }

@@ -95,10 +95,10 @@ describe('checkout request', () => {
 });
 
 describe('payment methods', () => {
-  it('offers GCash once its name and number are set, and QR Ph once the QR is uploaded', () => {
-    expect(availablePaymentMethods({ gcashName: '', gcashNumber: '', qrUrl: null })).toEqual([]);
-    expect(availablePaymentMethods({ gcashName: 'Kuha Ko', gcashNumber: '', qrUrl: null })).toEqual([]);
-    expect(availablePaymentMethods({ gcashName: 'Kuha Ko', gcashNumber: '+639171234567', qrUrl: null })).toEqual(['gcash']);
-    expect(availablePaymentMethods({ gcashName: '', gcashNumber: '', qrUrl: 'https://x/qr.png' })).toEqual(['qrph']);
+  it('offers each way to pay once its QR code is uploaded', () => {
+    expect(availablePaymentMethods({ gcashQrUrl: null, qrUrl: null })).toEqual([]);
+    expect(availablePaymentMethods({ gcashQrUrl: 'https://x/gcash.png', qrUrl: null })).toEqual(['gcash']);
+    expect(availablePaymentMethods({ gcashQrUrl: null, qrUrl: 'https://x/qr.png' })).toEqual(['qrph']);
+    expect(availablePaymentMethods({ gcashQrUrl: 'https://x/gcash.png', qrUrl: 'https://x/qr.png' })).toEqual(['gcash', 'qrph']);
   });
 });
