@@ -364,3 +364,29 @@ html.kk-app body::before { display: none; }
   .app-nav,
   .app-nav__title { transition: none; }
 }
+
+/* Appearance: the pull-chain lamp (src/components/ThemeLamp.tsx) */
+.app-lamp {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+.app-lamp__lamp { height: 84px; width: 56px; flex: none; }
+.app-lamp__lamp .lamp__svg { width: 52px; }
+.app-lamp__text { flex: 1; min-width: 0; }
+.app-lamp__text p { margin: 0; font-size: 15px; line-height: 1.45; }
+.app-lamp__note { margin-top: var(--space-1) !important; color: var(--ink-muted); font-size: 13px !important; }
+.app-lamp__auto {
+  margin-top: var(--space-1);
+  min-height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--rust);
+  font: 500 15px var(--font-sans);
+  cursor: pointer;
+}

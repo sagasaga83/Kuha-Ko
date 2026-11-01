@@ -1,8 +1,8 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { Wordmark } from '@kuhako/ui';
-import { currentTheme, setTheme, type Theme } from '../theme';
 import { useScrollSpy, useScrollState } from '../hooks/motion';
 import { CartButton } from '../shop/Shop';
+import { ThemeLamp } from './ThemeLamp';
 
 const links = [
   { id: 'menu', label: 'Menu' },
@@ -13,11 +13,9 @@ const links = [
 const ids = links.map((l) => l.id);
 
 export function SiteHeader() {
-  const [theme, setThemeState] = useState<Theme>('light');
   const [open, setOpen] = useState(false);
   const active = useScrollSpy(ids);
   const { scrolled, goingDown } = useScrollState();
-  useEffect(() => setThemeState(currentTheme()), []);
 
   useEffect(() => {
     if (!open) return;
@@ -25,12 +23,6 @@ export function SiteHeader() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open]);
-
-  const toggleTheme = () => {
-    const next: Theme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    setThemeState(next);
-  };
 
   const cls = [
     'site-header',
@@ -70,10 +62,8 @@ export function SiteHeader() {
               {l.label}
             </a>
           ))}
-          <button type="button" className="theme-toggle" onClick={toggleTheme} aria-pressed={theme === 'dark'}>
-            {theme === 'dark' ? 'Light mode' : 'Dark mode'}
-          </button>
         </nav>
+        <ThemeLamp className="site-header__lamp" />
       </div>
     </header>
   );

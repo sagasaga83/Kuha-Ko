@@ -166,7 +166,6 @@ body::before {
 .site-header__home { text-decoration: none; margin-right: auto; }
 .site-nav { display: flex; align-items: center; gap: var(--space-4); }
 .site-nav a,
-.theme-toggle,
 .nav-toggle {
   font-family: var(--font-mono);
   font-weight: 700;
@@ -197,16 +196,6 @@ body::before {
 .site-nav a:hover::after,
 .site-nav a[aria-current]::after { transform: scaleX(1); transform-origin: left; }
 .site-nav a[aria-current] { color: var(--rust); }
-.theme-toggle {
-  min-height: 44px;
-  margin-left: var(--space-3);
-  padding: 0;
-  background: transparent;
-  border: 0;
-  color: var(--ink-muted);
-  cursor: pointer;
-}
-.theme-toggle:hover { color: var(--espresso); }
 
 .nav-toggle {
   display: none;
@@ -266,7 +255,8 @@ body::before {
   }
   .is-open .site-nav a { opacity: 1; transform: none; }
   .site-nav a::after { display: none; }
-  .theme-toggle { margin: var(--space-3) 0 0; align-self: flex-start; }
+  .nav-toggle { order: 2; }
+  .site-header__lamp { order: 1; margin-left: calc(var(--space-5) * -0.5); }
 }
 
 /* Sections */
@@ -884,3 +874,65 @@ html.is-splashing .hero__in { animation-play-state: paused; }
 @keyframes splash-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
 .splash__label { animation: rise 700ms var(--ease-out) 900ms both; }
+
+/* Theme switch: a vintage pendant lamp with a beaded pull chain (src/components/ThemeLamp.tsx).
+   On = dark mode, off = light mode. Pulling swings the lamp and the new theme spreads from the bulb. */
+.lamp {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  align-self: flex-start;
+  width: 44px;
+  height: calc(var(--header-h) - 6px);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--espresso);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.lamp:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.lamp__svg { display: block; width: 40px; height: 100%; overflow: visible; }
+
+.lamp__line { fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; }
+.lamp__fitting { fill: var(--kraft); stroke: currentColor; stroke-width: 1.25; }
+.lamp__shade { fill: var(--paper); stroke: currentColor; stroke-width: 1.25; stroke-linejoin: round; transition: fill 300ms ease; }
+.lamp__bulb { fill: var(--canvas); stroke: currentColor; stroke-width: 1.25; transition: fill 200ms ease; }
+.lamp__beads { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-dasharray: 0 2.7; }
+.lamp__knob { fill: var(--rust); }
+.lamp__glow-stop { stop-color: var(--rust); }
+
+.lamp__light { opacity: 0; transition: opacity 250ms ease; }
+.lamp.is-on .lamp__light { opacity: 1; }
+.lamp.is-on .lamp__bulb { fill: var(--rust); }
+.lamp.is-on .lamp__shade { fill: var(--board); }
+
+.lamp__swing { transform-origin: 20px 0; transform-box: view-box; }
+.lamp__chain { transform-box: view-box; }
+.lamp:hover .lamp__chain { animation: lamp-tease 600ms var(--ease-out); }
+.lamp.is-pulling .lamp__chain { animation: lamp-pull 480ms cubic-bezier(0.3, 1.6, 0.5, 1); }
+.lamp.is-pulling .lamp__swing { animation: lamp-swing 1300ms ease-out; }
+.lamp.is-pulling.is-on .lamp__light { animation: lamp-flicker 420ms steps(1, end); }
+
+@keyframes lamp-pull { 0% { transform: none; } 30% { transform: translateY(6px); } 100% { transform: none; } }
+@keyframes lamp-tease { 40% { transform: translateY(1.5px); } }
+@keyframes lamp-swing {
+  0% { transform: rotate(0); }
+  18% { transform: rotate(5deg); }
+  40% { transform: rotate(-3.5deg); }
+  60% { transform: rotate(2deg); }
+  80% { transform: rotate(-0.8deg); }
+  100% { transform: rotate(0); }
+}
+@keyframes lamp-flicker { 0% { opacity: 0.3; } 20% { opacity: 1; } 35% { opacity: 0.5; } 50% { opacity: 1; } }
+
+/* The theme change spreads out from the bulb (browsers with view transitions). */
+html.lamp-vt::view-transition-old(root),
+html.lamp-vt::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lamp .lamp__chain,
+  .lamp .lamp__swing,
+  .lamp .lamp__light { animation: none !important; }
+}
