@@ -11,6 +11,7 @@ import { PHONE_QUERY, isApp } from './app/platform';
 import { applyStoredTheme } from './theme';
 import { CatalogProvider } from './catalog/catalog';
 import { ShopProvider } from './shop/Shop';
+import { Splash } from './components/Splash';
 
 applyStoredTheme();
 
@@ -48,6 +49,7 @@ createRoot(document.getElementById('root')!).render(
       <CatalogProvider>
         <ShopProvider>
           <Root />
+          <Splash />
         </ShopProvider>
       </CatalogProvider>
     )}

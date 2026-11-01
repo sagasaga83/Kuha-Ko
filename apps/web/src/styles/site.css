@@ -821,3 +821,66 @@ body::before {
   .marquee__row { flex-wrap: wrap; justify-content: center; }
   .photo--placeholder::after { display: none; }
 }
+
+/* Opening splash (src/components/Splash.tsx): wordmark, tagline, a filling hairline, then it lifts away.
+   While it is up, the hero's entrance waits so it plays as the page is revealed. */
+html.is-splashing { overflow: hidden; }
+html.is-splashing .hero__in { animation-play-state: paused; }
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: var(--safe-t) calc(var(--safe-r) + 16px) var(--safe-b) calc(var(--safe-l) + 16px);
+  background: var(--canvas);
+  color: var(--espresso);
+  cursor: pointer;
+  transition: transform 650ms var(--ease-out), opacity 650ms var(--ease-out);
+}
+.splash.is-leaving { transform: translateY(-100%); opacity: 0.6; pointer-events: none; }
+
+.splash__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+  transition: transform 650ms var(--ease-out);
+}
+.splash.is-leaving .splash__inner { transform: translateY(40%); }
+
+.splash__mask { display: inline-block; overflow: hidden; padding: 0.06em 0.04em 0.12em; vertical-align: bottom; }
+.splash__mark { display: block; animation: rise-line 800ms var(--ease-out) 120ms both; }
+
+.splash__tagline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 5.5vw, 30px);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--espresso);
+}
+.splash__tagline em { font-style: italic; color: var(--rust); }
+.splash__line { display: inline-block; animation: rise-line 700ms var(--ease-out) both; }
+
+.splash__bar {
+  position: relative;
+  width: min(180px, 50vw);
+  height: 1px;
+  margin-top: var(--space-2);
+  background: var(--line);
+  overflow: hidden;
+}
+.splash__bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--rust);
+  transform-origin: left;
+  animation: splash-fill 1500ms var(--ease-out) 200ms both;
+}
+@keyframes splash-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.splash__label { animation: rise 700ms var(--ease-out) 900ms both; }
