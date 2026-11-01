@@ -3,7 +3,6 @@ import { Wordmark } from '@kuhako/ui';
 import { site } from '../data/site';
 import { prefersReducedMotion } from '../hooks/motion';
 
-const SEEN_KEY = 'kk-splash-seen';
 /** Shortest time the splash stays up, so the animation can finish. */
 const MIN_MS = 1700;
 /** Longest it waits for the fonts before leaving anyway. */
@@ -11,25 +10,9 @@ const MAX_MS = 3500;
 /** Length of the exit (matches `.splash.is-leaving` in site.css). */
 const EXIT_MS = 650;
 
-function seenThisSession() {
-  try {
-    return sessionStorage.getItem(SEEN_KEY) === '1';
-  } catch {
-    return false;
-  }
-}
-
-function markSeen() {
-  try {
-    sessionStorage.setItem(SEEN_KEY, '1');
-  } catch {
-    // Private mode or blocked storage: the splash just shows again next visit.
-  }
-}
-
-/** Whether the splash should play: once per browser session, never under reduced motion. */
+/** Whether the splash should play: on every load, except under reduced motion. */
 export function shouldShowSplash() {
-  return !prefersReducedMotion() && !seenThisSession();
+  return !prefersReducedMotion();
 }
 
 /**
@@ -44,7 +27,6 @@ export function Splash() {
     if (phase !== 'on') return;
     const root = document.documentElement;
     root.classList.add('is-splashing');
-    markSeen();
 
     let done = false;
     const leave = () => {
