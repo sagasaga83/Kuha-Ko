@@ -29,6 +29,7 @@ export function MenuSection() {
     <section id="menu" className="section" aria-labelledby="menu-title">
       <div className="container">
         <SectionHead
+          level={1}
           id="menu-title"
           accent="coffee"
           label="Kuha Ko Coffee"

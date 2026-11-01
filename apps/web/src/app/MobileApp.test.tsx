@@ -5,7 +5,10 @@ import { menu } from '../data/menu';
 import { shirts } from '../data/shirts';
 import { isApp } from './platform';
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  window.history.replaceState(null, '', '/');
+});
 
 const panel = (id: string) => document.getElementById(`screen-${id}`)!;
 

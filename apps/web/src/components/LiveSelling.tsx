@@ -9,6 +9,7 @@ export function LiveSelling() {
     <section id="live" className="section" aria-labelledby="live-title">
       <div className="container">
         <SectionHead
+          level={1}
           id="live-title"
           accent="thrift"
           label="Kuha Ko Thrift"

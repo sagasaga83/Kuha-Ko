@@ -14,8 +14,10 @@ import { applyStoredTheme } from './theme';
 import { CatalogProvider } from './catalog/catalog';
 import { ShopProvider } from './shop/Shop';
 import { Splash } from './components/Splash';
+import { upgradeHashLink } from './router';
 
 applyStoredTheme();
+upgradeHashLink();
 
 // The shop admin is its own page, loaded only on /admin.
 const Admin = lazy(() => import('./admin/Admin'));

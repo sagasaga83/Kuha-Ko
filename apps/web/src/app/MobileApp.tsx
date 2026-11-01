@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 
 import { Wordmark } from '@kuhako/ui';
 import { Screen } from './ui';
 import { CartBar } from '../shop/Shop';
+import { navigate, pageFor, pathFor } from '../router';
 import { HomeScreen, LiveScreen, MenuScreen, ThriftScreen, VisitScreen, type TabId } from './screens';
 
 const tabs: { id: TabId; label: string; icon: ReactNode }[] = [
@@ -62,9 +63,9 @@ const titles: Record<TabId, string> = {
   visit: 'Visit',
 };
 
-/** `?app=menu` (or thrift, live, visit) opens on that tab; handy for previews. */
+/** Opens on the tab for the page's address (/menu → Menu), or `?app=menu` (handy for previews). */
 function startTab(): TabId {
-  const want = new URLSearchParams(window.location.search).get('app');
+  const want = new URLSearchParams(window.location.search).get('app') || pageFor(window.location.pathname);
   return tabs.some((t) => t.id === want) ? (want as TabId) : 'home';
 }
 
@@ -78,6 +79,12 @@ export function MobileApp() {
     document.documentElement.classList.add('kk-app');
     return () => document.documentElement.classList.remove('kk-app');
   }, []);
+
+  // Keep the address in step with the tab (/menu, /thrift …), so links and the full site agree.
+  useEffect(() => {
+    if (pageFor(window.location.pathname) === null && window.location.pathname !== '/') return;
+    navigate(pathFor(tab) + window.location.search, { replace: true, scroll: false });
+  }, [tab]);
 
   const select = (id: TabId) => {
     // Tapping the tab you're on scrolls back to the top, as on iOS.

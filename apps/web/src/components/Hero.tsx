@@ -3,6 +3,7 @@ import { Stamp } from '@kuhako/ui';
 import { site } from '../data/site';
 import { photos } from '../data/photos';
 import { Photo } from './Photo';
+import { Link } from '../router';
 
 export function Hero() {
   return (
@@ -28,12 +29,12 @@ export function Hero() {
             My coffee. My find. A coffee bar and a thrift boutique under one roof in {site.city}.
           </p>
           <div className="hero__links hero__in" style={{ '--d': 4 } as CSSProperties}>
-            <a className="text-link" href="#menu">
+            <Link className="text-link" href="/menu">
               See the menu
-            </a>
-            <a className="text-link" href="#live">
+            </Link>
+            <Link className="text-link" href="/live">
               Join the live selling
-            </a>
+            </Link>
           </div>
         </div>
         <div className="hero__media">
