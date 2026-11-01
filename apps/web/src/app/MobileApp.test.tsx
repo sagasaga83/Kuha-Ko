@@ -1,5 +1,5 @@
-import { afterEach, describe, expect, it } from 'vitest';
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { MobileApp } from './MobileApp';
 import { menu } from '../data/menu';
 import { shirts } from '../data/shirts';
@@ -46,14 +46,21 @@ describe('the app layout', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('switches appearance and can go back to the device setting', () => {
+  it('pulls the lamp chain for dark mode and can go back to the device setting', async () => {
+    vi.useFakeTimers();
     render(<MobileApp />);
     fireEvent.click(screen.getByRole('tab', { name: 'Visit' }));
     const visit = within(panel('visit'));
-    fireEvent.click(visit.getByRole('radio', { name: 'Evening' }));
+    const lamp = visit.getByRole('button', { name: /Lamp off \(light mode\)/ });
+    fireEvent.click(lamp);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
     expect(document.documentElement.dataset.theme).toBe('dark');
-    fireEvent.click(visit.getByRole('radio', { name: 'Automatic' }));
+    expect(lamp.getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(visit.getByRole('button', { name: 'Follow my phone’s setting' }));
     expect(document.documentElement.dataset.theme).toBeUndefined();
+    vi.useRealTimers();
   });
 });
 

@@ -10,6 +10,7 @@ import { site } from '../data/site';
 import { Photo } from '../components/Photo';
 import { LiveDemo } from '../components/LiveDemo';
 import { clearTheme, setTheme, storedTheme, type Theme } from '../theme';
+import { ThemeLamp } from '../components/ThemeLamp';
 import { Group, Row, Segmented, Sheet } from './ui';
 
 export type TabId = 'home' | 'menu' | 'thrift' | 'live' | 'visit';
@@ -224,16 +225,19 @@ export function VisitScreen() {
       </Group>
       <div className="app-group">
         <h2 className="app-group__header">Appearance</h2>
-        <Segmented
-          label="Appearance"
-          options={[
-            { value: 'system', label: 'Automatic' },
-            { value: 'light', label: 'Light' },
-            { value: 'dark', label: 'Evening' },
-          ]}
-          value={theme}
-          onChange={pick}
-        />
+        <div className="app-lamp">
+          <ThemeLamp className="app-lamp__lamp" onChange={setChoice} />
+          <div className="app-lamp__text">
+            <p>Pull the chain. Lamp on for evening, off for daytime.</p>
+            {theme !== 'system' ? (
+              <button type="button" className="app-lamp__auto" onClick={() => pick('system')}>
+                Follow my phone’s setting
+              </button>
+            ) : (
+              <p className="app-lamp__note">Following your phone’s setting.</p>
+            )}
+          </div>
+        </div>
       </div>
       <footer className="app-colophon">
         <Wordmark size={32} />
