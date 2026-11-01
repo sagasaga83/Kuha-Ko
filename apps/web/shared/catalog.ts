@@ -17,7 +17,7 @@ export const KIND_LABELS: Record<Kind, string> = {
 export const DEFAULT_SETTINGS: Settings = {
   delivery: { origin: null, radiusKm: 8, baseFee: 4900, baseKm: 3, perKm: 1000 },
   ordering: { coffee: false, shirt: false, thrift: false },
-  payment: { gcashName: '', gcashNumber: '', qrUrl: null },
+  payment: { gcashQrUrl: null, qrUrl: null },
 };
 
 /** What GET /api/catalog returns. */
@@ -26,13 +26,13 @@ export interface Catalog {
   ordering: OrderingSettings;
   /** True once the shop's location is set, so delivery fees can be worked out. */
   deliveryReady: boolean;
-  /** Ways customers can pay right now: GCash once its name and number are set, QR Ph once the QR is uploaded. */
+  /** Ways customers can pay right now: each one once its QR code is uploaded. */
   paymentMethods: PaymentMethod[];
 }
 
 export function availablePaymentMethods(p: PaymentSettings): PaymentMethod[] {
   const out: PaymentMethod[] = [];
-  if (p.gcashName && p.gcashNumber) out.push('gcash');
+  if (p.gcashQrUrl) out.push('gcash');
   if (p.qrUrl) out.push('qrph');
   return out;
 }

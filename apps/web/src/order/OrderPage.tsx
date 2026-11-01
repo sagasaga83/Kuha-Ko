@@ -11,18 +11,11 @@ import '../styles/shop.css';
 const STEPS = ['paid', 'preparing', 'out_for_delivery', 'delivered'] as const;
 const FINAL = ['delivered', 'cancelled', 'expired'];
 
-/** 09171234567 shown as 0917 123 4567. */
-function prettyPhone(e164: string): string {
-  const local = e164.replace(/^\+63/, '0');
-  return local.length === 11 ? `${local.slice(0, 4)} ${local.slice(4, 7)} ${local.slice(7)}` : local;
-}
-
 export default function OrderPage({ id }: { id: string }) {
   const [order, setOrder] = useState<OrderView | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [reference, setReference] = useState('');
-  const [copied, setCopied] = useState(false);
   const [, tick] = useState(0);
 
   const load = useCallback(async () => {
@@ -88,19 +81,11 @@ export default function OrderPage({ id }: { id: string }) {
     post({ action: 'reference', reference });
   };
 
-  const copyNumber = async (n: string) => {
-    try {
-      await navigator.clipboard.writeText(n.replace(/^\+63/, '0'));
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Clipboard blocked: the number is on screen to copy by hand.
-    }
-  };
 
   const minutesLeft = order?.holdExpiresAt ? Math.max(0, Math.ceil((Date.parse(order.holdExpiresAt) - Date.now()) / 60000)) : null;
   const stepIndex = order ? STEPS.indexOf(order.status as (typeof STEPS)[number]) : -1;
   const payTo = order?.payTo;
+  const qr = order?.paymentMethod === 'gcash' ? payTo?.gcashQrUrl : payTo?.qrUrl;
 
   return (
     <div className="order">
@@ -129,39 +114,23 @@ export default function OrderPage({ id }: { id: string }) {
           {order.status === 'pending_payment' && payTo ? (
             <section className="order__pay" aria-labelledby="pay-title">
               <h2 id="pay-title" className="shop-h">
-                {order.paymentMethod === 'qrph' ? 'Scan to pay' : 'Send by GCash'}
+                {order.paymentMethod === 'gcash' ? 'Scan with GCash' : 'Scan to pay'}
               </h2>
-              {order.paymentMethod === 'qrph' && payTo.qrUrl ? (
+              {qr ? (
                 <>
-                  <img className="order__qr" src={payTo.qrUrl} alt={`Kuha Ko’s Maya QR Ph code. Pay ${formatPeso(order.total)}.`} />
+                  <img className="order__qr" src={qr} alt={`Kuha Ko’s ${order.paymentMethod === 'gcash' ? 'GCash QR' : 'Maya QR Ph'} code. Pay ${formatPeso(order.total)}.`} />
                   <p className="shop-note">
-                    Open Maya, GCash, GoTyme, MariBank or your bank app, scan this code (or save it and upload it in the app), and pay{' '}
+                    {order.paymentMethod === 'gcash'
+                      ? 'Open GCash, tap Scan QR (or save this code and upload it there), and pay '
+                      : 'Open Maya, GCash, GoTyme, MariBank or your bank app, scan this code (or save it and upload it in the app), and pay '}
                     <strong>exactly {formatPeso(order.total)}</strong>.
                   </p>
-                  <a className="shop-link" href={payTo.qrUrl} download={`kuha-ko-qr-${order.code}.png`} target="_blank" rel="noreferrer">
+                  <a className="shop-link" href={qr} download={`kuha-ko-qr-${order.code}.png`} target="_blank" rel="noreferrer">
                     Save QR
                   </a>
                 </>
               ) : (
-                <dl className="order__gcash">
-                  <div>
-                    <dt>GCash number</dt>
-                    <dd>
-                      <span className="order__number">{prettyPhone(payTo.gcashNumber)}</span>
-                      <button type="button" className="shop-link" onClick={() => copyNumber(payTo.gcashNumber)}>
-                        {copied ? 'Copied' : 'Copy number'}
-                      </button>
-                    </dd>
-                  </div>
-                  <div>
-                    <dt>Account name</dt>
-                    <dd>{payTo.gcashName}</dd>
-                  </div>
-                  <div>
-                    <dt>Amount</dt>
-                    <dd className="order__number">{formatPeso(order.total)}</dd>
-                  </div>
-                </dl>
+                <p className="shop-note">This way to pay isn’t available right now. Please message us, or cancel and order again.</p>
               )}
               <p className="shop-note">
                 Add <strong>{order.code}</strong> in the message, if your app has one.

@@ -8,6 +8,7 @@ import { Sheet } from '../app/ui';
 import { canOrder, lastOrderId, useCart, type Cart } from './cart';
 import { Checkout } from './Checkout';
 import { ProductPicker, Stepper } from './ProductPicker';
+import { BasketIcon } from './BasketIcon';
 
 interface Shop {
   cart: Cart;
@@ -51,13 +52,13 @@ export function ShopProvider({ children }: { children: ReactNode }) {
             onAdd={(line) => {
               cart.add(line);
               setProduct(null);
-              setAdded(`${product.name} added to your order`);
+              setAdded(`${product.name} added to your cart`);
               window.setTimeout(() => setAdded(''), 2500);
             }}
           />
         ) : null}
       </Sheet>
-      <Sheet title={cartStep === 'checkout' ? 'Checkout' : 'Your order'} open={cartStep !== 'closed'} onClose={closeCart}>
+      <Sheet title={cartStep === 'checkout' ? 'Checkout' : 'Your cart'} open={cartStep !== 'closed'} onClose={closeCart}>
         {cartStep === 'cart' ? <CartView cart={cart} onCheckout={() => setCartStep('checkout')} /> : null}
         {cartStep === 'checkout' ? <Checkout cart={cart} onBack={() => setCartStep('cart')} /> : null}
       </Sheet>
@@ -129,7 +130,9 @@ export function CartBar() {
   if (!shop || shop.cart.count === 0) return null;
   return (
     <button type="button" className="shop-cartbar" onClick={shop.openCart}>
-      <span>View order</span>
+      <span className="shop-cartbar__title">
+        <BasketIcon /> View cart
+      </span>
       <span className="shop-cartbar__meta">
         {shop.cart.count} {shop.cart.count === 1 ? 'item' : 'items'} · {formatPeso(shop.cart.subtotal)}
       </span>
@@ -143,7 +146,7 @@ export function CartButton() {
   if (!shop || shop.cart.count === 0) return null;
   return (
     <button type="button" className="shop-cartbtn" onClick={shop.openCart}>
-      Order <span className="shop-cartbtn__count">{shop.cart.count}</span>
+      <BasketIcon /> Cart <span className="shop-cartbtn__count">{shop.cart.count}</span>
     </button>
   );
 }
