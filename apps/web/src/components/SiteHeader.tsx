@@ -1,20 +1,20 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import { Wordmark } from '@kuhako/ui';
-import { useScrollSpy, useScrollState } from '../hooks/motion';
+import { useScrollState } from '../hooks/motion';
+import { Link, pageFor, usePath } from '../router';
 import { CartButton } from '../shop/Shop';
 import { ThemeLamp } from './ThemeLamp';
 
 const links = [
-  { id: 'menu', label: 'Menu' },
-  { id: 'thrift', label: 'Thrift' },
-  { id: 'live', label: 'Live selling' },
-  { id: 'visit', label: 'Visit' },
+  { id: 'menu', href: '/menu', label: 'Menu' },
+  { id: 'thrift', href: '/thrift', label: 'Thrift' },
+  { id: 'live', href: '/live', label: 'Live selling' },
+  { id: 'visit', href: '/visit', label: 'Visit' },
 ];
-const ids = links.map((l) => l.id);
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const active = useScrollSpy(ids);
+  const active = pageFor(usePath());
   const { scrolled, goingDown } = useScrollState();
 
   useEffect(() => {
@@ -36,9 +36,9 @@ export function SiteHeader() {
   return (
     <header className={cls}>
       <div className="container site-header__inner">
-        <a href="#top" className="site-header__home" aria-label="Kuha Ko, back to top" onClick={() => setOpen(false)}>
+        <Link href="/" className="site-header__home" aria-label="Kuha Ko, home" onClick={() => setOpen(false)}>
           <Wordmark size={40} aria-hidden="true" role="presentation" aria-label={undefined} />
-        </a>
+        </Link>
         <CartButton />
         <button
           type="button"
@@ -52,15 +52,15 @@ export function SiteHeader() {
         </button>
         <nav id="site-nav" aria-label="Sections" className="site-nav">
           {links.map((l, i) => (
-            <a
+            <Link
               key={l.id}
-              href={`#${l.id}`}
-              aria-current={active === l.id ? 'true' : undefined}
+              href={l.href}
+              aria-current={active === l.id ? 'page' : undefined}
               style={{ '--i': i } as CSSProperties}
               onClick={() => setOpen(false)}
             >
               {l.label}
-            </a>
+            </Link>
           ))}
         </nav>
         <ThemeLamp className="site-header__lamp" />

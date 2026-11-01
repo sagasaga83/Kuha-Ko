@@ -51,6 +51,7 @@ export function ThriftSection() {
     <section id="thrift" className="section" aria-labelledby="thrift-title">
       <div className="container">
         <SectionHead
+          level={1}
           id="thrift-title"
           accent="thrift"
           label="Kuha Ko Thrift"

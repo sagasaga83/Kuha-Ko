@@ -8,7 +8,10 @@ import { App } from '../App';
 import { ShopProvider } from './Shop';
 
 beforeEach(() => localStorage.clear());
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  window.history.replaceState(null, '', '/');
+});
 
 /** The built-in catalog with The Kuha priced at ₱140 (iced +₱20) and coffee open for orders. */
 const open: Catalog = {
@@ -94,11 +97,13 @@ describe('ordering in the app layout', () => {
 
 describe('ordering on the one-page site', () => {
   it('shows Add buttons only for orderable items', () => {
+    window.history.replaceState(null, '', '/menu');
     withShop(open, <App />);
     expect(screen.getAllByRole('button', { name: /Add to order/ }).map((b) => b.textContent)).toEqual(['Add to order: The Kuha']);
   });
 
   it('shows no ordering while prices, ordering or delivery are not set up', () => {
+    window.history.replaceState(null, '', '/menu');
     withShop(fallbackCatalog, <App />);
     expect(screen.queryByRole('button', { name: /Add to order/ })).toBeNull();
     withShop({ ...open, deliveryReady: false }, <App />);

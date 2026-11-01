@@ -6,7 +6,7 @@ Kuha Ko is a coffee bar (Kuha Ko Coffee, the owner's) and a thrift boutique (Kuh
 
 Turborepo monorepo, npm workspaces, React 18 + Vite + TypeScript.
 
-- `apps/web`: the one-page website. Shop details live in `src/data/site.ts`; sections are in `src/components/`.
+- `apps/web`: the website, one page per section: `/` (home), `/menu`, `/thrift`, `/live`, `/visit`. Routing is `src/router.tsx` (no library; `Link` and `navigate`, old `/#menu` links are upgraded); `src/App.tsx` maps each path to its sections. New paths also need a rewrite in `apps/web/vercel.json`. Shop details live in `src/data/site.ts`; sections are in `src/components/`.
   Products and prices come from the database (Neon Postgres) through `GET /api/catalog` (`src/catalog/catalog.tsx`). `src/data/menu.ts` and `shirts.ts` are the seed and the fallback shown when the API can't be reached; edit live products in the admin page, not there.
   Backend: Vercel Functions in `api/` (Web `Request`/`Response` handlers), helpers in `server/`, code shared with the browser in `shared/` (`catalog.ts` types and helpers; `schema.ts` zod schemas, kept out of the customer bundle). Money is whole centavos everywhere. Server-side relative imports end in `.js`.
   Ordering: `src/shop/` (cart in localStorage, product sheet, checkout), `src/order/` (the customer's `/order/:id` page), `server/orders.ts` (holds stock 30 minutes). No payment gateway: customers scan the shop's GCash QR or Maya QR Ph code and send the reference number; the shop confirms it in the admin's Orders tab. The server re-prices every order from the database.

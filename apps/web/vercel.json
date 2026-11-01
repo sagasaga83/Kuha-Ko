@@ -49,6 +49,22 @@
     {
       "source": "/order/:path*",
       "destination": "/index.html"
+    },
+    {
+      "source": "/menu",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/thrift",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/live",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/visit",
+      "destination": "/index.html"
     }
   ],
   "regions": [
