@@ -3,7 +3,6 @@ import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { Splash } from './Splash';
 
 beforeEach(() => {
-  sessionStorage.clear();
   vi.useFakeTimers();
 });
 afterEach(() => {
@@ -36,9 +35,10 @@ describe('the opening splash', () => {
     expect(screen.queryByRole('status')).toBeNull();
   });
 
-  it('plays only once per session', () => {
-    sessionStorage.setItem('kk-splash-seen', '1');
+  it('plays again on every load', () => {
     render(<Splash />);
-    expect(screen.queryByRole('status')).toBeNull();
+    cleanup();
+    render(<Splash />);
+    expect(screen.getByRole('status', { name: 'Loading Kuha Ko' })).toBeTruthy();
   });
 });
