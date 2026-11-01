@@ -1,5 +1,6 @@
 import { StrictMode, Suspense, lazy, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import '@kuhako/tokens/tokens.css';
 import '@kuhako/ui/styles.css';
@@ -54,6 +55,7 @@ createRoot(document.getElementById('root')!).render(
         </ShopProvider>
       </CatalogProvider>
     )}
-    <SpeedInsights />
+    <Analytics />
+    <SpeedInsights dsn="bSxYQbOvjqJCiNmJq1Eey88eD4v" />
   </StrictMode>,
 );
