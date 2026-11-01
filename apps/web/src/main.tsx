@@ -56,6 +56,6 @@ createRoot(document.getElementById('root')!).render(
       </CatalogProvider>
     )}
     <Analytics />
-    <SpeedInsights dsn="bSxYQbOvjqJCiNmJq1Eey88eD4v" />
+    <SpeedInsights />
   </StrictMode>,
 );
