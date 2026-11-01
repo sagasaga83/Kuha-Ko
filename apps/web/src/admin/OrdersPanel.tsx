@@ -5,7 +5,7 @@ import { formatPeso } from '../../shared/catalog';
 import { ORDER_STATUS_LABELS } from '../../shared/order';
 import { adminApi, guarded, type AdminOrder, type OrderAction } from './api';
 
-const METHOD: Record<string, string> = { gcash: 'GCash', qrph: 'QR Ph' };
+const METHOD: Record<string, string> = { gcash: 'GCash', qrph: 'Maya (QR Ph)' };
 
 /** The next step for an order, as buttons. */
 function actionsFor(o: AdminOrder): { action: OrderAction; label: string; primary?: boolean; confirm?: string }[] {

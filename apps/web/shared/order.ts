@@ -23,7 +23,7 @@ export interface PricedLine {
  */
 export const PAYMENT_OPTIONS = [
   { id: 'gcash', label: 'GCash', note: 'Send to our GCash number' },
-  { id: 'qrph', label: 'QR Ph', note: 'Scan our QR with Maya, GoTyme, MariBank or any bank app' },
+  { id: 'qrph', label: 'Maya or any bank app', note: 'Scan our QR Ph code with Maya, GCash, GoTyme, MariBank or any bank app' },
 ] as const;
 export type PaymentMethod = (typeof PAYMENT_OPTIONS)[number]['id'];
 export const PAYMENT_METHOD_IDS = PAYMENT_OPTIONS.map((o) => o.id) as [PaymentMethod, ...PaymentMethod[]];

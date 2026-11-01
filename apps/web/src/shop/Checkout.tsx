@@ -215,7 +215,7 @@ export function Checkout({ cart, onBack }: { cart: Cart; onBack: () => void }) {
         {busy ? 'Placing your order…' : fee === null ? 'Place order' : `Place order · ${formatPeso(cart.subtotal + fee)}`}
       </button>
       <p className="shop-note shop-center">
-        Next you’ll see where to send {options.find((o) => o.id === method)?.label ?? 'your'} payment. We hold your items for 30 minutes.
+        Next you’ll see how to pay. We hold your items for 30 minutes.
       </p>
     </form>
   );
