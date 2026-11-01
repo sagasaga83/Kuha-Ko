@@ -55,7 +55,7 @@ function lines(order: OrderView, totalLabel: string) {
 const wrap = (body: string) =>
   `<div style="font:15px/1.6 Helvetica,Arial,sans-serif;color:#3B2A20;max-width:520px">${body}</div>`;
 
-const METHOD = { gcash: 'GCash', qrph: 'QR Ph' } as const;
+const METHOD = { gcash: 'GCash', qrph: 'Maya (QR Ph)' } as const;
 
 /** To the shop: a customer says they've paid; check the reference in GCash or the bank app. */
 export async function sendPaymentToCheck(order: OrderView, phone: string, siteUrl: string): Promise<void> {
@@ -67,7 +67,7 @@ export async function sendPaymentToCheck(order: OrderView, phone: string, siteUr
   const { textBlock, htmlBlock } = lines(order, 'Total to check');
   const method = METHOD[order.paymentMethod] ?? order.paymentMethod;
   const subject = `Check payment: ${order.code}, ${formatPeso(order.total)} by ${method}`;
-  const text = `${order.customerName} says they paid ${formatPeso(order.total)} by ${method}.\nReference: ${order.paymentReference}\n\nFind it in your ${method === 'GCash' ? 'GCash' : 'GCash or bank'} app, then confirm it in the admin: ${siteUrl}/admin\n\n${textBlock}\n\nDeliver to: ${order.customerName}, ${phone}\n${order.address}${order.addressNotes ? `\nNotes: ${order.addressNotes}` : ''}`;
+  const text = `${order.customerName} says they paid ${formatPeso(order.total)} by ${method}.\nReference: ${order.paymentReference}\n\nFind it in your ${order.paymentMethod === 'gcash' ? 'GCash' : 'Maya Business'} app, then confirm it in the admin: ${siteUrl}/admin\n\n${textBlock}\n\nDeliver to: ${order.customerName}, ${phone}\n${order.address}${order.addressNotes ? `\nNotes: ${order.addressNotes}` : ''}`;
   const html = wrap(
     `<p><strong>${esc(order.customerName)}</strong> says they paid <strong>${esc(formatPeso(order.total))}</strong> by ${esc(method)}.</p><p style="font-size:18px">Reference: <strong style="font-family:Courier,monospace">${esc(order.paymentReference ?? '')}</strong></p><p>Find it in your app, then <a href="${esc(siteUrl)}/admin">confirm it in the admin</a>.</p>${htmlBlock}<p><strong>Deliver to</strong><br>${esc(order.customerName)}, ${esc(phone)}<br>${esc(order.address)}${order.addressNotes ? `<br>Notes: ${esc(order.addressNotes)}` : ''}</p>`,
   );

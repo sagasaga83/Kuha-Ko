@@ -133,9 +133,9 @@ export default function OrderPage({ id }: { id: string }) {
               </h2>
               {order.paymentMethod === 'qrph' && payTo.qrUrl ? (
                 <>
-                  <img className="order__qr" src={payTo.qrUrl} alt={`Kuha Ko’s QR Ph code. Pay ${formatPeso(order.total)}.`} />
+                  <img className="order__qr" src={payTo.qrUrl} alt={`Kuha Ko’s Maya QR Ph code. Pay ${formatPeso(order.total)}.`} />
                   <p className="shop-note">
-                    Open GCash, Maya, GoTyme, MariBank or your bank app, scan this code (or save it and upload it in the app), and pay{' '}
+                    Open Maya, GCash, GoTyme, MariBank or your bank app, scan this code (or save it and upload it in the app), and pay{' '}
                     <strong>exactly {formatPeso(order.total)}</strong>.
                   </p>
                   <a className="shop-link" href={payTo.qrUrl} download={`kuha-ko-qr-${order.code}.png`} target="_blank" rel="noreferrer">

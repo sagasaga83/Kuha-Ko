@@ -135,10 +135,10 @@ export function SettingsPanel({ onSignedOut }: { onSignedOut: () => void }) {
           </label>
         </div>
         <div className="adm-photo">
-          {draft.qrUrl ? <img src={draft.qrUrl} alt="Your QR Ph code" /> : <span className="adm-photo__empty">No QR</span>}
+          {draft.qrUrl ? <img src={draft.qrUrl} alt="Your Maya QR Ph code" /> : <span className="adm-photo__empty">No QR</span>}
           <div className="adm-photo__actions">
             <label className="kk-button kk-button--secondary adm-file">
-              {qrBusy ? 'Uploading…' : draft.qrUrl ? 'Change QR Ph code' : 'Add QR Ph code'}
+              {qrBusy ? 'Uploading…' : draft.qrUrl ? 'Change Maya QR Ph code' : 'Add Maya QR Ph code'}
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
@@ -162,13 +162,13 @@ export function SettingsPanel({ onSignedOut }: { onSignedOut: () => void }) {
                 Remove QR
               </button>
             ) : null}
-            <small className="adm-note">Screenshot or download it from GCash (“Receive money”) or your bank app.</small>
+            <small className="adm-note">Screenshot or download it from your Maya Business app (any QR Ph code works).</small>
           </div>
         </div>
         <p className="adm-note">
           Customers can pay by:{' '}
           {typeof preview !== 'string' && availablePaymentMethods(preview.payment).length
-            ? availablePaymentMethods(preview.payment).map((m) => (m === 'gcash' ? 'GCash' : 'QR Ph')).join(' and ')
+            ? availablePaymentMethods(preview.payment).map((m) => (m === 'gcash' ? 'GCash' : 'Maya or any bank app (QR Ph)')).join(' and ')
             : 'nothing yet, so ordering is off'}
           .
         </p>

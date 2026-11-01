@@ -73,10 +73,10 @@ describe('ordering in the app layout', () => {
     const methods = within(checkout).getByRole('group', { name: 'Payment method' });
     expect(within(methods).getAllByRole('radio').map((r) => r.closest('label')?.textContent)).toEqual([
       'GCashSend to our GCash number',
-      'QR PhScan our QR with Maya, GoTyme, MariBank or any bank app',
+      'Maya or any bank appScan our QR Ph code with Maya, GCash, GoTyme, MariBank or any bank app',
     ]);
     expect((within(methods).getByRole('radio', { name: /^GCash/ }) as HTMLInputElement).checked).toBe(true);
-    fireEvent.click(within(methods).getByRole('radio', { name: /QR Ph/ }));
+    fireEvent.click(within(methods).getByRole('radio', { name: /^Maya/ }));
     expect(JSON.parse(localStorage.getItem('kuhako-checkout')!).paymentMethod).toBe('qrph');
     fireEvent.click(within(checkout).getByRole('button', { name: 'Place order' }));
     expect(within(checkout).getByRole('alert').textContent).toBe('Add your name.');
