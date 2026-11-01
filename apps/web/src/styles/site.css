@@ -671,9 +671,8 @@ body::before {
   letter-spacing: 2px;
   text-transform: uppercase;
 }
-.live-demo__dot { width: 8px; height: 8px; border-radius: var(--radius-pill); background: var(--rust); animation: blink 1.6s ease-in-out infinite; }
+.live-demo__dot { width: 8px; height: 8px; border-radius: var(--radius-pill); background: var(--rust); }
 .live-demo__piece { flex-basis: 100%; font-weight: 400; letter-spacing: 1px; text-transform: none; font-size: 14px; color: var(--ink-muted); }
-@keyframes blink { 50% { opacity: 0.25; } }
 .live-demo__thread {
   list-style: none;
   margin: 0;
@@ -706,21 +705,6 @@ body::before {
 
 /* Footer, with the visit details */
 .site-footer { border-top: 1px solid var(--espresso); padding-block: var(--space-5) calc(var(--space-5) + var(--safe-b)); }
-.site-footer__nav { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); padding-bottom: var(--space-4); border-bottom: 1px solid var(--line); }
-.site-footer__nav a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: var(--espresso);
-}
-.site-footer__nav a:hover { color: var(--rust); }
-.site-footer__base { padding-top: var(--space-4); }
 .site-footer__top {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -891,7 +875,7 @@ html.is-splashing .hero__in { animation-play-state: paused; }
 .splash__label { animation: rise 700ms var(--ease-out) 900ms both; }
 
 /* Theme switch: a vintage pendant lamp with a beaded pull chain (src/components/ThemeLamp.tsx).
-   On = dark mode, off = light mode. Pulling swings the lamp and the new theme spreads from the bulb.
+   On = dark mode, off = light mode. Pulling swings the lamp and the page cross-fades to the new theme.
    The light only fades in and out: no flicker or flashing (photosensitive epilepsy). */
 .lamp {
   position: relative;
@@ -941,9 +925,9 @@ html.is-splashing .hero__in { animation-play-state: paused; }
   100% { transform: rotate(0); }
 }
 
-/* The theme change spreads out from the bulb (browsers with view transitions). */
+/* The theme change: one slow, even cross-fade (browsers with view transitions). */
 html.lamp-vt::view-transition-old(root),
-html.lamp-vt::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+html.lamp-vt::view-transition-new(root) { animation-duration: 700ms; animation-timing-function: ease-in-out; }
 
 @media (prefers-reduced-motion: reduce) {
   .lamp .lamp__chain,
