@@ -573,6 +573,21 @@ body::before {
 }
 .rack__track::-webkit-scrollbar { display: none; }
 .rack__item { flex: 0 0 clamp(240px, 26vw, 340px); scroll-snap-align: start; }
+/* Stop at every piece. Without it, a swipe back from the end of the rack (which isn't
+   lined up with a piece) carries straight past the second-to-last piece. */
+.rack__item,
+.app-rack > li { scroll-snap-stop: always; }
+/* On touch screens, room after the last piece so it can scroll to the start of the rail
+   like the others. Without it the end of the rack is a clamped position, and a swipe
+   back from there skips the second-to-last piece. Mouse, trackpad and the arrow buttons
+   don't have the problem, so desktops keep the compact end. (100% is the track's
+   content width.) */
+@media (hover: none) and (pointer: coarse) {
+  .rack__track::after,
+  .app-rack::after { content: ''; flex: 0 0 auto; }
+  .rack__track::after { flex-basis: calc(100% - clamp(240px, 26vw, 340px) - var(--space-4)); }
+  .app-rack::after { flex-basis: calc(100% - min(62%, 260px) - var(--space-3)); }
+}
 .rack__track { cursor: grab; }
 .rack__track.is-dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
 .rack__track img { -webkit-user-drag: none; }
