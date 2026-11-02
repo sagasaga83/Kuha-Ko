@@ -227,7 +227,6 @@ html.kk-app body::before { display: none; }
 .app-rack li { flex: 0 0 62%; max-width: 260px; scroll-snap-align: start; }
 /* Room between the heading and the rail the hangers hook onto. */
 .app-rack { margin-top: var(--space-3); }
-.app-rack .photo--placeholder { padding: var(--space-3); }
 
 .app-shirts {
   list-style: none;
