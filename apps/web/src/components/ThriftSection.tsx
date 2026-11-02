@@ -47,11 +47,15 @@ export function ThriftSection() {
     return () => window.removeEventListener('resize', update);
   }, []);
 
+  /** Step to the next or previous piece, from wherever the rack has been scrolled to. */
   const scroll = (dir: 1 | -1) => {
     const el = track.current;
     if (!el) return;
-    const card = el.querySelector('li');
-    el.scrollBy({ left: dir * ((card?.clientWidth ?? 280) + 24), behavior: 'smooth' });
+    const pad = parseFloat(getComputedStyle(el).scrollPaddingLeft) || 0;
+    const stops = Array.from(el.children, (li) => (li as HTMLElement).offsetLeft - pad);
+    const here = el.scrollLeft;
+    const to = dir > 0 ? stops.find((x) => x > here + 4) : [...stops].reverse().find((x) => x < here - 4);
+    el.scrollTo({ left: to ?? (dir > 0 ? el.scrollWidth : 0), behavior: 'smooth' });
   };
 
   return (
