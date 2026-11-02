@@ -15,6 +15,7 @@ import { CatalogProvider } from './catalog/catalog';
 import { ShopProvider } from './shop/Shop';
 import { Splash } from './components/Splash';
 import { upgradeHashLink } from './router';
+import { AccountProvider } from './account/auth';
 
 applyStoredTheme();
 upgradeHashLink();
@@ -25,6 +26,9 @@ const isAdminPath = /^\/admin(\/|$)/.test(window.location.pathname);
 // A customer's order page (where they pay and follow the order), also its own page.
 const OrderPage = lazy(() => import('./order/OrderPage'));
 const orderId = window.location.pathname.match(/^\/order\/([0-9a-f-]{36})\/?$/)?.[1];
+// Customer sign-in, saved details and order history.
+const AccountPage = lazy(() => import('./account/AccountPage'));
+const isAccountPath = /^\/account(\/sign-up)?\/?$/.test(window.location.pathname);
 
 /** Picks the app layout or the one-page site, and switches if the window is resized across the phone size. */
 function Root() {
@@ -49,13 +53,21 @@ createRoot(document.getElementById('root')!).render(
       <Suspense fallback={null}>
         <OrderPage id={orderId} />
       </Suspense>
+    ) : isAccountPath ? (
+      <AccountProvider>
+        <Suspense fallback={null}>
+          <AccountPage />
+        </Suspense>
+      </AccountProvider>
     ) : (
-      <CatalogProvider>
-        <ShopProvider>
-          <Root />
-          <Splash />
-        </ShopProvider>
-      </CatalogProvider>
+      <AccountProvider>
+        <CatalogProvider>
+          <ShopProvider>
+            <Root />
+            <Splash />
+          </ShopProvider>
+        </CatalogProvider>
+      </AccountProvider>
     )}
     <Analytics />
     <SpeedInsights dsn="bSxYQbOvjqJCiNmJq1Eey88eD4v" />

@@ -4,6 +4,7 @@ import { useScrollState } from '../hooks/motion';
 import { Link, pageFor, usePath } from '../router';
 import { CartButton } from '../shop/Shop';
 import { ThemeLamp } from './ThemeLamp';
+import { useAccount } from '../account/auth';
 
 const links = [
   { id: 'menu', href: '/menu', label: 'Menu' },
@@ -16,6 +17,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const active = pageFor(usePath());
   const { scrolled, goingDown } = useScrollState();
+  const account = useAccount();
 
   useEffect(() => {
     if (!open) return;
@@ -62,6 +64,12 @@ export function SiteHeader() {
               {l.label}
             </Link>
           ))}
+          {account.status !== 'off' ? (
+            // A full page load: /account is its own page (see main.tsx).
+            <a href="/account" style={{ '--i': links.length } as CSSProperties}>
+              {account.status === 'signed-in' ? 'Account' : 'Sign in'}
+            </a>
+          ) : null}
         </nav>
         <ThemeLamp className="site-header__lamp" />
       </div>

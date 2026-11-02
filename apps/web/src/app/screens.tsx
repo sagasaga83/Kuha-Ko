@@ -11,6 +11,7 @@ import { Photo } from '../components/Photo';
 import { LiveDemo } from '../components/LiveDemo';
 import { clearTheme, setTheme, storedTheme, type Theme } from '../theme';
 import { ThemeLamp } from '../components/ThemeLamp';
+import { useAccount } from '../account/auth';
 import { Group, Row, Segmented, Sheet } from './ui';
 
 export type TabId = 'home' | 'menu' | 'thrift' | 'live' | 'visit';
@@ -196,6 +197,7 @@ export function LiveScreen() {
 }
 
 export function VisitScreen() {
+  const account = useAccount();
   const [theme, setChoice] = useState<Theme | 'system'>(() => storedTheme());
   const pick = (t: Theme | 'system') => {
     if (t === 'system') clearTheme();
@@ -223,6 +225,16 @@ export function VisitScreen() {
           <Row title="Facebook" detail="Coming soon" />
         )}
       </Group>
+      {account.status !== 'off' ? (
+        <Group header="Your account" footer="Saved delivery details and your orders. You can always order as a guest.">
+          <Row
+            title={account.status === 'signed-in' ? 'Account' : 'Sign in'}
+            subtitle={account.status === 'signed-in' ? account.email || undefined : undefined}
+            onClick={() => window.location.assign('/account')}
+            chevron
+          />
+        </Group>
+      ) : null}
       <div className="app-group">
         <h2 className="app-group__header">Appearance</h2>
         <div className="app-lamp">

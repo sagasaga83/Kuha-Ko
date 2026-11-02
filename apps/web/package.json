@@ -14,6 +14,8 @@
     "db:seed": "tsx --env-file=../../.env.local db/seed.ts"
   },
   "dependencies": {
+    "@clerk/backend": "3.26.5",
+    "@clerk/react": "6.18.4",
     "@kuhako/tokens": "*",
     "@kuhako/ui": "*",
     "@neondatabase/serverless": "1.2.0",

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { formatPeso } from '../../shared/catalog';
-import { PAYMENT_OPTIONS, normalizePhone, type PaymentMethod } from '../../shared/order';
+import { PAYMENT_OPTIONS, normalizePhone, type AccountView, type PaymentMethod } from '../../shared/order';
+import { authHeaders, useAccount, type Account } from '../account/auth';
 import { useCatalog } from '../catalog/catalog';
 import { AddressPicker, type Pin } from './AddressPicker';
 import { rememberOrder, type Cart } from './cart';
@@ -35,8 +36,9 @@ type QuoteState =
   | { state: 'ok'; fee: number; distanceM: number; estimated: boolean }
   | { state: 'error'; message: string };
 
-async function postJson(url: string, body: unknown) {
-  const res = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify(body) });
+async function postJson(url: string, body: unknown, account?: Account) {
+  const headers = account ? await authHeaders(account) : { 'content-type': 'application/json', accept: 'application/json' };
+  const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) });
   const data = res.headers.get('content-type')?.includes('json') ? await res.json() : null;
   return { ok: res.ok, status: res.status, data };
 }
@@ -51,6 +53,35 @@ export function Checkout({ cart, onBack }: { cart: Cart; onBack: () => void }) {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const quoteSeq = useRef(0);
+  const account = useAccount();
+
+  // Signed in: fill in the details saved on the account (they win over this device's).
+  useEffect(() => {
+    if (account.status !== 'signed-in') return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/account', { headers: await authHeaders(account, false) });
+        if (!res.ok || cancelled) return;
+        const { profile } = (await res.json()) as AccountView;
+        const saved: Partial<Details> = {};
+        if (profile.name) saved.name = profile.name;
+        if (profile.phone) saved.phone = profile.phone.replace(/^\+63/, '0');
+        if (profile.email || account.email) saved.email = profile.email || account.email;
+        if (profile.address) saved.address = profile.address;
+        if (profile.notes) saved.notes = profile.notes;
+        if (profile.pin) saved.pin = profile.pin;
+        if (!cancelled) setD((cur) => ({ ...cur, ...saved }));
+      } catch {
+        // Not fatal: they can type their details.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // Once per sign-in, not on every token refresh.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account.status]);
 
   // Remember details on this device for next time (not the pin: people order from different places).
   useEffect(() => {
@@ -93,7 +124,7 @@ export function Checkout({ cart, onBack }: { cart: Cart; onBack: () => void }) {
         customer: { name: d.name, phone: d.phone, email: d.email },
         address: { text: d.address, lat: d.pin.lat, lng: d.pin.lng, notes: d.notes },
         paymentMethod: method,
-      });
+      }, account);
       if (!r.ok) {
         setError(r.data?.error ?? 'Something went wrong. Please try again.');
         setBusy(false);
@@ -114,6 +145,16 @@ export function Checkout({ cart, onBack }: { cart: Cart; onBack: () => void }) {
       </button>
 
       <h3 className="shop-h">Your details</h3>
+      {account.status === 'signed-in' ? (
+        <p className="shop-note">Signed in. We’ll keep these details on your account for next time.</p>
+      ) : account.status === 'signed-out' ? (
+        <p className="shop-note">
+          <a className="shop-link" href="/account">
+            Sign in
+          </a>{' '}
+          to use your saved details and keep this order on your account. Or just carry on as a guest.
+        </p>
+      ) : null}
       <label className="shop-field">
         <span>Name</span>
         <input value={d.name} onChange={(e) => set({ name: e.target.value })} autoComplete="name" maxLength={80} />

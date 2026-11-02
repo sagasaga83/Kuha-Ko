@@ -35,6 +35,15 @@
           "value": "no-referrer"
         }
       ]
+    },
+    {
+      "source": "/account(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ],
   "rewrites": [
@@ -52,6 +61,14 @@
     },
     {
       "source": "/menu",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/account",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/account/sign-up",
       "destination": "/index.html"
     },
     {

@@ -61,8 +61,12 @@ function newCode(): string {
   return `KK-${Array.from({ length: 5 }, () => abc[randomInt(abc.length)]).join('')}`;
 }
 
-/** Places an order and holds its stock. The customer then pays on the order page. */
-export async function createOrder(req: CheckoutRequest): Promise<{ orderId: string }> {
+/**
+ * Places an order and holds its stock. The customer then pays on the order page.
+ * A signed-in customer (`customerId`, their Clerk user id) gets the order linked to
+ * their account, and these checkout details saved for next time.
+ */
+export async function createOrder(req: CheckoutRequest, customerId: string | null = null): Promise<{ orderId: string }> {
   const sql = db();
   await releaseExpired();
   const settings = await getSettings();
@@ -101,9 +105,20 @@ export async function createOrder(req: CheckoutRequest): Promise<{ orderId: stri
     const id = crypto.randomUUID();
     try {
       await sql.transaction([
-        sql`INSERT INTO orders (id, code, customer_name, customer_phone, customer_email, address, address_lat, address_lng, address_notes,
+        ...(customerId
+          ? [
+              sql`INSERT INTO customers (id, name, phone, email, address, address_notes, address_lat, address_lng)
+                  VALUES (${customerId}, ${req.customer.name}, ${phone}, ${req.customer.email}, ${req.address.text}, ${req.address.notes},
+                          ${req.address.lat}, ${req.address.lng})
+                  ON CONFLICT (id) DO UPDATE SET
+                    name = EXCLUDED.name, phone = EXCLUDED.phone, email = EXCLUDED.email, address = EXCLUDED.address,
+                    address_notes = EXCLUDED.address_notes, address_lat = EXCLUDED.address_lat, address_lng = EXCLUDED.address_lng,
+                    updated_at = now()`,
+            ]
+          : []),
+        sql`INSERT INTO orders (id, code, customer_id, customer_name, customer_phone, customer_email, address, address_lat, address_lng, address_notes,
                                 distance_m, subtotal, delivery_fee, total, payment_method, hold_expires_at)
-            VALUES (${id}, ${code}, ${req.customer.name}, ${phone}, ${req.customer.email || null}, ${req.address.text},
+            VALUES (${id}, ${code}, ${customerId}, ${req.customer.name}, ${phone}, ${req.customer.email || null}, ${req.address.text},
                     ${req.address.lat}, ${req.address.lng}, ${req.address.notes}, ${q.distanceM}, ${subtotal}, ${q.fee}, ${total},
                     ${req.paymentMethod}, now() + make_interval(mins => ${HOLD_MINUTES}))`,
         ...lines.map(

@@ -113,3 +113,13 @@ export const checkoutRequestSchema = z.object({
   paymentMethod: z.enum(PAYMENT_METHOD_IDS, { message: 'Choose how to pay' }),
 });
 export type CheckoutRequest = z.infer<typeof checkoutRequestSchema>;
+
+/** A signed-in customer's saved checkout details. Every field may be blank. */
+export const profileSchema = z.object({
+  name: z.string().trim().max(80).default(''),
+  phone: z.string().trim().max(20).default(''),
+  email: z.union([z.literal(''), z.string().trim().email('Check your email address').max(120)]).default(''),
+  address: z.string().trim().max(300).default(''),
+  notes: z.string().trim().max(300).default(''),
+  pin: z.object(latLng).nullable().default(null),
+});
