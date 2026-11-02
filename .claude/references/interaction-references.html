@@ -1,0 +1,319 @@
+<title>Kuha Ko interaction references</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=DM+Sans:wght@400;500;700&family=Courier+Prime:wght@400;700&display=swap">
+<style>
+/* Layout: one reading column; each direction is a band with a live demo beside its references. Kuha Ko's own tokens. */
+:root {
+  --canvas: #FFFFFF; --paper: #FBF7EF; --kraft: #E8D9BF; --line: #D8CBB4;
+  --espresso: #3B2A20; --ink-muted: #5E4B3C; --rust: #9A4A26; --on-rust: #FFFFFF;
+  --sage-ink: #556640; --board: #3B2A20; --on-board: #F3EBDD; --mustard: #D9A15A;
+  --display: "Fraunces", Georgia, serif; --body: "DM Sans", system-ui, sans-serif; --mono: "Courier Prime", "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --canvas: #1E1611; --paper: #2A201A; --kraft: #6B5642; --line: #4A3A2C;
+  --espresso: #F3EBDD; --ink-muted: #CDBEA8; --rust: #E08A5E; --on-rust: #1E1611;
+  --sage-ink: #A9BD86; --board: #4A372A; --on-board: #F3EBDD; --mustard: #E3B26F; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --canvas: #1E1611; --paper: #2A201A; --kraft: #6B5642; --line: #4A3A2C;
+  --espresso: #F3EBDD; --ink-muted: #CDBEA8; --rust: #E08A5E; --on-rust: #1E1611;
+  --sage-ink: #A9BD86; --board: #4A372A; --on-board: #F3EBDD; --mustard: #E3B26F; color-scheme: dark }
+body { background: var(--canvas); color: var(--espresso); font: 17px/1.6 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 980px; margin: 0 auto; padding-block: 48px 80px; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(38px, 6vw, 64px); line-height: 1.02; }
+h2 { font-size: clamp(28px, 4vw, 38px); line-height: 1.1; }
+h3 { font-size: 20px; }
+p { margin: 0; max-width: 64ch; }
+a { color: var(--rust); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--rust); outline-offset: 3px; }
+.lede { font-size: 19px; color: var(--ink-muted); }
+.intro { display: grid; gap: 18px; }
+.brief { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px 28px; border-top: 1px solid var(--espresso); padding-top: 16px; }
+.brief div { display: grid; gap: 4px; }
+.brief b { font-family: var(--mono); font-size: 14px; font-weight: 700; }
+.brief span { font-size: 15px; color: var(--ink-muted); }
+
+.dir { display: grid; gap: 24px; border-top: 1px solid var(--line); padding-top: 28px; }
+.dir header { display: grid; gap: 10px; }
+.tag { font-family: var(--mono); font-size: 14px; color: var(--ink-muted); }
+.rec { display: inline-block; font-family: var(--mono); font-size: 13px; background: var(--rust); color: var(--on-rust); padding: 2px 8px; border-radius: 2px; margin-left: 8px; vertical-align: 3px; }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 32px; align-items: start; }
+@media (max-width: 760px) { .split { grid-template-columns: minmax(0, 1fr); } }
+.refs { list-style: none; margin: 0; padding: 0; display: grid; }
+.refs li { display: grid; gap: 2px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.refs li:first-child { border-top: 1px solid var(--line); }
+.refs .src { font-family: var(--mono); font-size: 13px; color: var(--ink-muted); }
+.refs p { font-size: 15px; }
+.use { display: grid; gap: 8px; }
+.use h3 { margin-top: 4px; }
+.use ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 16px; }
+
+/* Demo stage */
+.stage { background: var(--paper); border: 1px solid var(--line); border-radius: 2px; padding: 24px; display: grid; gap: 14px; min-height: 260px; align-content: start; }
+.stage .cap { font-size: 14px; color: var(--ink-muted); }
+.stage button.act { font: 700 14px var(--mono); background: transparent; color: var(--espresso); border: 1px solid var(--espresso); border-radius: 2px; padding: 8px 14px; cursor: pointer; justify-self: start; }
+
+/* 1. Rack of hang tags */
+.rack { position: relative; padding-top: 18px; display: flex; gap: 18px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; }
+.rack::before { content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 3px; background: var(--ink-muted); border-radius: 2px; }
+.hanger { flex: 0 0 auto; scroll-snap-align: start; display: grid; justify-items: center; cursor: grab; }
+.hanger .hook { width: 14px; height: 16px; border: 2px solid var(--ink-muted); border-bottom: 0; border-radius: 8px 8px 0 0; margin-top: -12px; }
+.piece { width: 120px; transform-origin: 50% -10px; transition: transform 0.6s cubic-bezier(.3,1.6,.5,1); }
+.piece .garment { height: 120px; background: var(--kraft); border-radius: 30px 30px 2px 2px; display: grid; place-items: center; font-family: var(--display); font-style: italic; color: var(--espresso); }
+.piece .htag { position: relative; margin: -14px 0 0 72px; width: 58px; background: var(--paper); border: 1px solid var(--line); padding: 6px 4px; text-align: center; font: 700 13px/1.2 var(--mono); transform-origin: 50% 0; transition: transform 0.7s cubic-bezier(.3,1.8,.5,1); }
+.piece .htag small { display: block; font-weight: 400; color: var(--ink-muted); }
+.hanger:hover .piece { transform: rotate(-3deg); }
+.hanger:hover .htag { transform: rotate(14deg); }
+.hanger.sold .htag::after { content: "KUHA KO!"; position: absolute; inset: 8px -10px auto; transform: rotate(-12deg); font: 700 12px var(--mono); color: var(--rust); border: 2px solid var(--rust); padding: 1px 2px; background: var(--paper); animation: thunk 0.32s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes thunk { from { transform: rotate(-12deg) scale(1.9); opacity: 0; } to { transform: rotate(-12deg) scale(1); opacity: 1; } }
+
+/* 2. Menu board split-flap countdown */
+.board { background: var(--board); color: var(--on-board); padding: 20px; border-radius: 2px; display: grid; gap: 12px; }
+.board .lbl { font-family: var(--mono); font-size: 13px; color: var(--mustard); }
+.flaps { display: flex; gap: 6px; flex-wrap: wrap; align-items: end; }
+.flap { font: 700 34px/1 var(--mono); background: rgba(0,0,0,.28); padding: 8px 6px; min-width: 1.1em; text-align: center; border-radius: 2px; position: relative; font-variant-numeric: tabular-nums; }
+.flap::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; border-top: 1px solid rgba(0,0,0,.45); }
+.flap.flip { animation: flip 0.18s ease-in; }
+@keyframes flip { 0% { transform: rotateX(0); } 50% { transform: rotateX(80deg); } 100% { transform: rotateX(0); } }
+.unit { font: 400 13px var(--mono); color: var(--on-board); opacity: .8; margin: 0 8px 6px 2px; }
+.drinks { display: grid; gap: 4px; font-size: 15px; border-top: 1px solid rgba(243,235,221,.25); padding-top: 10px; }
+.drinks div { display: flex; justify-content: space-between; gap: 12px; }
+.drinks span:last-child { font-family: var(--mono); color: var(--mustard); }
+
+/* 3. Live comments */
+.feed { background: var(--board); color: var(--on-board); border-radius: 2px; padding: 14px; height: 210px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; }
+.cm { display: grid; grid-template-columns: 28px 1fr; gap: 8px; font-size: 15px; animation: rise 0.35s ease-out both; }
+.cm i { width: 28px; height: 28px; border-radius: 50%; background: var(--kraft); display: grid; place-items: center; font: 700 12px var(--mono); color: var(--espresso); font-style: normal; }
+.cm.win b { color: var(--mustard); }
+.cm.win small { display: block; font: 700 13px var(--mono); color: var(--mustard); }
+@keyframes rise { from { transform: translateY(14px); opacity: 0; } }
+
+.rule { display: grid; gap: 12px; border-top: 1px solid var(--espresso); padding-top: 24px; }
+.rule ul { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+.next { background: var(--paper); border: 1px solid var(--line); padding: 20px; border-radius: 2px; display: grid; gap: 10px; }
+.sources { font-size: 14px; color: var(--ink-muted); display: grid; gap: 6px; }
+.sources ul { margin: 0; padding-left: 18px; columns: 2 260px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+</style>
+
+<div class="wrap">
+  <section class="intro">
+    <span class="tag">Research for kuha-ko · 2 Nov 2026</span>
+    <h1>Making Kuha Ko feel like you can pick it up</h1>
+    <p class="lede">I looked through Awwwards winners and Dribbble shots for coffee bars, bakeries, vintage shops and live selling, to find interactions that would make the site feel dynamic without losing its quiet, well-kept-shop tone. Below are three directions, each with the references behind it and a small working demo built with the brand's own colours and type.</p>
+    <div class="brief">
+      <div><b>Keep</b><span>Tokens, Fraunces / DM Sans / Courier Prime, square corners, hairlines, no shadows.</span></div>
+      <div><b>Add</b><span>Motion that answers a person's hand: drag, tap, claim. Not decoration on every section.</span></div>
+      <div><b>Limits</b><span>Fast on mid-range Android in Iloilo, no WebGL or 3D, calm under reduced motion.</span></div>
+    </div>
+  </section>
+
+  <section class="dir" aria-labelledby="d1">
+    <header>
+      <span class="tag">Direction A · thrift and the cart</span>
+      <h2 id="d1">The rack you can browse by hand <span class="rec">Recommended</span></h2>
+      <p>The site already has hang tags and a stamp in its component library, and the name means "I'll take it". This direction turns those into the interaction: pieces hang on a rail you can drag, tags swing when you touch them, and adding to the cart stamps the tag. That one stamp becomes the site's signature moment.</p>
+    </header>
+    <div class="split">
+      <div class="stage" aria-label="Demo: rack of hang tags">
+        <div class="rack" id="rack"></div>
+        <p class="cap">Hover or tap a piece. Tap twice to claim it.</p>
+        <button class="act" type="button" id="rackReset">Put them back</button>
+      </div>
+      <div class="use">
+        <ul class="refs">
+          <li><span class="src">Awwwards · Honorable Mention 2025</span><a href="https://www.awwwards.com/sites/bernice-bakery">Bernice Bakery</a><p>A cookie-crumbs microinteraction and lots of motion on a store that stays easy to shop. The proof that playful and shoppable can coexist.</p></li>
+          <li><span class="src">Awwwards · Site of the Day 2024</span><a href="https://www.awwwards.com/sites/escape-coffee">Escape Coffee</a><p>Product-listing thumbnails that react to the cursor; a calm Shopify store with one strong hover idea.</p></li>
+          <li><span class="src">Awwwards · element</span><a href="https://www.awwwards.com/inspiration/vintageria-vintage-shop-search-filter">Vintageria product filter</a><p>A vintage shop where filtering one-of-a-kind pieces feels like digging through a bin.</p></li>
+          <li><span class="src">Awwwards · element</span><a href="https://www.awwwards.com/inspiration/woset-e-commerce">Woset cart</a> and <a href="https://www.awwwards.com/inspiration/add-to-cart-microinteraction-obachan">Obachan add to cart</a><p>Add-to-cart moments that show the item travelling into the basket.</p></li>
+          <li><span class="src">Dribbble · tags</span><a href="https://dribbble.com/tags/vintage-clothing-store">Vintage clothing store</a> and <a href="https://dribbble.com/tags/thrift-shop">Thrift shop</a><p>Mostly static, but useful for how others lay out one-off pieces and condition notes.</p></li>
+        </ul>
+        <h3>Where it goes on Kuha Ko</h3>
+        <ul>
+          <li>Thrift page: the rack as a draggable rail (touch swipe on phones), tags that swing on hover or tap.</li>
+          <li>Add to cart: a KUHA KO! stamp lands on the tag, and the rattan basket in the header nods once.</li>
+          <li>Cart and order page: the order total prints like a receipt strip.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="dir" aria-labelledby="d2">
+    <header>
+      <span class="tag">Direction B · coffee and the count to opening</span>
+      <h2 id="d2">The menu board that changes</h2>
+      <p>Coffee sites that won awards lean on one object that moves with you: a clock on scroll, a menu that flips. For Kuha Ko that object is the menu board. Its letters flip like a split-flap sign, it counts the days to opening on June 22, 2027, and on opening day the same board turns into the live menu.</p>
+    </header>
+    <div class="split">
+      <div class="stage" aria-label="Demo: split-flap menu board">
+        <div class="board">
+          <span class="lbl">Doors open in</span>
+          <div class="flaps" id="flaps"></div>
+          <div class="drinks" id="drinks"></div>
+        </div>
+        <button class="act" type="button" id="flipAgain">Flip the board</button>
+      </div>
+      <div class="use">
+        <ul class="refs">
+          <li><span class="src">Awwwards · Honorable Mention 2025</span><a href="https://www.awwwards.com/sites/le-pain-quotidien">Le Pain Quotidien</a><p>An animated clock on scroll, masked type with video, and a menu page that feels like part of the story.</p></li>
+          <li><span class="src">Awwwards · Honorable Mention 2022</span><a href="https://www.awwwards.com/sites/d-e-cafe">D.E Café</a><p>A page loader and page transitions (GSAP, Barba). The idea to borrow is the transition between pages, which Kuha Ko now has since each section is its own page.</p></li>
+          <li><span class="src">Awwwards · Site of the Day 2018</span><a href="https://www.awwwards.com/sites/ceremony-coffee-roasters">Ceremony Coffee Roasters</a><p>A cursor that colours in as you move. A reminder that one odd, memorable touch can carry a site.</p></li>
+          <li><span class="src">Awwwards · element</span><a href="https://www.awwwards.com/inspiration/interactive-scroll-cycle-coffee-ground-zero-bkkdw2026">Coffee Ground Zero scroll cycle</a><p>Coffee's journey told through scroll. Good inspiration for a short "bean to cup" story on the menu page.</p></li>
+          <li><span class="src">Dribbble · tag</span><a href="https://dribbble.com/tags/coffee_website">Coffee website</a><p>Landing pages with parallax cups and steam. Mostly the look to avoid: they all resemble each other.</p></li>
+        </ul>
+        <h3>Where it goes on Kuha Ko</h3>
+        <ul>
+          <li>Home hero: the board counts down to opening day; after June 22 it shows today's drinks.</li>
+          <li>Menu page: switching coffee categories flips the board's rows instead of swapping tabs.</li>
+          <li>Between pages: a short cross-fade like the lamp's, so moving between pages feels like one place.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="dir" aria-labelledby="d3">
+    <header>
+      <span class="tag">Direction C · live selling, starting this month</span>
+      <h2 id="d3">A live room that shows the claim</h2>
+      <p>The Live page currently explains the rules in text and a static demo. Live-shopping concepts on Dribbble show the room moving: comments rising, a piece up for grabs, the first claim winning. A looping demo here would teach the rules without reading them.</p>
+    </header>
+    <div class="split">
+      <div class="stage" aria-label="Demo: live-selling comment feed">
+        <div class="feed" id="feed" aria-live="off"></div>
+        <p class="cap">The first KUHA KO! wins the piece. The demo loops.</p>
+      </div>
+      <div class="use">
+        <ul class="refs">
+          <li><span class="src">Dribbble</span><a href="https://dribbble.com/shots/20619655-Fashion-Live-Stream-Shopping-App">Fashion live stream shopping app</a> (MindInventory)<p>Product cards that slide over the stream while comments run.</p></li>
+          <li><span class="src">Dribbble</span><a href="https://dribbble.com/shots/16233383-Live-Stream-Shopping-App">Live stream shopping app</a> (Purrweb)<p>Auction-style buying during the stream: close to how claims work.</p></li>
+          <li><span class="src">Dribbble</span><a href="https://dribbble.com/shots/23951353-Live-Shopping-Streaming-App-UI">Live shopping streaming UI</a> (Akshay Syal)<p>Live-selling chrome: the live badge, the viewer count, the current item.</p></li>
+          <li><span class="src">Dribbble · tag</span><a href="https://dribbble.com/tags/countdown">Countdown</a><p>Drop timers, useful for "next live: Friday 8 PM".</p></li>
+        </ul>
+        <h3>Where it goes on Kuha Ko</h3>
+        <ul>
+          <li>Live page: replace the static demo with this looping feed, ending on the claim stamp from Direction A.</li>
+          <li>A "Next live" countdown once the Facebook page and schedule are set.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="rule" aria-labelledby="skip">
+    <h2 id="skip">What I'd leave out</h2>
+    <ul>
+      <li><strong>3D heroes and WebGL</strong>, as on <a href="https://www.awwwards.com/sites/coffeetech-r">CoffeeTech</a> (Site of the Day, July 2026) and <a href="https://www.awwwards.com/sites/caffe-design">Caffè Design</a>. They win awards but are heavy on the phones most customers will use, and they don't say anything about a thrift rack in Iloilo.</li>
+      <li><strong>Fade-and-slide on every section.</strong> The site does this today (<code>data-reveal</code>). It's the most common pattern on generated sites. I'd trade it for the one stamp moment and calmer page entries.</li>
+      <li><strong>Custom cursors everywhere.</strong> Nice on desktop, invisible on phones, where most visitors are.</li>
+    </ul>
+  </section>
+
+  <section class="next" aria-labelledby="nx">
+    <h2 id="nx">My recommendation</h2>
+    <p>Build <strong>Direction A</strong> first: the rack, the swinging tags and the KUHA KO! stamp on add to cart. It uses components the site already has, it's built from the shop's own objects, and it's ready for live selling this month. Then take the claim stamp into the <strong>Direction C</strong> live feed, and save the split-flap board (<strong>B</strong>) for the run-up to opening day. Everything would use CSS and small scripts, with no new animation library, and would stand still for anyone who has reduced motion turned on.</p>
+  </section>
+
+  <footer class="sources">
+    <strong>Sources</strong>
+    <ul>
+      <li><a href="https://www.awwwards.com/sites/bernice-bakery">Bernice Bakery</a></li>
+      <li><a href="https://www.awwwards.com/sites/escape-coffee">Escape Coffee</a></li>
+      <li><a href="https://www.awwwards.com/sites/ceremony-coffee-roasters">Ceremony Coffee Roasters</a></li>
+      <li><a href="https://www.awwwards.com/sites/le-pain-quotidien">Le Pain Quotidien</a></li>
+      <li><a href="https://www.awwwards.com/sites/d-e-cafe">D.E Café</a></li>
+      <li><a href="https://www.awwwards.com/sites/caffe-design">Caffè Design</a></li>
+      <li><a href="https://www.awwwards.com/sites/coffeetech-r">CoffeeTech</a></li>
+      <li><a href="https://www.awwwards.com/sites/only-once-shop-1">Only / Once Shop</a></li>
+      <li><a href="https://www.awwwards.com/inspiration/vintageria-vintage-shop-search-filter">Vintageria filter</a></li>
+      <li><a href="https://www.awwwards.com/inspiration/woset-e-commerce">Woset cart</a></li>
+      <li><a href="https://www.awwwards.com/inspiration/add-to-cart-microinteraction-obachan">Obachan add to cart</a></li>
+      <li><a href="https://www.awwwards.com/inspiration/interactive-scroll-cycle-coffee-ground-zero-bkkdw2026">Coffee Ground Zero</a></li>
+      <li><a href="https://dribbble.com/tags/coffee_website">Dribbble: coffee website</a></li>
+      <li><a href="https://dribbble.com/tags/thrift-shop">Dribbble: thrift shop</a></li>
+      <li><a href="https://dribbble.com/tags/vintage-clothing-store">Dribbble: vintage clothing store</a></li>
+      <li><a href="https://dribbble.com/shots/20619655-Fashion-Live-Stream-Shopping-App">Dribbble: fashion live shopping</a></li>
+      <li><a href="https://dribbble.com/shots/16233383-Live-Stream-Shopping-App">Dribbble: live stream shopping</a></li>
+      <li><a href="https://dribbble.com/shots/23951353-Live-Shopping-Streaming-App-UI">Dribbble: live shopping UI</a></li>
+    </ul>
+  </footer>
+</div>
+
+<script>
+(() => {
+  // A. Rack
+  const pieces = [
+    ['Denim jacket', '₱650', 'M'], ['Linen shirt', '₱380', 'L'], ['Pleated skirt', '₱420', 'S'],
+    ['Barong top', '₱550', 'M'], ['Knit vest', '₱300', 'M'],
+  ];
+  const rack = document.getElementById('rack');
+  const build = () => {
+    rack.innerHTML = '';
+    pieces.forEach(([name, price, size]) => {
+      const h = document.createElement('button');
+      h.type = 'button'; h.className = 'hanger';
+      h.style.cssText = 'background:none;border:0;padding:0;color:inherit;font:inherit';
+      h.setAttribute('aria-label', `${name}, ${price}, size ${size}`);
+      h.innerHTML = `<span class="hook"></span><span class="piece"><span class="garment" style="display:grid">${name.split(' ')[0]}</span><span class="htag" style="display:block">${price}<small>Size ${size}</small></span></span>`;
+      let taps = 0;
+      h.addEventListener('click', () => { if (++taps >= 2) h.classList.add('sold'); });
+      rack.appendChild(h);
+    });
+  };
+  build();
+  document.getElementById('rackReset').addEventListener('click', build);
+
+  // B. Split-flap
+  const flaps = document.getElementById('flaps');
+  const drinks = document.getElementById('drinks');
+  const menu = [['Iced latte', 'Soon'], ['Tablea mocha', 'Soon'], ['Americano', 'Soon']];
+  drinks.innerHTML = menu.map(([d, p]) => `<div><span>${d}</span><span>${p}</span></div>`).join('');
+  const days = Math.max(0, Math.ceil((new Date('2027-06-22T08:00:00+08:00') - new Date()) / 864e5));
+  const render = (animate) => {
+    const digits = String(days).padStart(3, '0').split('');
+    flaps.innerHTML = '';
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    digits.forEach((d, i) => {
+      const f = document.createElement('span'); f.className = 'flap'; f.textContent = animate && !reduce ? '0' : d;
+      flaps.appendChild(f);
+      if (animate && !reduce) {
+        let n = 0; const target = +d; const steps = 6 + i * 4;
+        const t = setInterval(() => {
+          n++; f.classList.remove('flip'); void f.offsetWidth; f.classList.add('flip');
+          f.textContent = n >= steps ? d : String((target + n) % 10);
+          if (n >= steps) clearInterval(t);
+        }, 70);
+      }
+    });
+    const u = document.createElement('span'); u.className = 'unit'; u.textContent = 'days'; flaps.appendChild(u);
+  };
+  render(true);
+  document.getElementById('flipAgain').addEventListener('click', () => render(true));
+
+  // C. Live feed
+  const feed = document.getElementById('feed');
+  const script = [
+    ['AM', 'Ana', 'Ang nami sang jacket'],
+    ['JR', 'Jun', 'Size?'],
+    ['KK', 'Kuha Ko', 'Medium. Denim jacket, ₱650. Up for grabs now'],
+    ['LT', 'Lia', 'KUHA KO!', true],
+    ['MS', 'Mika', 'KUHA KO!'],
+    ['KK', 'Kuha Ko', 'Lia got it first. Salamat, Lia'],
+  ];
+  let i = 0;
+  const push = () => {
+    if (i === script.length) { i = 0; feed.innerHTML = ''; }
+    const [ini, who, text, win] = script[i++];
+    const el = document.createElement('div');
+    el.className = 'cm' + (win ? ' win' : '');
+    el.innerHTML = `<i>${ini}</i><span><b>${who}</b> ${text}${win ? '<small>First claim · wins the piece</small>' : ''}</span>`;
+    feed.appendChild(el);
+    while (feed.children.length > 5) feed.firstChild.remove();
+  };
+  push();
+  setInterval(push, 1400);
+})();
+</script>
