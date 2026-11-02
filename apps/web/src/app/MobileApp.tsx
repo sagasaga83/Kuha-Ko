@@ -3,7 +3,7 @@ import { Wordmark } from '@kuhako/ui';
 import { Screen } from './ui';
 import { CartBar } from '../shop/Shop';
 import { PAGES, navigate, pageFor, pathFor } from '../router';
-import { HomeScreen, LiveScreen, MenuScreen, ThriftScreen, VisitScreen, type TabId } from './screens';
+import { HomeScreen, LiveScreen, MenuScreen, ThriftScreen, AboutScreen, type TabId } from './screens';
 
 const tabs: { id: TabId; label: string; icon: ReactNode }[] = [
   {
@@ -44,8 +44,8 @@ const tabs: { id: TabId; label: string; icon: ReactNode }[] = [
     ),
   },
   {
-    id: 'visit',
-    label: 'Visit',
+    id: 'about',
+    label: 'About',
     icon: (
       <>
         <path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z" />
@@ -60,7 +60,7 @@ const titles: Record<TabId, string> = {
   menu: 'Menu',
   thrift: 'Thrift',
   live: 'Live selling',
-  visit: 'Visit',
+  about: 'About',
 };
 
 /** Opens on the tab for the page's address (/menu → Menu), or `?app=menu` (handy for previews). */
@@ -125,7 +125,7 @@ export function MobileApp() {
       {screen('menu', <MenuScreen />)}
       {screen('thrift', <ThriftScreen />)}
       {screen('live', <LiveScreen />)}
-      {screen('visit', <VisitScreen />)}
+      {screen('about', <AboutScreen />)}
       <CartBar />
       <nav className="app-tabbar" role="tablist" aria-label="Sections">
         {tabs.map((t, i) => (

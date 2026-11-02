@@ -63,9 +63,19 @@ describe('pages', () => {
     expect(document.title).toBe('Menu · Kuha Ko');
     expect(within(nav).getByRole('link', { name: 'Menu' }).getAttribute('aria-current')).toBe('page');
     expect(screen.getByRole('tab', { name: new RegExp(menu[0].title) })).toBeTruthy();
-    fireEvent.click(within(nav).getByRole('link', { name: 'Visit' }));
-    expect(screen.getByRole('heading', { level: 1, name: 'Visit the shop' })).toBeTruthy();
+    fireEvent.click(within(nav).getByRole('link', { name: 'About' }));
+    expect(window.location.pathname).toBe('/about');
+    expect(screen.getByRole('heading', { level: 1, name: 'About Kuha Ko' })).toBeTruthy();
     expect(screen.queryByRole('tab', { name: new RegExp(menu[0].title) })).toBeNull();
+  });
+
+  it('sends the old Visit page to About', () => {
+    at('/visit');
+    upgradeHashLink();
+    expect(window.location.pathname).toBe('/about');
+    at('/#visit');
+    upgradeHashLink();
+    expect(window.location.pathname).toBe('/about');
   });
 
   it('turns old one-page links into page addresses', () => {

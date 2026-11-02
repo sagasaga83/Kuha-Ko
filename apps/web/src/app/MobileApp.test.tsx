@@ -52,8 +52,8 @@ describe('the app layout', () => {
   it('pulls the lamp chain for dark mode and can go back to the device setting', async () => {
     vi.useFakeTimers();
     render(<MobileApp />);
-    fireEvent.click(screen.getByRole('tab', { name: 'Visit' }));
-    const visit = within(panel('visit'));
+    fireEvent.click(screen.getByRole('tab', { name: 'About' }));
+    const visit = within(panel('about'));
     const lamp = visit.getByRole('button', { name: /Lamp off \(light mode\)/ });
     fireEvent.click(lamp);
     await act(async () => {

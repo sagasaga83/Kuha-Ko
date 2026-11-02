@@ -46,6 +46,13 @@
       ]
     }
   ],
+  "redirects": [
+    {
+      "source": "/visit",
+      "destination": "/about",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/admin",
@@ -80,7 +87,7 @@
       "destination": "/index.html"
     },
     {
-      "source": "/visit",
+      "source": "/about",
       "destination": "/index.html"
     }
   ],

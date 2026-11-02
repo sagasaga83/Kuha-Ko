@@ -40,7 +40,7 @@ Changes reach the website within a minute.
 5. Their items are **held for 30 minutes** until they send the reference, so nobody else can buy the same thrift piece. No reference in time: the order expires and the items go back on sale. Once a reference is sent, the items stay held until you confirm or reject it.
 6. You confirm it under *Orders*, then move it along to delivered. The order page shows each step.
 
-Customers can also **sign in** at `/account` (linked as *Sign in* in the site menu, at checkout, and on the app's Visit tab). It's optional: guest checkout works as before. Signed-in customers get their name, phone, email and delivery spot filled in at checkout (saved again each time they order, or edited on `/account`), and see all their orders there. These orders are marked as theirs in the database (`orders.customer_id`); the Orders tab in the admin works the same either way.
+Customers can also **sign in** at `/account` (linked as *Sign in* in the site menu, at checkout, and on the app's About tab). It's optional: guest checkout works as before. Signed-in customers get their name, phone, email and delivery spot filled in at checkout (saved again each time they order, or edited on `/account`), and see all their orders there. These orders are marked as theirs in the database (`orders.customer_id`); the Orders tab in the admin works the same either way.
 
 If someone pays but the order already expired, they're told to message you with the reference: check it, and refund or re-create the order by hand.
 
