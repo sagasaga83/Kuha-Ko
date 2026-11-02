@@ -584,18 +584,23 @@ body::before {
   background: linear-gradient(var(--espresso), var(--espresso)) 0 3px / 100% 2px no-repeat;
 }
 .hang {
+  /* one unit of the cut-out's 900-wide drawing, for the hanger, neck and tag */
+  --u: calc(100cqw / 900);
   position: relative;
+  display: flow-root;
   container-type: inline-size;
-  /* room for the hook above the photo: 110 of the hanger's 900 units */
-  padding-top: 12.222%;
   transform-origin: 50% 3px;
 }
-.hang__hanger { position: absolute; top: 0; left: 0; width: 100%; height: auto; overflow: visible; }
-.hang__wood { fill: var(--kraft); stroke: var(--ink-muted); stroke-width: 3; stroke-linejoin: round; }
-.hang__bar { fill: none; stroke: var(--ink-muted); stroke-width: 11; stroke-linecap: round; }
-.hang__notch { fill: none; stroke: var(--ink-muted); stroke-width: 5; stroke-linecap: round; }
-.hang__hook { fill: none; stroke: var(--ink-muted); stroke-width: 6; stroke-linecap: round; }
-.hang .photo { z-index: 1; }
+.hang__hanger {
+  position: absolute;
+  top: 0;
+  z-index: 0;
+  max-width: none;
+  height: auto;
+  pointer-events: none;
+}
+.hang__hanger--front { z-index: 2; }
+.hang .photo { z-index: 1; margin-top: calc(var(--off) * var(--u)); }
 /* A cut-out garment: no card behind it, it hangs in the air. */
 .photo.photo--cutout,
 :root[data-theme='dark'] .photo.photo--cutout { background: none; border-radius: 0; overflow: visible; }
@@ -606,10 +611,10 @@ body::before {
 .hang__tag {
   /* tied at the collar (y 262), where the hook comes out, hanging low enough to keep
      the collar in view */
-  --string: calc(218 * 100cqw / 900);
+  --string: calc(218 * var(--u));
   position: absolute;
-  z-index: 2;
-  top: calc(480 * 100cqw / 900);
+  z-index: 3;
+  top: calc((var(--off) + 370) * var(--u));
   left: 50%;
   translate: -50% 0;
   margin: 0;

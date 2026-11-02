@@ -24,10 +24,13 @@ export interface PhotoSlot {
    */
   cutout?: boolean;
   /**
-   * How the rack's hanger fits this cut-out, when the default doesn't: `scale` its width
-   * (1 = default) and `drop` it down, in the cut-out's units (the image is 900 wide).
+   * How the rack's wooden hanger sits in this cut-out, in the cut-out's units (900 × 1200):
+   * its `width` (default 400, keep it inside the shoulders), the height of the wood's
+   * `crown` (default 120; the collar is at about 150), and the `neck` opening as an
+   * ellipse whose lower edge is the front neckline. The hanger shows through the neck
+   * opening; leave `neck` out for a back view.
    */
-  hanger?: { scale?: number; drop?: number };
+  hanger?: { width?: number; crown?: number; neck?: { cx: number; cy: number; rx: number; ry: number } };
   /** Set while a slot uses a temporary stock photo: where it came from. */
   stockSource?: string;
 }
@@ -76,7 +79,7 @@ export const photos: {
       brief: 'Denim jacket on its hanger, front on, against a plain wall.',
       ratio: '3 / 4',
       cutout: true,
-      hanger: { scale: 0.8, drop: 30 },
+      hanger: { width: 330, crown: 140, neck: { cx: 440, cy: 150, rx: 52, ry: 100 } },
       stockSource: 'https://www.pexels.com/photo/16428589/ (James Frid)',
     },
     {
@@ -85,6 +88,7 @@ export const photos: {
       brief: 'A tee on its hanger, front on, against a plain wall.',
       ratio: '3 / 4',
       cutout: true,
+      hanger: { neck: { cx: 450, cy: 148, rx: 125, ry: 52 } },
       stockSource: 'https://www.pexels.com/photo/8148577/',
     },
     {
@@ -101,7 +105,7 @@ export const photos: {
       brief: 'An oversized tee on its hanger, against a plain wall.',
       ratio: '3 / 4',
       cutout: true,
-      hanger: { scale: 0.8, drop: 8 },
+      hanger: { width: 360, crown: 128, neck: { cx: 428, cy: 160, rx: 100, ry: 60 } },
       stockSource: 'https://www.pexels.com/photo/9558265/',
     },
     {
@@ -110,6 +114,7 @@ export const photos: {
       brief: 'A tee on its hanger, front on, against a plain wall.',
       ratio: '3 / 4',
       cutout: true,
+      hanger: { neck: { cx: 450, cy: 150, rx: 108, ry: 66 } },
       stockSource: 'https://www.pexels.com/photo/11671275/',
     },
   ],
