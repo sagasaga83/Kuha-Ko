@@ -577,6 +577,33 @@ body::before {
 .rack__track.is-dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
 .rack__track img { -webkit-user-drag: none; }
 
+/* The first time the rack comes into view (useArrival), the pieces slide in along the
+   rail one after another, leaning back from their hooks, and swing to a stop. */
+.rack__track.is-waiting > li,
+.app-rack.is-waiting > li { opacity: 0; translate: 60vw 0; }
+.rack__track.is-arriving > li,
+.app-rack.is-arriving > li {
+  transform-origin: 50% 3px;
+  animation: rack-arrive 1300ms both;
+  animation-delay: calc(var(--i, 0) * 110ms);
+}
+/* Pieces waiting off to the right widen the rack; without this it snaps to them. */
+.rack__track.is-waiting,
+.rack__track.is-arriving,
+.app-rack.is-waiting,
+.app-rack.is-arriving { scroll-snap-type: none; }
+/* On a fresh load the rack is often in view under the splash: wait for it to lift. */
+html.is-splashing .rack__track.is-arriving > li,
+html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
+@keyframes rack-arrive {
+  0% { opacity: 0; translate: 60vw 0; rotate: -7deg; animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1); }
+  10% { opacity: 1; }
+  55% { translate: 0 0; rotate: -5deg; animation-timing-function: ease-in-out; }
+  72% { rotate: 3.2deg; animation-timing-function: ease-in-out; }
+  87% { rotate: -1.3deg; animation-timing-function: ease-in-out; }
+  100% { opacity: 1; translate: 0 0; rotate: 0deg; }
+}
+
 /* A piece on the rack (RackPiece, on the site and in the app): the rail is drawn as the
    track's background, so it stays put while the hangers slide along it. */
 .rack__track,
