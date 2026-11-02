@@ -192,11 +192,15 @@
   cursor: pointer;
 }
 .shop-add:hover { background: var(--rust); color: var(--on-rust); }
+/* Thrift's accent is sage-ink (rust belongs to the coffee). */
+#thrift .shop-add { color: var(--sage-ink); border-color: var(--sage-ink); }
+#thrift .shop-add:hover { background: var(--sage-ink); color: var(--canvas); }
 .shop-cartbtn:focus-visible,
 .shop-add:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
 /* Thrift pieces for sale online */
-.shop-online { margin-bottom: var(--space-6); }
+/* Same gap above as the shirts below it; the shirts section adds the gap after. */
+.shop-online { margin-top: var(--space-6); }
 .shop-pieces { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4) var(--space-3); }
 .shop-pieces--site { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
 .shop-pieces--app { grid-template-columns: repeat(2, 1fr); padding-inline: var(--app-gutter) var(--app-gutter-r); margin-bottom: var(--space-5); }
@@ -283,3 +287,31 @@ button.shop-pieces__card { cursor: pointer; }
 }
 .order__number { font-family: var(--font-mono); font-size: 20px; letter-spacing: 0.02em; }
 .order__ref { margin-top: var(--space-3); }
+
+/* Account page (/account) */
+.account__lede { margin: 0 0 var(--space-4); }
+.account__signin { display: flex; justify-content: center; margin: 0 0 var(--space-5); }
+/* Clerk's card has its own max width; keep it inside the page gutter on small phones. */
+.account__signin > * { max-width: 100%; }
+.account__orders { list-style: none; margin: 0 0 var(--space-5); padding: 0; border-top: 1px solid var(--line); }
+.account__orders li { border-bottom: 1px solid var(--line); }
+.account__order { display: grid; gap: 4px; padding: var(--space-3) 0; color: var(--espresso); text-decoration: none; }
+.account__order:hover .account__order-summary { text-decoration: underline; }
+.account__order:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.account__order-head,
+.account__order-foot { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-2); }
+.account__order-status { font: 400 12px var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); }
+.account__order-status[data-status='pending_payment'],
+.account__order-status[data-status='awaiting_confirmation'] { color: var(--rust); }
+.account__order-summary { font-weight: 500; }
+.account__order-foot { font-size: 14px; color: var(--ink-muted); }
+.account__order-total { font-family: var(--font-mono); color: var(--espresso); }
+.account__details { border-top: 1px solid var(--line); padding-top: var(--space-2); margin-bottom: var(--space-4); }
+.account__signout { display: block; margin: 0 0 var(--space-3); }
+/* Clerk draws borders with box-shadow and adds a gradient to its button; Kuha Ko uses flat hairlines. */
+.account__signin .cl-button,
+.account__signin .cl-formFieldInput { box-shadow: 0 0 0 1px var(--line) !important; }
+.account__signin .cl-formButtonPrimary { box-shadow: none !important; }
+.account__signin .cl-button::after { display: none !important; }
+.account__signin .cl-button:focus-visible,
+.account__signin .cl-formFieldInput:focus-visible { outline: 2px solid var(--focus-ring) !important; outline-offset: 2px; }

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 
 import { Wordmark } from '@kuhako/ui';
 import { Screen } from './ui';
 import { CartBar } from '../shop/Shop';
-import { navigate, pageFor, pathFor } from '../router';
+import { PAGES, navigate, pageFor, pathFor } from '../router';
 import { HomeScreen, LiveScreen, MenuScreen, ThriftScreen, VisitScreen, type TabId } from './screens';
 
 const tabs: { id: TabId; label: string; icon: ReactNode }[] = [
@@ -81,6 +81,11 @@ export function MobileApp() {
   }, []);
 
   // Keep the address in step with the tab (/menu, /thrift …), so links and the full site agree.
+  // The browser tab names the screen, as the full site names its page.
+  useEffect(() => {
+    document.title = PAGES.find((p) => p.id === tab)?.title ?? PAGES[0].title;
+  }, [tab]);
+
   useEffect(() => {
     if (pageFor(window.location.pathname) === null && window.location.pathname !== '/') return;
     navigate(pathFor(tab) + window.location.search, { replace: true, scroll: false });

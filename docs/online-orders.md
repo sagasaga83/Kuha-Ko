@@ -40,6 +40,8 @@ Changes reach the website within a minute.
 5. Their items are **held for 30 minutes** until they send the reference, so nobody else can buy the same thrift piece. No reference in time: the order expires and the items go back on sale. Once a reference is sent, the items stay held until you confirm or reject it.
 6. You confirm it under *Orders*, then move it along to delivered. The order page shows each step.
 
+Customers can also **sign in** at `/account` (linked as *Sign in* in the site menu, at checkout, and on the app's Visit tab). It's optional: guest checkout works as before. Signed-in customers get their name, phone, email and delivery spot filled in at checkout (saved again each time they order, or edited on `/account`), and see all their orders there. These orders are marked as theirs in the database (`orders.customer_id`); the Orders tab in the admin works the same either way.
+
 If someone pays but the order already expired, they're told to message you with the reference: check it, and refund or re-create the order by hand.
 
 ## Setup (one time)
@@ -87,10 +89,17 @@ Connected through the Vercel Marketplace as `kuha-ko-email` (free plan, Tokyo re
 
 Until the domain is verified, Resend refuses to send; orders still go through and the failure is only logged.
 
+### Customer accounts: Clerk
+
+Connected through the Vercel Marketplace as `kuha-ko-auth` (`CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`). Clerk shows the sign-in form and sends the sign-in emails itself, so it works before kuha-ko.com is set up. Without these keys the *Sign in* links are hidden and everyone checks out as a guest.
+
+Open the Clerk dashboard from the Vercel integration page to choose how people sign in (email code, Google, Facebook) and to see who has signed up. It starts as a **development** instance: fine for testing (it shows a "Development mode" badge, and test emails like `ana+clerk_test@example.com` take the code `424242`), but before launch switch it to a **production** instance, which needs the site's own domain.
+
 ## For developers
 
 - Local, with the API: `vercel env pull` (repo root), then `vercel dev`. `npm run dev` runs the site alone, showing the built-in menu.
 - Schema changes: add `apps/web/db/migrations/NNN_name.sql`, then `npm run db:migrate --workspace @kuhako/web`. Each file runs once, in one transaction.
+- Accounts: `src/account/` (`/account` signs in, `/account/sign-up` signs up: separate pages so Clerk’s links between steps always land on a real one; `auth.tsx` wraps Clerk so the rest of the site uses `useAccount()`), `api/account.ts`, `server/customers.ts`. The browser sends the Clerk session token as `Authorization: Bearer …`; a missing or bad token at checkout just means a guest order.
 - Order logic: `server/orders.ts`. Stock holds use the SQL functions `reserve_stock` and `release_order` (`db/migrations/002_orders.sql`), so two buyers can't get the same piece and stock is never returned twice.
 - The database is in AWS us-east-1 and the functions run in `iad1` next to it (`apps/web/vercel.json`).
 

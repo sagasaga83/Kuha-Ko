@@ -84,6 +84,33 @@ export const ORDER_STATUS_LABELS = {
 } as const;
 export type OrderStatus = keyof typeof ORDER_STATUS_LABELS;
 
+/** A signed-in customer's saved checkout details (blank strings until they've ordered or filled them in). */
+export interface Profile {
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  notes: string;
+  pin: { lat: number; lng: number } | null;
+}
+
+/** One of a signed-in customer's orders, as listed on /account. */
+export interface AccountOrder {
+  id: string;
+  code: string;
+  status: OrderStatus;
+  createdAt: string;
+  total: number;
+  /** "2 × Iced latte, Kuha Ko shirt" */
+  summary: string;
+}
+
+/** What GET /api/account returns. */
+export interface AccountView {
+  profile: Profile;
+  orders: AccountOrder[];
+}
+
 /** What GET /api/order returns to the customer. */
 export interface OrderView {
   id: string;

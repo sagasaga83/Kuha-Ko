@@ -107,7 +107,7 @@ export default function OrderPage({ id }: { id: string }) {
             {order.status === 'pending_payment'
               ? `Pay ${formatPeso(order.total)} to finish your order`
               : order.status === 'paid'
-                ? `Salamat, ${order.customerName.split(' ')[0]}! Payment received.`
+                ? `Salamat, ${order.customerName.split(' ')[0]}. Payment received.`
                 : ORDER_STATUS_LABELS[order.status]}
           </h1>
 
@@ -168,7 +168,7 @@ export default function OrderPage({ id }: { id: string }) {
 
           {order.status === 'awaiting_confirmation' ? (
             <p className="order__box">
-              Thanks! We’re checking your payment (reference <strong>{order.paymentReference}</strong>). This page updates by itself once
+              Thanks. We’re checking your payment (reference <strong>{order.paymentReference}</strong>). This page updates by itself once
               it’s confirmed, usually within a few minutes during shop hours.
             </p>
           ) : null}
