@@ -590,6 +590,8 @@ body::before {
   display: flow-root;
   container-type: inline-size;
   transform-origin: 50% 3px;
+  /* set while the rack scrolls (useRackSway): the piece leans from its hook */
+  rotate: var(--sway, 0deg);
 }
 .hang__hanger {
   position: absolute;
@@ -615,6 +617,8 @@ body::before {
   position: absolute;
   z-index: 3;
   top: calc((var(--off) + 370) * var(--u));
+  /* the tag lags behind the garment it hangs on */
+  rotate: calc(var(--sway, 0deg) * 0.8);
   left: 50%;
   translate: -50% 0;
   margin: 0;
