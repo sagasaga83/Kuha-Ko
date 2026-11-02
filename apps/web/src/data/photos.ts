@@ -23,6 +23,11 @@ export interface PhotoSlot {
    * against a plain wall and remove the background; keep the collar about 1/8 down.
    */
   cutout?: boolean;
+  /**
+   * How the rack's hanger fits this cut-out, when the default doesn't: `scale` its width
+   * (1 = default) and `drop` it down, in the cut-out's units (the image is 900 wide).
+   */
+  hanger?: { scale?: number; drop?: number };
   /** Set while a slot uses a temporary stock photo: where it came from. */
   stockSource?: string;
 }
@@ -71,6 +76,7 @@ export const photos: {
       brief: 'Denim jacket on its hanger, front on, against a plain wall.',
       ratio: '3 / 4',
       cutout: true,
+      hanger: { scale: 0.8, drop: 30 },
       stockSource: 'https://www.pexels.com/photo/16428589/ (James Frid)',
     },
     {
@@ -95,6 +101,7 @@ export const photos: {
       brief: 'An oversized tee on its hanger, against a plain wall.',
       ratio: '3 / 4',
       cutout: true,
+      hanger: { scale: 0.8, drop: 8 },
       stockSource: 'https://www.pexels.com/photo/9558265/',
     },
     {
