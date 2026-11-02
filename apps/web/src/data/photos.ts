@@ -3,9 +3,9 @@
 // to its path ("/photos/hero.jpg"). Brand rules: real drinks and pieces, daylight,
 // one subject per photo, no stock or AI-made images.
 //
-// TEMPORARY: the coffee slots and the first four rack slots below use free
-// Unsplash photos (Unsplash licence: free for commercial use, no attribution
-// required) as stand-ins. Each one is marked with `stockSource`. Replace them
+// TEMPORARY: the coffee slots use free Unsplash photos, and the rack pieces free
+// Pexels photos cut out onto a transparent background (both licences: free for
+// commercial use, no attribution required) as stand-ins. Each one is marked with `stockSource`. Replace them
 // with photos of Kuha Ko's own drinks and pieces before opening, then delete the
 // stock files from public/photos/.
 export interface PhotoSlot {
@@ -17,6 +17,12 @@ export interface PhotoSlot {
   brief: string;
   /** Width / height, as CSS aspect-ratio. */
   ratio: string;
+  /**
+   * A garment cut out onto a transparent background (WebP with alpha), shown with
+   * no card behind it so it can hang on the rack's wooden hanger. Shoot rack pieces
+   * against a plain wall and remove the background; keep the collar about 1/8 down.
+   */
+  cutout?: boolean;
   /** Set while a slot uses a temporary stock photo: where it came from. */
   stockSource?: string;
 }
@@ -60,35 +66,45 @@ export const photos: {
   },
   rack: [
     {
-      src: '/photos/rack/denim-jacket.jpg',
-      alt: 'A faded denim jacket on a wooden hanger against a white wall',
-      brief: 'Denim jacket on the rack. Show the texture.',
+      src: '/photos/rack/denim-jacket.webp',
+      alt: 'A dark-wash denim jacket with chest and hip pockets',
+      brief: 'Denim jacket on its hanger, front on, against a plain wall.',
       ratio: '3 / 4',
-      stockSource: 'https://unsplash.com/photos/-sM7LOq1_eU (Logan Weaver)',
+      cutout: true,
+      stockSource: 'https://www.pexels.com/photo/16428589/ (James Frid)',
     },
     {
-      src: '/photos/rack/knit-sweater.jpg',
-      alt: 'A chunky oatmeal knit sweater on a hanger, sleeves rolled',
-      brief: 'Knit cardigan, folded. Close on the stitch.',
+      src: '/photos/rack/orange-tee.webp',
+      alt: 'A boxy orange cotton T-shirt',
+      brief: 'A tee on its hanger, front on, against a plain wall.',
       ratio: '3 / 4',
-      stockSource: 'https://unsplash.com/photos/mavrg7cLwbA (Toa Heftiba)',
+      cutout: true,
+      stockSource: 'https://www.pexels.com/photo/8148577/',
     },
     {
-      src: '/photos/rack/heart-print-shirt.jpg',
-      alt: 'A blue chambray shirt with a small white heart print on a hanger',
-      brief: 'Printed polo, front on, by the window.',
+      src: '/photos/rack/blazer.webp',
+      alt: 'The back of a light beige linen-blend blazer',
+      brief: 'Blazer on its hanger, back view, against a plain wall.',
       ratio: '3 / 4',
-      stockSource: 'https://unsplash.com/photos/RqYTuWkTdEs (Santhosh Kumar)',
+      cutout: true,
+      stockSource: 'https://www.pexels.com/photo/6909817/',
     },
     {
-      src: '/photos/rack/jeans-tag.jpg',
-      alt: 'The leather back label on a pair of vintage jeans, clipped to a hanger',
-      brief: 'Trousers with the hang tag in frame.',
+      src: '/photos/rack/pink-tee.webp',
+      alt: 'An oversized dusty-pink T-shirt',
+      brief: 'An oversized tee on its hanger, against a plain wall.',
       ratio: '3 / 4',
-      stockSource: 'https://unsplash.com/photos/4v1cMdT1480 (Jimi A.)',
+      cutout: true,
+      stockSource: 'https://www.pexels.com/photo/9558265/',
     },
-    { src: null, alt: 'A close-up of a small flaw on a pre-loved piece', brief: 'Flaw close-up. Honesty is part of the brand.', ratio: '3 / 4' },
-    { src: null, alt: 'The vintage mirror beside the fitting room', brief: 'The vintage mirror and the fitting room.', ratio: '3 / 4' },
+    {
+      src: '/photos/rack/yellow-tee.webp',
+      alt: 'A pale butter-yellow T-shirt with a curved hem',
+      brief: 'A tee on its hanger, front on, against a plain wall.',
+      ratio: '3 / 4',
+      cutout: true,
+      stockSource: 'https://www.pexels.com/photo/11671275/',
+    },
   ],
   shop: {
     src: null,

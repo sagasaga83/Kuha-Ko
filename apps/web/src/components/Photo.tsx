@@ -9,7 +9,7 @@ interface PhotoProps {
 
 /** A photo, or until one is added, a placeholder card that shows the shot brief. */
 export function Photo({ slot, className = '', eager }: PhotoProps) {
-  const cls = `photo ${className}`.trim();
+  const cls = `photo${slot.cutout ? ' photo--cutout' : ''} ${className}`.trim();
   if (slot.src) {
     return (
       <div className={cls} style={{ aspectRatio: slot.ratio }}>
