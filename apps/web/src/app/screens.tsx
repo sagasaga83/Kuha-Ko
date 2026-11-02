@@ -7,6 +7,7 @@ import { addOnsFrom, menuFrom, shirtsFrom, useCatalog } from '../catalog/catalog
 import { useShop } from '../shop/Shop';
 import { OnlineThrift } from '../shop/OnlineThrift';
 import { site } from '../data/site';
+import { RackPiece } from '../components/RackPiece';
 import { Photo } from '../components/Photo';
 import { LiveDemo } from '../components/LiveDemo';
 import { clearTheme, setTheme, storedTheme, type Theme } from '../theme';
@@ -118,8 +119,7 @@ export function ThriftScreen() {
       <ul className="app-rack" aria-label="On the rack" tabIndex={0}>
         {photos.rack.map((p, i) => (
           <li key={p.brief}>
-            <Photo slot={p} />
-            <p className="app-rack__tag">No. {String(i + 1).padStart(4, '0')}</p>
+            <RackPiece slot={p} no={i + 1} />
           </li>
         ))}
       </ul>
