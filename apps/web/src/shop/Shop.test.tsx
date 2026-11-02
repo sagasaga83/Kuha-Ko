@@ -112,3 +112,35 @@ describe('ordering on the one-page site', () => {
     expect(screen.queryByRole('button', { name: /Add to order/ })).toBeNull();
   });
 });
+
+describe('claiming a thrift piece', () => {
+  const jacket = {
+    id: 'denim-jacket',
+    kind: 'thrift' as const,
+    category: '',
+    name: 'Denim jacket',
+    description: '',
+    detail: 'Size M',
+    photoUrl: null,
+    price: 65000,
+    options: [],
+    stock: 1,
+    active: true,
+    featured: false,
+    sort: 0,
+  };
+  const rack: Catalog = { ...open, ordering: { ...open.ordering, thrift: true }, products: [...open.products, jacket] };
+
+  it('stamps the piece once it is in the cart, and the basket shows it', () => {
+    window.history.replaceState(null, '', '/thrift');
+    withShop(rack, <App />);
+    const card = screen.getByRole('button', { name: /Denim jacket/ });
+    expect(card.textContent).not.toMatch(/In your cart/);
+    fireEvent.click(card);
+    fireEvent.click(within(screen.getByRole('dialog', { name: 'Denim jacket' })).getByRole('button', { name: /Add to order/ }));
+    expect(screen.getByRole('button', { name: /Denim jacket/ }).textContent).toMatch(/In your cart/);
+    expect(screen.getByRole('status').textContent).toMatch(/Denim jacket added to your cart/);
+    expect(screen.getByRole('button', { name: /Cart 1/ })).toBeTruthy();
+  });
+});
+

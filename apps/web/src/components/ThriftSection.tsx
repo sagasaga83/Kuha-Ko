@@ -5,6 +5,8 @@ import { useShop } from '../shop/Shop';
 import { OnlineThrift } from '../shop/OnlineThrift';
 import { Photo } from './Photo';
 import { SectionHead } from './SectionHead';
+import { RackPiece } from './RackPiece';
+import { useDragScroll } from '../useDragScroll';
 
 const promises = [
   {
@@ -27,6 +29,7 @@ export function ThriftSection() {
   const shop = useShop();
   const track = useRef<HTMLUListElement>(null);
   const [pos, setPos] = useState({ start: true, end: false, progress: 0 });
+  useDragScroll(track);
 
   const update = () => {
     const el = track.current;
@@ -63,10 +66,7 @@ export function ThriftSection() {
         <ul className="rack__track" ref={track} onScroll={update} aria-label="On the rack" tabIndex={0}>
           {photos.rack.map((p, i) => (
             <li key={p.brief} className="rack__item">
-              <Photo slot={p} />
-              <p className="rack__tag">
-                No. {String(i + 1).padStart(4, '0')} <span>· One of one</span>
-              </p>
+              <RackPiece slot={p} no={i + 1} />
             </li>
           ))}
         </ul>

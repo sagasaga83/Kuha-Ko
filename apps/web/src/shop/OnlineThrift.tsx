@@ -2,6 +2,8 @@
 import { formatPeso } from '../../shared/catalog';
 import { useCatalog } from '../catalog/catalog';
 import { useShop } from './Shop';
+import { ClaimStamp } from './ClaimStamp';
+import { swingOnTouch } from '../swing';
 
 export function OnlineThrift({ variant }: { variant: 'app' | 'site' }) {
   const { products } = useCatalog();
@@ -14,22 +16,30 @@ export function OnlineThrift({ variant }: { variant: 'app' | 'site' }) {
       {pieces.map((p) => {
         const sold = p.stock === 0;
         const orderable = Boolean(shop?.canOrder(p));
+        const claimed = !sold && Boolean(shop?.inCart(p));
         const body = (
           <>
-            <span className="shop-pieces__photo">{p.photoUrl ? <img src={p.photoUrl} alt="" loading="lazy" /> : null}</span>
+            <span className="shop-pieces__photo">
+              {p.photoUrl ? <img src={p.photoUrl} alt="" loading="lazy" /> : null}
+              {claimed ? <ClaimStamp fresh={shop?.justAdded === p.id} /> : null}
+            </span>
+            {/* The price tag hangs off the photo's corner and swings with the card. */}
+            <span className="shop-pieces__tag">{sold ? 'Sold' : p.price === null ? 'Price soon' : formatPeso(p.price)}</span>
             <span className="shop-pieces__name">{p.name}</span>
             {p.detail ? <span className="shop-pieces__detail">{p.detail}</span> : null}
-            <span className="shop-pieces__price">{sold ? 'Sold' : p.price === null ? 'Price soon' : formatPeso(p.price)}</span>
+            {claimed ? <span className="shop-pieces__claimed">In your cart</span> : null}
           </>
         );
         return (
-          <li key={p.id} data-sold={sold || undefined}>
+          <li key={p.id} data-sold={sold || undefined} data-claimed={claimed || undefined}>
             {orderable ? (
-              <button type="button" className="shop-pieces__card" onClick={() => shop?.openProduct(p)}>
+              <button type="button" className="shop-pieces__card" onClick={() => shop?.openProduct(p)} {...swingOnTouch}>
                 {body}
               </button>
             ) : (
-              <div className="shop-pieces__card">{body}</div>
+              <div className="shop-pieces__card" {...swingOnTouch}>
+                {body}
+              </div>
             )}
           </li>
         );

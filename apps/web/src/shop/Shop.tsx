@@ -9,12 +9,19 @@ import { canOrder, lastOrderId, useCart, type Cart } from './cart';
 import { Checkout } from './Checkout';
 import { ProductPicker, Stepper } from './ProductPicker';
 import { BasketIcon } from './BasketIcon';
+import { ClaimStamp } from './ClaimStamp';
 
 interface Shop {
   cart: Cart;
   canOrder: (p: Product) => boolean;
   openProduct: (p: Product) => void;
   openCart: () => void;
+  /** Whether a product is already in the cart (thrift pieces show the claim stamp). */
+  inCart: (p: Product) => boolean;
+  /** The product added most recently, for one stamp landing; null once it has. */
+  justAdded: string | null;
+  /** How many things were added since the page opened: each one nods the basket. */
+  adds: number;
 }
 
 const ShopContext = createContext<Shop | null>(null);
@@ -30,6 +37,8 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [cartStep, setCartStep] = useState<'closed' | 'cart' | 'checkout'>('closed');
   const [added, setAdded] = useState('');
+  const [justAdded, setJustAdded] = useState<string | null>(null);
+  const [toastKey, setToastKey] = useState(0);
 
   const openProduct = useCallback((p: Product) => setProduct(p), []);
   const openCart = useCallback(() => setCartStep('cart'), []);
@@ -37,8 +46,16 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const closeCart = useCallback(() => setCartStep('closed'), []);
 
   const value = useMemo<Shop>(
-    () => ({ cart, canOrder: (p) => canOrder(p, catalog), openProduct, openCart }),
-    [cart, catalog, openProduct, openCart],
+    () => ({
+      cart,
+      canOrder: (p) => canOrder(p, catalog),
+      openProduct,
+      openCart,
+      inCart: (p) => cart.lines.some((l) => l.productId === p.id),
+      justAdded,
+      adds: toastKey,
+    }),
+    [cart, catalog, openProduct, openCart, justAdded, toastKey],
   );
 
   return (
@@ -53,7 +70,10 @@ export function ShopProvider({ children }: { children: ReactNode }) {
               cart.add(line);
               setProduct(null);
               setAdded(`${product.name} added to your cart`);
+              setJustAdded(product.id);
+              setToastKey((k) => k + 1);
               window.setTimeout(() => setAdded(''), 2500);
+              window.setTimeout(() => setJustAdded(null), 1200);
             }}
           />
         ) : null}
@@ -63,6 +83,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         {cartStep === 'checkout' ? <Checkout cart={cart} onBack={() => setCartStep('cart')} /> : null}
       </Sheet>
       <p className={`shop-toast${added ? ' is-on' : ''}`} role="status" aria-live="polite">
+        {added ? <ClaimStamp key={toastKey} fresh className="shop-toast__stamp" /> : null}
         {added}
       </p>
     </ShopContext.Provider>
@@ -110,7 +131,7 @@ function CartView({ cart, onCheckout }: { cart: Cart; onCheckout: () => void }) 
           </li>
         ))}
       </ul>
-      <dl className="shop-totals">
+      <dl className="shop-totals shop-receipt">
         <div className="shop-totals__total">
           <dt>Items</dt>
           <dd>{formatPeso(cart.subtotal)}</dd>
@@ -124,6 +145,18 @@ function CartView({ cart, onCheckout }: { cart: Cart; onCheckout: () => void }) 
   );
 }
 
+/**
+ * The basket nods when something goes in: a new key remounts it, which replays the nod.
+ * Nothing moves for what was already in the cart when the page opened.
+ */
+function NoddingBasket({ adds }: { adds: number }) {
+  return (
+    <span key={adds} className={adds > 0 ? 'basket-nod' : 'basket-still'}>
+      <BasketIcon />
+    </span>
+  );
+}
+
 /** The bar above the tab bar in the app layout: shows while the cart has something in it. */
 export function CartBar() {
   const shop = useShop();
@@ -131,7 +164,7 @@ export function CartBar() {
   return (
     <button type="button" className="shop-cartbar" onClick={shop.openCart}>
       <span className="shop-cartbar__title">
-        <BasketIcon /> View cart
+        <NoddingBasket adds={shop.adds} /> View cart
       </span>
       <span className="shop-cartbar__meta">
         {shop.cart.count} {shop.cart.count === 1 ? 'item' : 'items'} · {formatPeso(shop.cart.subtotal)}
@@ -146,7 +179,7 @@ export function CartButton() {
   if (!shop || shop.cart.count === 0) return null;
   return (
     <button type="button" className="shop-cartbtn" onClick={shop.openCart}>
-      <BasketIcon /> Cart <span className="shop-cartbtn__count">{shop.cart.count}</span>
+      <NoddingBasket adds={shop.adds} /> Cart <span className="shop-cartbtn__count">{shop.cart.count}</span>
     </button>
   );
 }
