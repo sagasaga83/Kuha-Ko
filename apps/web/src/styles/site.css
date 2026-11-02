@@ -525,7 +525,12 @@ body::before {
 .menu__item .kk-menuitem { transition: padding-left 300ms var(--ease-out); }
 .menu__item:hover .kk-menuitem { padding-left: var(--space-3); }
 .menu__item:hover .kk-menuitem__name { color: var(--rust); }
-.menu__panel > .menu__item:last-child .kk-menuitem { border-bottom: 1px solid var(--line); }
+.menu__panel > .menu__item:last-child { border-bottom: 1px solid var(--line); }
+/* The rule goes on the wrapper, so "Add to order" sits inside its drink, not on the next one's line. */
+.menu__item { border-top: 1px solid var(--line); }
+.menu__item .kk-menuitem { border-top: 0; }
+.menu__item:has(.shop-add) { padding-bottom: var(--space-3); }
+.menu__item .shop-add { margin-top: 0; }
 
 .addons { margin-top: var(--space-5); }
 .addons__list {
@@ -705,47 +710,15 @@ body::before {
 
 /* Footer, with the visit details */
 .site-footer { border-top: 1px solid var(--espresso); padding-block: var(--space-5) calc(var(--space-5) + var(--safe-b)); }
-.site-footer__top {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--space-5);
-  align-items: end;
-}
-.site-footer__title {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(44px, 8vw, 112px);
-  line-height: 0.95;
-  letter-spacing: -0.03em;
-}
-.site-footer__cols {
-  margin: var(--space-6) 0 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-5) var(--space-4);
-}
-.site-footer__cols > div { border-top: 1px solid var(--line); padding-top: var(--space-3); }
-.site-footer__cols dd { margin: var(--space-2) 0 0; font-size: 16px; }
 .site-footer__base {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: var(--space-2) var(--space-5);
-  margin-top: clamp(64px, 9vw, 112px);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--line);
 }
 .site-footer__tagline { margin: 0; font-family: var(--font-display); font-style: italic; font-size: 18px; color: var(--ink-muted); }
 .site-footer__meta { margin: 0 0 0 auto; font-size: 14px; color: var(--ink-muted); }
-@media (max-width: 860px) {
-  .site-footer__top { grid-template-columns: minmax(0, 1fr); }
-}
-@media (max-width: 700px) {
-  .site-footer__cols { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
-}
 @media (max-width: 480px) {
-  .site-footer__cols { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
   .site-footer__meta { margin-left: 0; }
 }
 

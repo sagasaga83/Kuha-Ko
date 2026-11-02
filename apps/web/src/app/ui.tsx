@@ -44,6 +44,8 @@ export function Screen({
       id={`screen-${id}`}
       role="tabpanel"
       aria-labelledby={`tab-${id}`}
+      // Focusable, as tab panels should be, so keyboard users can scroll it.
+      tabIndex={0}
     >
       <div className={`app-nav${collapsed ? ' is-collapsed' : ''}`} aria-hidden="true">
         <span className="app-nav__title">{title}</span>

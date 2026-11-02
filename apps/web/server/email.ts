@@ -81,7 +81,7 @@ export async function sendReceipt(order: OrderView, email: string, siteUrl: stri
   const subject = `Kuha Ko order ${order.code}: payment received`;
   const text = `Salamat, ${order.customerName}!\n\nWe’ve received your payment for order ${order.code}.\n\n${textBlock}\n\nDelivering to: ${order.address}\n\nFollow your order: ${link}\n\nKuha Ko · Iloilo City`;
   const html = wrap(
-    `<p>Salamat, ${esc(order.customerName)}!</p><p>We’ve received your payment for order <strong>${esc(order.code)}</strong>.</p>${htmlBlock}<p>Delivering to: ${esc(order.address)}</p><p><a href="${esc(link)}">Follow your order</a></p><p style="color:#5E4B3C">Kuha Ko · Iloilo City</p>`,
+    `<p>Salamat, ${esc(order.customerName)}.</p><p>We’ve received your payment for order <strong>${esc(order.code)}</strong>.</p>${htmlBlock}<p>Delivering to: ${esc(order.address)}</p><p><a href="${esc(link)}">Follow your order</a></p><p style="color:#5E4B3C">Kuha Ko · Iloilo City</p>`,
   );
   await send(email, subject, text, html);
 }

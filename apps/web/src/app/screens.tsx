@@ -115,7 +115,7 @@ export function ThriftScreen() {
     <>
       <p className="app-lede">Hand-picked ukay finds behind the coffee bar, a fitting room and a vintage mirror.</p>
       <h2 className="app-section-title">On the rack</h2>
-      <ul className="app-rack" aria-label="On the rack">
+      <ul className="app-rack" aria-label="On the rack" tabIndex={0}>
         {photos.rack.map((p, i) => (
           <li key={p.brief}>
             <Photo slot={p} />

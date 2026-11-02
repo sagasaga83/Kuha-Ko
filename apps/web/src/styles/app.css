@@ -390,3 +390,8 @@ html.kk-app body::before { display: none; }
   font: 500 15px var(--font-sans);
   cursor: pointer;
 }
+
+/* Scroll areas take keyboard focus. The screen's ring sits inside it, as it fills the window. */
+.app-screen:focus { outline: none; }
+.app-screen:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: -2px; }
+.app-rack:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }

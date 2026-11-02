@@ -192,11 +192,15 @@
   cursor: pointer;
 }
 .shop-add:hover { background: var(--rust); color: var(--on-rust); }
+/* Thrift's accent is sage-ink (rust belongs to the coffee). */
+#thrift .shop-add { color: var(--sage-ink); border-color: var(--sage-ink); }
+#thrift .shop-add:hover { background: var(--sage-ink); color: var(--canvas); }
 .shop-cartbtn:focus-visible,
 .shop-add:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
 /* Thrift pieces for sale online */
-.shop-online { margin-bottom: var(--space-6); }
+/* Same gap above as the shirts below it; the shirts section adds the gap after. */
+.shop-online { margin-top: var(--space-6); }
 .shop-pieces { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4) var(--space-3); }
 .shop-pieces--site { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
 .shop-pieces--app { grid-template-columns: repeat(2, 1fr); padding-inline: var(--app-gutter) var(--app-gutter-r); margin-bottom: var(--space-5); }
