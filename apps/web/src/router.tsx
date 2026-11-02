@@ -1,4 +1,4 @@
-// A tiny client-side router for the site's pages (/, /menu, /thrift, /live, /visit).
+// A tiny client-side router for the site's pages (/, /menu, /thrift, /live, /about).
 // No library: history.pushState plus a popstate listener. Vercel rewrites each path to index.html.
 import { useSyncExternalStore, type AnchorHTMLAttributes, type MouseEvent } from 'react';
 
@@ -7,7 +7,7 @@ export const PAGES = [
   { path: '/menu', id: 'menu', label: 'Menu', title: 'Menu · Kuha Ko' },
   { path: '/thrift', id: 'thrift', label: 'Thrift', title: 'Thrift · Kuha Ko' },
   { path: '/live', id: 'live', label: 'Live selling', title: 'Live selling · Kuha Ko' },
-  { path: '/visit', id: 'visit', label: 'Visit', title: 'Visit · Kuha Ko' },
+  { path: '/about', id: 'about', label: 'About', title: 'About · Kuha Ko' },
 ] as const;
 export type PageId = (typeof PAGES)[number]['id'];
 
@@ -16,8 +16,12 @@ const CHANGE = 'kk-navigate';
 /** "/menu/" → "/menu"; anything else stays as it is. */
 const clean = (path: string) => (path.length > 1 ? path.replace(/\/+$/, '') : path);
 
+/** Old addresses that moved. */
+const MOVED: Record<string, string> = { '/visit': '/about' };
+
 export function pageFor(path: string): PageId | null {
-  return PAGES.find((p) => p.path === clean(path))?.id ?? null;
+  const p = MOVED[clean(path)] ?? clean(path);
+  return PAGES.find((x) => x.path === p)?.id ?? null;
 }
 
 export function pathFor(id: PageId): string {
@@ -25,12 +29,18 @@ export function pathFor(id: PageId): string {
 }
 
 /**
- * Old one-page links (/#menu, /#visit …) still work: they become /menu, /visit.
+ * Old one-page links (/#menu, /#about …) still work: they become /menu, /about.
+ * The old /visit page is now /about (redirected in vercel.json; here too, for dev).
  * Call once, before the first render.
  */
 export function upgradeHashLink() {
   const { pathname, hash, search } = window.location;
-  const id = hash.slice(1);
+  const moved = MOVED[clean(pathname)];
+  if (moved) {
+    window.history.replaceState(null, '', moved + search);
+    return;
+  }
+  const id = hash === '#visit' ? 'about' : hash.slice(1);
   if (clean(pathname) === '/' && id !== 'home' && PAGES.some((p) => p.id === id)) {
     window.history.replaceState(null, '', `/${id}${search}`);
   }

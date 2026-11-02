@@ -5,7 +5,7 @@ const pages = [
   { href: '/menu', label: 'Coffee', title: 'Menu', line: 'Lattes, americanos and a tablea mocha.', accent: 'coffee' },
   { href: '/thrift', label: 'Thrift', title: 'Thrift', line: 'Pre-loved pieces and Kuha Ko shirts.', accent: 'thrift' },
   { href: '/live', label: 'Live', title: 'Live selling', line: 'Comment KUHA KO! to claim a piece first.', accent: 'shop' },
-  { href: '/visit', label: 'Visit', title: 'Visit the shop', line: 'Where we are, and when we open.', accent: 'shop' },
+  { href: '/about', label: 'About', title: 'About Kuha Ko', line: 'Who we are, where we are, and when we open.', accent: 'shop' },
 ] as const;
 
 /** The home page's way into the other pages. */

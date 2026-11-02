@@ -14,7 +14,7 @@ import { ThemeLamp } from '../components/ThemeLamp';
 import { useAccount } from '../account/auth';
 import { Group, Row, Segmented, Sheet } from './ui';
 
-export type TabId = 'home' | 'menu' | 'thrift' | 'live' | 'visit';
+export type TabId = 'home' | 'menu' | 'thrift' | 'live' | 'about';
 
 export function HomeScreen({ go }: { go: (tab: TabId) => void }) {
   return (
@@ -196,7 +196,7 @@ export function LiveScreen() {
   );
 }
 
-export function VisitScreen() {
+export function AboutScreen() {
   const account = useAccount();
   const [theme, setChoice] = useState<Theme | 'system'>(() => storedTheme());
   const pick = (t: Theme | 'system') => {

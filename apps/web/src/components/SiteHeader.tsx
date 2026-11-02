@@ -10,7 +10,7 @@ const links = [
   { id: 'menu', href: '/menu', label: 'Menu' },
   { id: 'thrift', href: '/thrift', label: 'Thrift' },
   { id: 'live', href: '/live', label: 'Live selling' },
-  { id: 'visit', href: '/visit', label: 'Visit' },
+  { id: 'about', href: '/about', label: 'About' },
 ];
 
 export function SiteHeader() {

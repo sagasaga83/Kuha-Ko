@@ -254,7 +254,7 @@ html.kk-app body::before { display: none; }
 .app-shirts__name { margin-top: var(--space-2); font-weight: 500; font-size: 15px; line-height: 1.3; }
 .app-shirts__meta { font-size: 13px; color: var(--ink-muted); }
 
-/* Visit */
+/* About */
 .app-colophon {
   display: flex;
   flex-direction: column;

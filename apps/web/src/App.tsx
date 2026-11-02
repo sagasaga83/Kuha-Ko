@@ -8,7 +8,7 @@ import { PageLinks } from './components/PageLinks';
 import { MenuSection } from './components/MenuSection';
 import { ThriftSection } from './components/ThriftSection';
 import { LiveSelling } from './components/LiveSelling';
-import { VisitSection } from './components/VisitSection';
+import { AboutSection } from './components/AboutSection';
 import { SiteFooter } from './components/SiteFooter';
 import { BackToTop } from './components/BackToTop';
 import { useReveal } from './hooks/motion';
@@ -31,8 +31,8 @@ function Page({ id }: { id: PageId | null }) {
       return <ThriftSection />;
     case 'live':
       return <LiveSelling />;
-    case 'visit':
-      return <VisitSection />;
+    case 'about':
+      return <AboutSection />;
     default:
       return (
         <section className="section" aria-labelledby="missing-title">
@@ -51,7 +51,7 @@ function Page({ id }: { id: PageId | null }) {
   }
 }
 
-/** The full website: one page per section (/, /menu, /thrift, /live, /visit). */
+/** The full website: one page per section (/, /menu, /thrift, /live, /about). */
 export function App() {
   useReveal();
   const path = usePath();
