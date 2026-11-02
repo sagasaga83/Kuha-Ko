@@ -7,6 +7,7 @@ import { Photo } from './Photo';
 import { SectionHead } from './SectionHead';
 import { RackPiece } from './RackPiece';
 import { useDragScroll } from '../useDragScroll';
+import { useRackSway } from '../useRackSway';
 
 const promises = [
   {
@@ -30,6 +31,7 @@ export function ThriftSection() {
   const track = useRef<HTMLUListElement>(null);
   const [pos, setPos] = useState({ start: true, end: false, progress: 0 });
   useDragScroll(track);
+  useRackSway(track);
 
   const update = () => {
     const el = track.current;
