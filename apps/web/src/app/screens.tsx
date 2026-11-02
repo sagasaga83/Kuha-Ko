@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type CSSProperties } from 'react';
 import { ClaimBanner, Wordmark } from '@kuhako/ui';
 import type { Drink } from '../data/menu';
 import { photos } from '../data/photos';
@@ -9,6 +9,7 @@ import { OnlineThrift } from '../shop/OnlineThrift';
 import { site } from '../data/site';
 import { RackPiece } from '../components/RackPiece';
 import { useRackSway } from '../useRackSway';
+import { useArrival } from '../useArrival';
 import { Photo } from '../components/Photo';
 import { LiveDemo } from '../components/LiveDemo';
 import { clearTheme, setTheme, storedTheme, type Theme } from '../theme';
@@ -115,13 +116,14 @@ export function ThriftScreen() {
   const [open, setOpen] = useState<Shirt | null>(null);
   const rack = useRef<HTMLUListElement>(null);
   useRackSway(rack);
+  const arrival = useArrival(rack);
   return (
     <>
       <p className="app-lede">Hand-picked ukay finds behind the coffee bar, a fitting room and a vintage mirror.</p>
       <h2 className="app-section-title">On the rack</h2>
-      <ul className="app-rack" ref={rack} aria-label="On the rack" tabIndex={0}>
+      <ul className={`app-rack is-${arrival}`} ref={rack} aria-label="On the rack" tabIndex={0}>
         {photos.rack.map((p, i) => (
-          <li key={p.brief}>
+          <li key={p.brief} style={{ '--i': i } as CSSProperties}>
             <RackPiece slot={p} no={i + 1} />
           </li>
         ))}
