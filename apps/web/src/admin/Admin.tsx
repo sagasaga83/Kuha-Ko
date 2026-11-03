@@ -6,10 +6,11 @@ import { adminApi, ApiError } from './api';
 import { OrdersPanel } from './OrdersPanel';
 import { ProductsPanel } from './ProductsPanel';
 import { SettingsPanel } from './SettingsPanel';
+import { SignupsPanel } from './SignupsPanel';
 import './admin.css';
 
-type Tab = 'orders' | 'products' | 'settings';
-const TAB_LABELS: Record<Tab, string> = { orders: 'Orders', products: 'Products', settings: 'Settings' };
+type Tab = 'orders' | 'products' | 'signups' | 'settings';
+const TAB_LABELS: Record<Tab, string> = { orders: 'Orders', products: 'Products', signups: 'Sign-ups', settings: 'Settings' };
 
 export default function Admin() {
   const [state, setState] = useState<'checking' | 'out' | 'in' | 'offline'>('checking');
@@ -57,7 +58,7 @@ export default function Admin() {
       {state === 'in' ? (
         <>
           <nav className="adm-tabs" aria-label="Admin sections">
-            {(['orders', 'products', 'settings'] as const).map((t) => (
+            {(['orders', 'products', 'signups', 'settings'] as const).map((t) => (
               <button
                 key={t}
                 type="button"
@@ -72,6 +73,7 @@ export default function Admin() {
           <main className="adm-main">
             {tab === 'orders' ? <OrdersPanel onSignedOut={() => setState('out')} /> : null}
             {tab === 'products' ? <ProductsPanel onSignedOut={() => setState('out')} /> : null}
+            {tab === 'signups' ? <SignupsPanel onSignedOut={() => setState('out')} /> : null}
             {tab === 'settings' ? <SettingsPanel onSignedOut={() => setState('out')} /> : null}
           </main>
         </>

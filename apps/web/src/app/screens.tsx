@@ -6,7 +6,10 @@ import type { Shirt } from '../data/shirts';
 import { addOnsFrom, menuFrom, shirtsFrom, useCatalog } from '../catalog/catalog';
 import { useShop } from '../shop/Shop';
 import { OnlineThrift } from '../shop/OnlineThrift';
-import { site } from '../data/site';
+import { openingDayText, site } from '../data/site';
+import { googleCalendarUrl, useNextLive } from '../live';
+import { SignupForm } from '../components/SignupForm';
+import { liveSteps } from '../components/LiveSelling';
 import { RackPiece } from '../components/RackPiece';
 import { useRackSway } from '../useRackSway';
 import { useArrival } from '../useArrival';
@@ -171,6 +174,7 @@ export function ThriftScreen() {
 }
 
 export function LiveScreen() {
+  const live = useNextLive();
   return (
     <>
       <p className="app-lede">Before the shop opens, Kuha Ko Thrift sells online. Join the lives on our Facebook page.</p>
@@ -182,10 +186,27 @@ export function LiveScreen() {
           <p>First comment gets it.</p>
         </ClaimBanner>
       </div>
+      <Group header={live?.now ? 'Live now' : 'Next live'} footer={live ? 'Philippine time.' : `Live selling starts ${site.liveSellingFrom}.`}>
+        {live ? (
+          <>
+            <Row title={live.day} detail={live.time} />
+            {live.now && site.facebook.url ? (
+              <Row title="Watch on Facebook" href={site.facebook.url} />
+            ) : (
+              <Row title="Add to calendar" href={googleCalendarUrl(live, `${window.location.origin}/live`)} />
+            )}
+          </>
+        ) : (
+          <Row title="Date announced soon" />
+        )}
+      </Group>
+      <div className="app-pad app-signup">
+        <SignupForm source="live" />
+      </div>
       <Group header="How it works">
-        <Row title="Watch the live" subtitle="Each piece is shown with its number, size and any flaw." />
-        <Row title="Comment KUHA KO!" subtitle="Add the item number, like KUHA KO! 0142." />
-        <Row title="First comment gets it" subtitle="We confirm the claim in the comments." />
+        {liveSteps.map((s) => (
+          <Row key={s.title} title={s.title} subtitle={s.body} />
+        ))}
       </Group>
       <div className="app-pad">
         <LiveDemo />
@@ -215,6 +236,7 @@ export function AboutScreen() {
         <Photo slot={photos.shop} />
       </div>
       <Group header="The shop">
+        {openingDayText() ? <Row title="Opening day" subtitle={openingDayText()!} /> : null}
         <Row title="Address" subtitle={site.address ?? `${site.city}. Exact spot announced soon.`} />
         <Row title="Hours" subtitle={site.hours ?? 'Announced before opening day.'} />
       </Group>

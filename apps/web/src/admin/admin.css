@@ -144,6 +144,10 @@
 .adm-photo__actions { display: grid; gap: var(--space-1); justify-items: start; }
 .adm-file { position: relative; cursor: pointer; }
 .adm-file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.adm-signups { list-style: none; margin: var(--space-3) 0 0; padding: 0; border-top: 1px solid var(--line); }
+.adm-signups li { display: flex; gap: var(--space-3); align-items: baseline; padding: var(--space-2) 0; border-bottom: 1px solid var(--line); }
+.adm-signups__email { flex: 1; overflow-wrap: anywhere; }
+.adm-signups__meta { color: var(--ink-muted); font-size: 13px; white-space: nowrap; }
 
 .adm-options { border: 0; border-top: 1px solid var(--line); margin: var(--space-4) 0 0; padding: var(--space-3) 0 0; }
 .adm-group { border: 1px solid var(--line); background: var(--paper); padding: var(--space-3); margin: var(--space-3) 0; }

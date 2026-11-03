@@ -99,17 +99,17 @@ describe('ordering on the one-page site', () => {
   it('shows Add buttons only for orderable items', () => {
     window.history.replaceState(null, '', '/menu');
     withShop(open, <App />);
-    expect(screen.getAllByRole('button', { name: /Add to order/ }).map((b) => b.textContent)).toEqual(['Add to order: The Kuha']);
+    expect(screen.getAllByRole('button', { name: /to your order/ }).map((b) => b.textContent)).toEqual(['Add The Kuha to your order']);
   });
 
   it('shows no ordering while prices, ordering or delivery are not set up', () => {
     window.history.replaceState(null, '', '/menu');
     withShop(fallbackCatalog, <App />);
-    expect(screen.queryByRole('button', { name: /Add to order/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /to your order/ })).toBeNull();
     withShop({ ...open, deliveryReady: false }, <App />);
-    expect(screen.queryByRole('button', { name: /Add to order/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /to your order/ })).toBeNull();
     withShop({ ...open, paymentMethods: [] }, <App />);
-    expect(screen.queryByRole('button', { name: /Add to order/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /to your order/ })).toBeNull();
   });
 });
 

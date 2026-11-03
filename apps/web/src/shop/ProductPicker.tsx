@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { formatPeso, type Product } from '../../shared/catalog';
 import { MAX_QUANTITY, defaultChoices, priceLine, type CartLine } from '../../shared/order';
+import { photos } from '../data/photos';
+
+/** The product's photo: its own, or for a drink without one, its menu group's photo. */
+function photoOf(product: Product): string | null {
+  if (product.photoUrl) return product.photoUrl;
+  return product.kind === 'coffee' ? (photos.menu[product.category]?.src ?? null) : null;
+}
 
 export function Stepper({ value, onChange, max, label }: { value: number; onChange: (n: number) => void; max: number; label: string }) {
   return (
@@ -35,7 +42,7 @@ export function ProductPicker({ product, onAdd }: { product: Product; onAdd: (li
         if (!('error' in priced)) onAdd({ productId: product.id, quantity, choices });
       }}
     >
-      {product.photoUrl ? <img className="shop-picker__photo" src={product.photoUrl} alt="" /> : null}
+      {photoOf(product) ? <img className="shop-picker__photo" src={photoOf(product)!} alt="" /> : null}
       <div className="shop-picker__head">
         <h2 className="shop-picker__name">{product.name}</h2>
         {product.detail ? <p className="shop-picker__detail">{product.detail}</p> : null}

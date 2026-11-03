@@ -39,8 +39,8 @@ const send = (method: string, body?: unknown): RequestInit => ({
 
 export const adminApi = {
   session: () => call<{ admin: boolean }>('/api/admin/session'),
-  login: (password: string) => call<{ admin: boolean }>('/api/admin/login', send('POST', { password })),
-  logout: () => call<{ admin: boolean }>('/api/admin/logout', send('POST')),
+  login: (password: string) => call<{ admin: boolean }>('/api/admin/session', send('POST', { password })),
+  logout: () => call<{ admin: boolean }>('/api/admin/session', send('DELETE')),
   products: () => call<{ products: Product[] }>('/api/admin/products'),
   createProduct: (p: ProductInput) => call<{ product: Product }>('/api/admin/products', send('POST', p)),
   updateProduct: (id: string, p: ProductInput) =>
@@ -50,7 +50,16 @@ export const adminApi = {
   updateOrder: (id: string, action: OrderAction) => call<{ order: OrderView }>('/api/admin/orders', send('POST', { id, action })),
   settings: () => call<{ settings: Settings }>('/api/admin/settings'),
   saveSettings: (s: Settings) => call<{ settings: Settings }>('/api/admin/settings', send('PUT', s)),
+  signups: () => call<{ signups: Signup[] }>('/api/admin/signups'),
+  removeSignup: (email: string) => call<{ ok: true }>(`/api/admin/signups?email=${encodeURIComponent(email)}`, send('DELETE')),
 };
+
+/** Someone who asked for the live schedule (server/signups.ts). */
+export interface Signup {
+  email: string;
+  source: string;
+  createdAt: string;
+}
 
 /** Uploads a photo straight to Vercel Blob and returns its public URL. */
 export async function uploadPhoto(file: File): Promise<string> {

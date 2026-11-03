@@ -29,7 +29,8 @@ export function Photo({ slot, className = '', eager }: PhotoProps) {
         Photo coming soon
       </span>
       <span className="photo__brief">{slot.brief}</span>
-      <span className="photo__ratio">{slot.ratio.replace(/\s/g, '')}</span>
+      {/* The shape to shoot, as a photographer writes it: 3:2, 4:5. */}
+      <span className="photo__ratio">{slot.ratio.replace(/\s/g, '').replace('/', ':')}</span>
     </div>
   );
 }

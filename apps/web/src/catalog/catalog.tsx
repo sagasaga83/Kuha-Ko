@@ -12,6 +12,7 @@ export const fallbackCatalog: Catalog = {
   ordering: DEFAULT_SETTINGS.ordering,
   deliveryReady: false,
   paymentMethods: [],
+  nextLive: null,
 };
 
 /** Exported for tests, which pass a catalog in directly. */

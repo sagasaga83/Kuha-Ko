@@ -13,6 +13,24 @@ interface Draft {
   perKm: string;
   gcashQrUrl: string | null;
   qrUrl: string | null;
+  /** The next live, as the date-time field shows it ("2026-11-14T20:00"), Manila time; '' when not set. */
+  nextLive: string;
+}
+
+/** The shop is in Iloilo: live times are typed and shown in Philippine time (UTC+8, no daylight saving). */
+const MANILA = '+08:00';
+
+/** "2026-11-14T12:00:00Z" → "2026-11-14T20:00" (Manila time, for a datetime-local field). */
+export function toLocalField(iso: string | null): string {
+  if (!iso) return '';
+  const d = new Date(new Date(iso).getTime() + 8 * 3600_000);
+  return Number.isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 16);
+}
+
+/** "2026-11-14T20:00" (Manila) → "2026-11-14T20:00:00+08:00"; '' → null. */
+export function fromLocalField(text: string): string | null | 'bad' {
+  if (!text.trim()) return null;
+  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(text) ? `${text}:00${MANILA}` : 'bad';
 }
 
 const toDraft = (s: Settings): Draft => ({
@@ -24,6 +42,7 @@ const toDraft = (s: Settings): Draft => ({
   perKm: String(s.delivery.perKm / 100),
   gcashQrUrl: s.payment.gcashQrUrl,
   qrUrl: s.payment.qrUrl,
+  nextLive: toLocalField(s.live.nextAt),
 });
 
 /** "10.6969, 122.5644" (copied from Google Maps) → { lat, lng }. */
@@ -43,10 +62,13 @@ function fromDraft(d: Draft): Settings | string {
   const perKm = parsePeso(d.perKm);
   if (baseFee === null || Number.isNaN(baseFee)) return 'Base fee: type an amount like 49.';
   if (perKm === null || Number.isNaN(perKm)) return 'Per km: type an amount like 10.';
+  const nextAt = fromLocalField(d.nextLive);
+  if (nextAt === 'bad') return 'Next live: pick a date and a time.';
   const parsed = settingsSchema.safeParse({
     ordering: d.ordering,
     delivery: { origin, radiusKm: Number(d.radiusKm), baseFee, baseKm: Number(d.baseKm), perKm },
     payment: { gcashQrUrl: d.gcashQrUrl, qrUrl: d.qrUrl },
+    live: { nextAt },
   });
   if (!parsed.success) {
     const i = parsed.error.issues[0];
@@ -139,6 +161,18 @@ export function SettingsPanel({ onSignedOut }: { onSignedOut: () => void }) {
             : 'nothing yet, so ordering is off'}
           .
         </p>
+      </section>
+
+      <section className="adm-section">
+        <h2 className="adm-h2">Live selling</h2>
+        <label className="adm-field">
+          <span>Next live starts (Philippine time)</span>
+          <input type="datetime-local" value={draft.nextLive} onChange={(e) => set({ nextLive: e.target.value })} />
+          <small>
+            Shown on the home page and the live selling page, with an “Add to calendar” link. It disappears by itself
+            three hours after the start. Clear it when there’s no live planned.
+          </small>
+        </label>
       </section>
 
       <section className="adm-section">

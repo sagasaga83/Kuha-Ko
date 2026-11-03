@@ -12,9 +12,15 @@ export function MenuSection() {
   const menu = menuFrom(products);
   const addOns = addOnsFrom(products);
   const [active, setActive] = useState(menu[0]?.id ?? '');
+  /** The drink being pointed at or focused: the photo column shows it. */
+  const [pointed, setPointed] = useState<string | null>(null);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const group = menu.find((g) => g.id === active) ?? menu[0];
   if (!group) return null;
+  const drink = group.drinks.find((d) => d.id && d.id === pointed);
+  const drinkPhoto = drink?.id ? products.find((x) => x.id === drink.id)?.photoUrl : null;
+  const price = (d: (typeof group.drinks)[number]) =>
+    d.hot && d.iced ? `Hot ${d.hot} · Iced ${d.iced}` : (d.hot ?? d.iced ?? 'Price at opening');
 
   const onKey = (e: KeyboardEvent, i: number) => {
     const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
@@ -26,7 +32,7 @@ export function MenuSection() {
   };
 
   return (
-    <section id="menu" className="section" aria-labelledby="menu-title">
+    <section id="menu" className="section section--first" aria-labelledby="menu-title">
       <div className="container">
         <SectionHead
           level={1}
@@ -38,11 +44,22 @@ export function MenuSection() {
         />
         <div className="menu" data-reveal>
           <div className="menu__media">
-            {menu.map((g) => (
-              <div key={g.id} className={`menu__photo${g.id === active ? ' is-active' : ''}`}>
-                {photos.menu[g.id] ? <Photo slot={photos.menu[g.id]} /> : null}
-              </div>
-            ))}
+            <div className="menu__frame">
+              {menu.map((g) => (
+                <div key={g.id} className={`menu__photo${g.id === active && !drinkPhoto ? ' is-active' : ''}`}>
+                  {photos.menu[g.id] ? <Photo slot={photos.menu[g.id]} /> : null}
+                </div>
+              ))}
+              {drinkPhoto && drink ? (
+                <div key={drinkPhoto} className="menu__photo is-active">
+                  <Photo slot={{ src: drinkPhoto, alt: drink.name, brief: drink.name, ratio: '4 / 5' }} />
+                </div>
+              ) : null}
+            </div>
+            <p className="menu__caption" aria-hidden="true">
+              <span className="menu__caption-name">{drink ? drink.name : group.title}</span>
+              <span className="menu__caption-meta">{drink ? price(drink) : group.subtitle}</span>
+            </p>
           </div>
           <div className="menu__list">
             <div className="tabs" role="tablist" aria-label="Menu groups">
@@ -73,19 +90,34 @@ export function MenuSection() {
               aria-labelledby={`tab-${group.id}`}
             >
               <p className="menu__subtitle">{group.subtitle}</p>
-              {group.drinks.map((d, i) => (
-                <div key={d.name} className="menu__item" style={{ '--i': i } as CSSProperties}>
-                  <MenuItem {...d} />
-                  {(() => {
-                    const p = d.id ? products.find((x) => x.id === d.id) : undefined;
-                    return p && shop?.canOrder(p) ? (
-                      <button type="button" className="shop-add" onClick={() => shop.openProduct(p)}>
-                        Add to order<span className="visually-hidden">: {d.name}</span>
-                      </button>
-                    ) : null;
-                  })()}
-                </div>
-              ))}
+              {group.drinks.map((d, i) => {
+                const p = d.id ? products.find((x) => x.id === d.id) : undefined;
+                const orderable = Boolean(p && shop?.canOrder(p));
+                const point = () => setPointed(d.id ?? null);
+                return (
+                  <div
+                    key={d.name}
+                    className={`menu__item${orderable ? ' is-orderable' : ''}`}
+                    style={{ '--i': i } as CSSProperties}
+                    onMouseEnter={point}
+                    onMouseLeave={() => setPointed(null)}
+                    onFocus={point}
+                    onBlur={() => setPointed(null)}
+                  >
+                    <MenuItem {...d} />
+                    {orderable && p ? (
+                      <>
+                        <span className="menu__plus" aria-hidden="true">
+                          Add +
+                        </span>
+                        <button type="button" className="menu__open" onClick={() => shop?.openProduct(p)}>
+                          <span className="visually-hidden">Add {d.name} to your order</span>
+                        </button>
+                      </>
+                    ) : null}
+                  </div>
+                );
+              })}
             </div>
             <div className="addons">
               <p className="label">Add-ons</p>

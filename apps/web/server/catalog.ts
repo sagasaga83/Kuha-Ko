@@ -60,6 +60,7 @@ export async function getCatalog(): Promise<Catalog> {
     ordering: settings.ordering,
     deliveryReady: settings.delivery.origin !== null,
     paymentMethods: availablePaymentMethods(settings.payment),
+    nextLive: settings.live.nextAt,
   };
 }
 

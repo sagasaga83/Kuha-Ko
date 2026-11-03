@@ -1,7 +1,7 @@
 // Pricing a cart line, shared by the cart (to show totals) and the server (to
 // charge). The server always re-prices from the database; the browser's numbers
 // are only for display. Also: payment options, order statuses, the order view.
-import type { Product } from './catalog';
+import type { Product } from './catalog.js';
 
 /** One line in the cart: a product, how many, and the chosen option values per group. */
 export interface CartLine {

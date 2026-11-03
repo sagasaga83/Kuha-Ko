@@ -3,9 +3,11 @@
 export const site = {
   name: 'Kuha Ko',
   city: 'Iloilo City',
-  /** Grand opening; the lease starts the same day. Not shown on the site for now. */
+  /** Grand opening; the lease starts the same day. */
   openingDate: '2027-06-22',
-  /** When live selling starts on the thrift page. Not shown on the site for now. */
+  /** Show the opening date on the home page, the About page and the footer. Set to false to hide it again. */
+  showOpeningDate: true,
+  /** When live selling starts on the thrift page, shown until the first live's date is set in the admin. */
   liveSellingFrom: 'November 2026',
   address: null as string | null,
   hours: null as string | null,
@@ -13,3 +15,14 @@ export const site = {
   instagram: { handle: '@kuhako', url: null as string | null },
   facebook: { name: 'Kuha Ko Thrift', url: null as string | null },
 };
+
+/** "June 22, 2027", or null when the opening date is hidden. */
+export function openingDayText(): string | null {
+  if (!site.showOpeningDate) return null;
+  return new Date(`${site.openingDate}T12:00:00+08:00`).toLocaleDateString('en-PH', {
+    timeZone: 'Asia/Manila',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
