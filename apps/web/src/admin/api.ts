@@ -39,8 +39,8 @@ const send = (method: string, body?: unknown): RequestInit => ({
 
 export const adminApi = {
   session: () => call<{ admin: boolean }>('/api/admin/session'),
-  login: (password: string) => call<{ admin: boolean }>('/api/admin/login', send('POST', { password })),
-  logout: () => call<{ admin: boolean }>('/api/admin/logout', send('POST')),
+  login: (password: string) => call<{ admin: boolean }>('/api/admin/session', send('POST', { password })),
+  logout: () => call<{ admin: boolean }>('/api/admin/session', send('DELETE')),
   products: () => call<{ products: Product[] }>('/api/admin/products'),
   createProduct: (p: ProductInput) => call<{ product: Product }>('/api/admin/products', send('POST', p)),
   updateProduct: (id: string, p: ProductInput) =>
