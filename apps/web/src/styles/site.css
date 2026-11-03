@@ -1039,6 +1039,192 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
   .site-footer__top { grid-template-columns: minmax(0, 1fr); }
 }
 
+
+/* Back to top */
+.to-top {
+  position: fixed;
+  right: max(16px, var(--safe-r));
+  bottom: calc(max(16px, var(--safe-b)) + 4px);
+  z-index: 15;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 48px;
+  padding: 0 var(--space-3);
+  overflow: hidden;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--canvas);
+  background: var(--espresso);
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity 250ms ease, transform 350ms var(--ease-out), visibility 0s linear 350ms, background-color 200ms ease;
+}
+.to-top.is-shown { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+.to-top:hover { background: var(--rust); color: var(--on-rust); }
+.to-top svg { transition: transform 300ms var(--ease-out); }
+.to-top:hover svg { transform: translateY(-3px); }
+/* Reading progress along the bottom edge. */
+.to-top::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--rust);
+  transform: scaleX(var(--p, 0));
+  transform-origin: left;
+}
+.to-top:hover::after { background: var(--on-rust); }
+
+/* Reduced motion: everything in place, nothing loops. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0s !important;
+  }
+  .marquee__track { animation: none !important; flex-wrap: wrap; width: auto; }
+  .marquee__row[aria-hidden] { display: none; }
+  .marquee__row li[aria-hidden] { display: none; }
+  .marquee__row { flex-wrap: wrap; justify-content: center; }
+  .photo--placeholder::after { display: none; }
+}
+
+/* Opening splash (src/components/Splash.tsx): wordmark, tagline, a filling hairline, then it lifts away.
+   While it is up, the hero's entrance waits so it plays as the page is revealed. */
+html.is-splashing { overflow: hidden; }
+html.is-splashing .hero__in { animation-play-state: paused; }
+
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: var(--safe-t) calc(var(--safe-r) + 16px) var(--safe-b) calc(var(--safe-l) + 16px);
+  background: var(--canvas);
+  color: var(--espresso);
+  cursor: pointer;
+  transition: transform 650ms var(--ease-out), opacity 650ms var(--ease-out);
+}
+.splash.is-leaving { transform: translateY(-100%); opacity: 0.6; pointer-events: none; }
+
+.splash__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  text-align: center;
+  transition: transform 650ms var(--ease-out);
+}
+.splash.is-leaving .splash__inner { transform: translateY(40%); }
+
+.splash__mask { display: inline-block; overflow: hidden; padding: 0.06em 0.04em 0.12em; vertical-align: bottom; }
+.splash__mark { display: block; animation: rise-line 800ms var(--ease-out) 120ms both; }
+
+.splash__tagline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 5.5vw, 30px);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--espresso);
+}
+.splash__tagline em { font-style: italic; color: var(--rust); }
+.splash__line { display: inline-block; animation: rise-line 700ms var(--ease-out) both; }
+
+.splash__bar {
+  position: relative;
+  width: min(180px, 50vw);
+  height: 1px;
+  margin-top: var(--space-2);
+  background: var(--line);
+  overflow: hidden;
+}
+.splash__bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--rust);
+  transform-origin: left;
+  animation: splash-fill 1500ms var(--ease-out) 200ms both;
+}
+@keyframes splash-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.splash__label { animation: rise 700ms var(--ease-out) 900ms both; }
+
+/* Theme switch: a vintage pendant lamp with a beaded pull chain (src/components/ThemeLamp.tsx).
+   On = dark mode, off = light mode. Pulling swings the lamp and the page cross-fades to the new theme.
+   The light only fades in and out: no flicker or flashing (photosensitive epilepsy). */
+.lamp {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  align-self: flex-start;
+  width: 44px;
+  height: calc(var(--header-h) - 6px);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--espresso);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.lamp:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.lamp__svg { display: block; width: 40px; height: 100%; overflow: visible; }
+
+.lamp__line { fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; }
+.lamp__fitting { fill: var(--kraft); stroke: currentColor; stroke-width: 1.25; }
+.lamp__shade { fill: var(--paper); stroke: currentColor; stroke-width: 1.25; stroke-linejoin: round; transition: fill 300ms ease; }
+.lamp__bulb { fill: var(--canvas); stroke: currentColor; stroke-width: 1.25; transition: fill 200ms ease; }
+.lamp__beads { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-dasharray: 0 2.7; }
+.lamp__knob { fill: var(--rust); }
+.lamp__glow-stop { stop-color: var(--rust); }
+
+.lamp__light { opacity: 0; transition: opacity 400ms ease; }
+.lamp.is-on .lamp__light { opacity: 1; }
+.lamp.is-on .lamp__bulb { fill: var(--rust); }
+.lamp.is-on .lamp__shade { fill: var(--board); }
+
+.lamp__swing { transform-origin: 20px 0; transform-box: view-box; }
+.lamp__chain { transform-box: view-box; }
+.lamp:hover .lamp__chain { animation: lamp-tease 600ms var(--ease-out); }
+.lamp.is-pulling .lamp__chain { animation: lamp-pull 480ms cubic-bezier(0.3, 1.6, 0.5, 1); }
+.lamp.is-pulling .lamp__swing { animation: lamp-swing 1300ms ease-out; }
+
+@keyframes lamp-pull { 0% { transform: none; } 30% { transform: translateY(6px); } 100% { transform: none; } }
+@keyframes lamp-tease { 40% { transform: translateY(1.5px); } }
+@keyframes lamp-swing {
+  0% { transform: rotate(0); }
+  18% { transform: rotate(5deg); }
+  40% { transform: rotate(-3.5deg); }
+  60% { transform: rotate(2deg); }
+  80% { transform: rotate(-0.8deg); }
+  100% { transform: rotate(0); }
+}
+
+/* The theme change: one slow, even cross-fade (browsers with view transitions). */
+html.lamp-vt::view-transition-old(root),
+html.lamp-vt::view-transition-new(root) { animation-duration: 700ms; animation-timing-function: ease-in-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .lamp .lamp__chain,
+  .lamp .lamp__swing { animation: none !important; }
+}
+
 /* Home page: the way into each page */
 .page-links__title { margin-bottom: var(--space-4); }
 .page-links {
