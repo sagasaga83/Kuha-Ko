@@ -1,4 +1,4 @@
-import type { DeliverySettings } from './catalog';
+import type { DeliverySettings } from './catalog.js';
 
 /**
  * The delivery fee for a road distance, in centavos, or null when it's past the

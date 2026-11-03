@@ -1,9 +1,9 @@
 // The product catalog, shared by the site, the API and the admin page.
 // Money is always whole centavos (₱120 = 12000), never floats.
 // Validation schemas live in ./schema.ts, so the customer bundle doesn't carry zod.
-import type { OrderingSettings, PaymentSettings, Product, Settings } from './schema';
-import type { PaymentMethod } from './order';
-export type { DeliverySettings, LiveSettings, OptionGroup, OrderingSettings, PaymentSettings, Product, ProductInput, Settings } from './schema';
+import type { OrderingSettings, PaymentSettings, Product, Settings } from './schema.js';
+import type { PaymentMethod } from './order.js';
+export type { DeliverySettings, LiveSettings, OptionGroup, OrderingSettings, PaymentSettings, Product, ProductInput, Settings } from './schema.js';
 
 export const KINDS = ['coffee', 'shirt', 'thrift'] as const;
 export type Kind = (typeof KINDS)[number];
