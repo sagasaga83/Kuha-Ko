@@ -260,14 +260,12 @@ body::before {
 }
 
 /* Sections */
-.section { padding-block: clamp(64px, 9vw, 120px); }
+.section { padding-block: clamp(80px, 12vw, 152px); }
 .section + .section { border-top: 1px solid var(--line); }
 /* The first section of a page sits closer to the header. */
 .section--first { padding-top: clamp(40px, 6vw, 88px); }
-/* Linen bands between white sections: the warm wall the brand's photos are shot against.
-   --ground is what shows through punched holes (hang tags). */
-.section--linen,
-.band--linen { background: var(--linen); --ground: var(--linen); }
+/* Linen bands between white sections: the warm wall the brand's photos are shot against. */
+.section--linen { background: var(--linen); }
 .band-title { margin: 0 0 var(--space-4); }
 
 .section-head {
@@ -409,41 +407,7 @@ body::before {
 .hero__title em { font-weight: 400; color: var(--rust); }
 .hero__lede { margin: var(--space-5) 0 0; max-width: 40ch; font-size: 18px; }
 .hero__links { display: flex; flex-wrap: wrap; gap: 0 var(--space-5); margin-top: var(--space-3); }
-/* The two dates that bring people back: the next live and opening day. */
-.hero__dates {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3) var(--space-5);
-  margin: var(--space-5) 0 0;
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--line);
-  max-width: 34rem;
-}
-.hero__dates div { display: grid; gap: 4px; }
-.hero__dates dt { color: var(--ink-muted); }
-.hero__dates dd { margin: 0; font-family: var(--font-display); font-size: 22px; font-weight: 600; }
-.hero__dates a { color: var(--espresso); text-decoration: none; border-bottom: 1px solid var(--line); transition: color 200ms ease, border-color 200ms ease; }
-.hero__dates a:hover { color: var(--rust); border-color: currentColor; }
 .hero__media { position: relative; }
-/* A thrift piece hangs off the photo's lower left: both shops in one picture. */
-.hero__hang {
-  position: absolute;
-  z-index: 2;
-  left: -24%;
-  bottom: -14%;
-  width: 46%;
-  padding-top: 0;
-  animation: rise 900ms var(--ease-out) 900ms both;
-}
-.hero__hang::before {
-  content: '';
-  position: absolute;
-  top: 3px;
-  left: 6%;
-  right: 6%;
-  height: 2px;
-  background: var(--espresso);
-}
 .hero__photo { animation: unveil 1400ms var(--ease-out) 200ms both; }
 .hero__stamp {
   position: absolute;
@@ -471,7 +435,6 @@ body::before {
   .hero__grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
   .hero__media { max-width: 520px; width: calc(100% - 24px); margin-top: var(--space-4); }
   .hero__stamp { width: 112px; height: 112px; right: -24px; top: -32px; }
-  .hero__hang { left: auto; right: -8%; bottom: -18%; width: 40%; }
   .hero__stamp .kk-stamp { width: 96px; height: 96px; }
 }
 
@@ -632,8 +595,7 @@ body::before {
 @media (max-width: 640px) { .addons__list { grid-template-columns: minmax(0, 1fr); } }
 
 /* Thrift rack: a scroll-snap row that bleeds past the container. */
-.rack { margin-top: var(--space-6); padding-block: var(--space-4) var(--space-5); }
-.rack__note { margin-bottom: var(--space-4); font-size: 15px; color: var(--ink-muted); }
+.rack { margin-top: var(--space-6); }
 .rack__track {
   --gutter: max(24px, calc((100vw - 1240px) / 2 + 24px));
   display: flex;
@@ -755,26 +717,10 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
   font: 700 14px/1.3 var(--font-mono);
   transform-origin: 50% calc(-1 * var(--string));
 }
-.hang__note { font-weight: 400; font-size: 12px; color: var(--ink-muted); white-space: nowrap; }
-/* A real piece: the whole thing opens its sheet. */
-.hang__open {
-  position: absolute;
-  z-index: 4;
-  inset: 0;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-}
-.hang__open:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
-.hang:has(.hang__open):hover .hang__tag { background: var(--paper); }
-.hang[data-sold] .photo img { filter: grayscale(1); opacity: 0.6; }
-.hang__stamp { z-index: 3; top: 62%; font-size: 18px; }
-/* A photo that isn't cut out hangs as a framed print from the hook. */
-.hang--framed .photo { border: 1px solid var(--line); }
+.hang__note { font-weight: 400; font-size: 12px; color: var(--ink-muted); }
 /* The punched hole, and the string up to the hanger. */
-.hang__tag::before {
+.hang__tag::before,
+.shop-pieces__tag::before {
   content: '';
   position: absolute;
   top: 4px;
@@ -783,9 +729,10 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
   height: 6px;
   border-radius: 50%;
   border: 1px solid var(--espresso);
-  background: var(--ground, var(--canvas));
+  background: var(--canvas);
 }
-.hang__tag::after {
+.hang__tag::after,
+.shop-pieces__tag::after {
   content: '';
   position: absolute;
   bottom: calc(100% - 7px);
@@ -795,7 +742,8 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
   background: var(--espresso);
 }
 .hang.is-swinging { animation: hang-swing 1600ms cubic-bezier(0.3, 0.7, 0.4, 1); }
-.is-swinging .hang__tag { animation: tag-swing 1800ms cubic-bezier(0.3, 0.7, 0.4, 1) 80ms; }
+.is-swinging .hang__tag,
+.is-swinging .shop-pieces__tag { animation: tag-swing 1800ms cubic-bezier(0.3, 0.7, 0.4, 1) 80ms; }
 @keyframes hang-swing {
   0% { transform: rotate(0); }
   15% { transform: rotate(2.2deg); }
@@ -841,19 +789,9 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
   margin: var(--space-5) 0 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-5) var(--space-4);
 }
-.shirts__item { grid-column: span 2; }
-/* Five designs: two large, then three. Four: two by two. No gap at the end of the grid. */
-.shirts__item:first-child:nth-last-child(5),
-.shirts__item:first-child:nth-last-child(5) + .shirts__item,
-.shirts__item:first-child:nth-last-child(4),
-.shirts__item:first-child:nth-last-child(4) ~ .shirts__item { grid-column: span 3; }
-/* The shirt mock-ups come on a grey studio card; on the espresso board they take the
-   brand's warmth until they're reshot on linen. */
-.photo--mockup { background: var(--board); }
-.photo--mockup img { mix-blend-mode: luminosity; }
 .shirts__item .photo { transition: transform 500ms var(--ease-out); }
 .shirts__item:hover .photo { transform: translateY(-6px); }
 .shirts__no {
@@ -869,10 +807,7 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
 .shirts__price { font-family: var(--font-mono); font-size: 14px; color: var(--ink-muted); white-space: nowrap; }
 .shirts__desc { margin: var(--space-2) 0 0; font-size: 15px; color: var(--ink-muted); }
 .shirts__colours { margin: var(--space-2) 0 0; font-family: var(--font-mono); font-size: 14px; }
-@media (max-width: 960px) {
-  .shirts__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .shirts__grid > .shirts__item { grid-column: auto; }
-}
+@media (max-width: 960px) { .shirts__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 860px) { .shirts__head { margin-left: 0; } }
 @media (max-width: 560px) { .shirts__grid { grid-template-columns: minmax(0, 1fr); } }
 
@@ -1160,23 +1095,3 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
 .page-link:hover .page-link__title { color: var(--rust); }
 .page-link:hover .page-link__arrow { transform: translateX(6px); }
 .page-link:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
-
-/* Home page: a look at the rack, on the linen wall */
-.new-rack__head { max-width: 52ch; }
-.new-rack__head .section-head__label { margin-bottom: var(--space-2); }
-.new-rack__title { margin: 0; font-family: var(--font-display); font-size: clamp(32px, 4.4vw, 52px); font-weight: 600; line-height: 1.05; letter-spacing: -0.02em; }
-.new-rack__lede { margin: var(--space-3) 0 var(--space-3); font-size: 17px; color: var(--ink-muted); }
-.mini-rack {
-  list-style: none;
-  margin: var(--space-5) 0 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--space-5) 0;
-}
-/* Each piece carries its own length of rail, so the rail runs on across a wrapped row. */
-.mini-rack > li {
-  padding-inline: var(--space-3);
-  background: linear-gradient(var(--espresso), var(--espresso)) 0 3px / 100% 2px no-repeat;
-}
-@media (max-width: 860px) { .mini-rack { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

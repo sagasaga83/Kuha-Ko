@@ -22,7 +22,6 @@ export function blankProduct(kind: Kind): Product {
     description: '',
     detail: '',
     photoUrl: null,
-    gallery: [],
     price: null,
     options:
       kind === 'shirt'
@@ -107,7 +106,7 @@ export function ProductEditor({
   const [price, setPrice] = useState(pesoText(initial.price));
   const [stock, setStock] = useState(initial.stock === null ? '' : String(initial.stock));
   const [groups, setGroups] = useState<GroupDraft[]>(initial.options.map(toDraft));
-  const [busy, setBusy] = useState<'' | 'save' | 'photo' | 'gallery' | 'delete'>('');
+  const [busy, setBusy] = useState<'' | 'save' | 'photo' | 'delete'>('');
   const [error, setError] = useState('');
 
   const set = <K extends keyof Product>(key: K, value: Product[K]) => setP((cur) => ({ ...cur, [key]: value }));
@@ -176,22 +175,6 @@ export function ProductEditor({
     }
   };
 
-  const addToGallery = async (files: FileList | null) => {
-    if (!files?.length) return;
-    setBusy('gallery');
-    setError('');
-    try {
-      const room = 6 - p.gallery.length;
-      const urls: string[] = [];
-      for (const file of Array.from(files).slice(0, room)) urls.push(await uploadPhoto(file));
-      setP((cur) => ({ ...cur, gallery: [...cur.gallery, ...urls].slice(0, 6) }));
-    } catch (err) {
-      setError(err instanceof ApiError || err instanceof Error ? `Photo: ${err.message}` : 'Photo upload failed.');
-    } finally {
-      setBusy('');
-    }
-  };
-
   const remove = async () => {
     if (!window.confirm(`Delete “${p.name}” for good? To take it off the site for now, untick “Show on the site” instead.`)) return;
     setBusy('delete');
@@ -231,47 +214,6 @@ export function ProductEditor({
             </button>
           ) : null}
         </div>
-      </div>
-      {p.kind === 'thrift' ? (
-        <p className="adm-note">
-          To hang a piece on the website’s rack, upload it cut out on a transparent background (PNG or WebP). A JPEG
-          shows as a framed photo on the rack instead.
-        </p>
-      ) : null}
-
-      <div className="adm-field">
-        <span>More photos</span>
-        <ul className="adm-gallery">
-          {p.gallery.map((url, i) => (
-            <li key={url}>
-              <img src={url} alt="" />
-              <button
-                type="button"
-                className="adm-link"
-                onClick={() => set('gallery', p.gallery.filter((_, j) => j !== i))}
-              >
-                Remove
-              </button>
-            </li>
-          ))}
-        </ul>
-        {p.gallery.length < 6 ? (
-          <label className="kk-button kk-button--secondary adm-file">
-            {busy === 'gallery' ? 'Uploading…' : 'Add photos'}
-            <input
-              type="file"
-              multiple
-              accept="image/jpeg,image/png,image/webp"
-              onChange={(e) => addToGallery(e.target.files)}
-              disabled={busy !== ''}
-            />
-          </label>
-        ) : null}
-        <small>
-          {p.kind === 'thrift'
-            ? 'Close-ups, the back, the label, and any flaw. Up to 6. Customers see them in the piece’s sheet.'
-            : 'Up to 6, shown in the product’s sheet.'}
-        </small>
       </div>
 
       <label className="adm-field">

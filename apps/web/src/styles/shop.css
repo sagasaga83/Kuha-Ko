@@ -52,33 +52,6 @@
 /* Product picker */
 .shop-picker__photo { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border: 1px solid var(--line); border-radius: var(--radius-sm); }
 .shop-picker__head { margin: var(--space-3) 0; }
-.shop-gallery--whole .shop-picker__photo { aspect-ratio: 4 / 5; object-fit: contain; background: var(--linen); }
-.shop-gallery__thumbs { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.shop-gallery__thumb {
-  display: block;
-  width: 56px;
-  height: 56px;
-  padding: 0;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  background: var(--linen);
-  cursor: pointer;
-}
-.shop-gallery__thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.shop-gallery--whole .shop-gallery__thumb img { object-fit: contain; }
-.shop-gallery__thumb[aria-pressed='true'] { border-color: var(--espresso); outline: 1px solid var(--espresso); outline-offset: -2px; }
-.shop-gallery__thumb:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
-/* Size and measurements, each on its own little kraft tag. */
-.shop-measure { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-2); }
-.shop-measure li {
-  padding: 4px 8px;
-  background: var(--kraft);
-  color: var(--espresso);
-  border: 1px solid var(--espresso);
-  border-radius: var(--radius-sm);
-  font: 400 13px var(--font-mono);
-}
 .shop-picker__name { font: 600 26px/1.15 var(--font-display); margin: 0; }
 .shop-picker__detail,
 .shop-picker__tag { font: 400 13px var(--font-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted); margin: var(--space-1) 0 0; }
@@ -239,6 +212,48 @@
 #thrift .shop-add:hover { background: var(--sage-ink); color: var(--canvas); }
 .shop-cartbtn:focus-visible,
 .shop-add:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+/* Thrift pieces for sale online */
+/* Same gap above as the shirts below it; the shirts section adds the gap after. */
+.shop-online { margin-top: var(--space-6); }
+.shop-pieces { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4) var(--space-3); }
+.shop-pieces--site { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.shop-pieces--app { grid-template-columns: repeat(2, 1fr); padding-inline: var(--app-gutter) var(--app-gutter-r); margin-bottom: var(--space-5); }
+.shop-pieces__card {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  color: var(--espresso);
+  font: inherit;
+}
+button.shop-pieces__card { cursor: pointer; }
+.shop-pieces__card { position: relative; }
+.shop-pieces__photo { position: relative; display: block; aspect-ratio: 4 / 5; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: var(--space-1); }
+/* The price, on a kraft tag tied to the photo's corner (string and hole shared with the rack, in site.css). */
+.shop-pieces__tag {
+  --string: var(--space-2);
+  position: absolute;
+  z-index: 1;
+  top: var(--space-2);
+  right: var(--space-2);
+  padding: 13px 8px 5px;
+  background: var(--kraft);
+  color: var(--espresso);
+  border: 1px solid var(--espresso);
+  border-radius: var(--radius-sm);
+  font: 700 14px/1.2 var(--font-mono);
+  transform-origin: 50% calc(-1 * var(--space-2));
+}
+.shop-pieces__claimed { font: 700 13px var(--font-mono); color: var(--sage-ink); }
+.shop-pieces__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.shop-pieces__name { font-weight: 500; }
+.shop-pieces__detail { font-size: 13px; color: var(--ink-muted); }
+.shop-pieces [data-sold] .shop-pieces__photo img { filter: grayscale(1); opacity: 0.6; }
+.shop-pieces [data-sold] .shop-pieces__tag { color: var(--ink-muted); }
 
 /* KUHA KO! stamped on what's in the cart. Lands once, right after it's added. */
 .claim-stamp {

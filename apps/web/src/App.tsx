@@ -4,7 +4,6 @@ import { SiteHeader } from './components/SiteHeader';
 import { Hero } from './components/Hero';
 import { Marquee } from './components/Marquee';
 import { NameStory } from './components/NameStory';
-import { NewOnRack } from './components/NewOnRack';
 import { PageLinks } from './components/PageLinks';
 import { MenuSection } from './components/MenuSection';
 import { ThriftSection } from './components/ThriftSection';
@@ -22,7 +21,6 @@ function Page({ id }: { id: PageId | null }) {
         <>
           <Hero />
           <Marquee />
-          <NewOnRack />
           <NameStory />
           <PageLinks />
         </>

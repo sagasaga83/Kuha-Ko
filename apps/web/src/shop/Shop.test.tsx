@@ -122,7 +122,6 @@ describe('claiming a thrift piece', () => {
     description: '',
     detail: 'Size M',
     photoUrl: null,
-    gallery: [],
     price: 65000,
     options: [],
     stock: 1,
@@ -135,12 +134,11 @@ describe('claiming a thrift piece', () => {
   it('stamps the piece once it is in the cart, and the basket shows it', () => {
     window.history.replaceState(null, '', '/thrift');
     withShop(rack, <App />);
-    // The piece hangs on the rack with its size and price on the tag.
-    const piece = screen.getByRole('button', { name: 'Denim jacket, M · ₱650' });
-    fireEvent.click(piece);
+    const card = screen.getByRole('button', { name: /Denim jacket/ });
+    expect(card.textContent).not.toMatch(/In your cart/);
+    fireEvent.click(card);
     fireEvent.click(within(screen.getByRole('dialog', { name: 'Denim jacket' })).getByRole('button', { name: /Add to order/ }));
-    expect(screen.getByRole('button', { name: 'Denim jacket, M · ₱650, in your cart' })).toBeTruthy();
-    expect(document.querySelector('.rack .claim-stamp')?.textContent).toBe('KUHA KO!');
+    expect(screen.getByRole('button', { name: /Denim jacket/ }).textContent).toMatch(/In your cart/);
     expect(screen.getByRole('status').textContent).toMatch(/Denim jacket added to your cart/);
     expect(screen.getByRole('button', { name: /Cart 1/ })).toBeTruthy();
   });

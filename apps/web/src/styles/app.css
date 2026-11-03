@@ -82,7 +82,6 @@ html.kk-app body::before { display: none; }
 .app-mono { font-family: var(--font-mono); font-size: 14px; }
 .app-word { font-family: var(--font-display); font-size: 19px; color: var(--rust); }
 .app-signup { margin-block: var(--space-3) var(--space-4); }
-.app-footnote { margin: var(--space-2) 0 var(--space-5); padding-inline: var(--app-gutter) var(--app-gutter-r); font-size: 15px; color: var(--ink-muted); }
 .app-lede { margin: 0; padding-inline: var(--app-gutter) var(--app-gutter-r); font-size: 17px; color: var(--ink-muted); }
 .app-section-title {
   margin: var(--space-5) 0 0;

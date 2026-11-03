@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { photos } from '../data/photos';
 import { shirtsFrom, useCatalog } from '../catalog/catalog';
 import { useShop } from '../shop/Shop';
-import { useRackItems } from '../rack';
+import { OnlineThrift } from '../shop/OnlineThrift';
 import { Photo } from './Photo';
 import { SectionHead } from './SectionHead';
-import { RackItemPiece } from './RackItemPiece';
+import { RackPiece } from './RackPiece';
 import { useDragScroll } from '../useDragScroll';
 import { useRackSway } from '../useRackSway';
 import { useArrival } from '../useArrival';
@@ -28,8 +29,6 @@ export function ThriftSection() {
   const { products } = useCatalog();
   const shirts = shirtsFrom(products);
   const shop = useShop();
-  const rack = useRackItems();
-  const forSale = rack.some((r) => r.product);
   const track = useRef<HTMLUListElement>(null);
   const [pos, setPos] = useState({ start: true, end: false, progress: 0 });
   useDragScroll(track);
@@ -60,7 +59,7 @@ export function ThriftSection() {
   };
 
   return (
-    <section id="thrift" className="section section--first" aria-labelledby="thrift-title">
+    <section id="thrift" className="section" aria-labelledby="thrift-title">
       <div className="container">
         <SectionHead
           level={1}
@@ -71,16 +70,11 @@ export function ThriftSection() {
           lede="Behind the coffee bar: racks of hand-picked ukay finds, a fitting room and a vintage mirror. Grab a cup and take your time."
         />
       </div>
-      <div className="rack band--linen" data-reveal>
-        <p className="container rack__note">
-          {forSale
-            ? 'On the rack now. Tap a piece for its photos, measurements and price; first to pay gets it.'
-            : 'A look at the rack. Pieces for sale online hang here once they’re in.'}
-        </p>
+      <div className="rack" data-reveal>
         <ul className={`rack__track is-${arrival}`} ref={track} onScroll={update} aria-label="On the rack" tabIndex={0}>
-          {rack.map((r, i) => (
-            <li key={r.key} className="rack__item" style={{ '--i': i } as CSSProperties}>
-              <RackItemPiece item={r} no={i + 1} />
+          {photos.rack.map((p, i) => (
+            <li key={p.src} className="rack__item" style={{ '--i': i } as CSSProperties}>
+              <RackPiece slot={p} no={i + 1} />
             </li>
           ))}
         </ul>
@@ -101,6 +95,7 @@ export function ThriftSection() {
         </div>
       </div>
       <div className="container">
+        <OnlineThrift variant="site" />
         <section className="shirts" aria-labelledby="shirts-title">
           <header className="shirts__head" data-reveal>
             <h3 id="shirts-title" className="shirts__title">
@@ -114,7 +109,7 @@ export function ThriftSection() {
           <ul className="shirts__grid">
             {shirts.map((s, i) => (
               <li key={s.name} className="shirts__item" data-reveal style={{ '--d': i % 3 } as CSSProperties}>
-                <Photo slot={s.photo} className="photo--mockup" />
+                <Photo slot={s.photo} />
                 <p className="shirts__no">Design {String(i + 1).padStart(2, '0')}</p>
                 <div className="shirts__row">
                   <h4 className="shirts__name">{s.name}</h4>

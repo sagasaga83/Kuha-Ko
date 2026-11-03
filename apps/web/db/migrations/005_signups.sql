@@ -1,7 +1,4 @@
--- More photos per product (close-ups, the back, any flaw), and the list of
--- people who asked to hear when the next live selling starts.
-
-ALTER TABLE products ADD COLUMN gallery jsonb NOT NULL DEFAULT '[]';
+-- People who asked to hear when the next live selling starts.
 
 CREATE TABLE signups (
   email      text PRIMARY KEY,

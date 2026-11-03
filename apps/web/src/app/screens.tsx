@@ -5,12 +5,12 @@ import { photos } from '../data/photos';
 import type { Shirt } from '../data/shirts';
 import { addOnsFrom, menuFrom, shirtsFrom, useCatalog } from '../catalog/catalog';
 import { useShop } from '../shop/Shop';
-import { useRackItems } from '../rack';
+import { OnlineThrift } from '../shop/OnlineThrift';
 import { openingDayText, site } from '../data/site';
 import { googleCalendarUrl, useNextLive } from '../live';
 import { SignupForm } from '../components/SignupForm';
 import { liveSteps } from '../components/LiveSelling';
-import { RackItemPiece } from '../components/RackItemPiece';
+import { RackPiece } from '../components/RackPiece';
 import { useRackSway } from '../useRackSway';
 import { useArrival } from '../useArrival';
 import { Photo } from '../components/Photo';
@@ -23,8 +23,6 @@ import { Group, Row, Segmented, Sheet } from './ui';
 export type TabId = 'home' | 'menu' | 'thrift' | 'live' | 'about';
 
 export function HomeScreen({ go }: { go: (tab: TabId) => void }) {
-  const live = useNextLive();
-  const opening = openingDayText();
   return (
     <>
       <div className="app-hero">
@@ -34,15 +32,6 @@ export function HomeScreen({ go }: { go: (tab: TabId) => void }) {
         </p>
         <p className="app-hero__sub">A coffee bar and a thrift boutique under one roof in {site.city}.</p>
       </div>
-      <Group header="Coming up">
-        <Row
-          title={live?.now ? 'Live now' : 'Next live'}
-          detail={live ? `${live.shortDay} · ${live.time}` : 'Date soon'}
-          onClick={() => go('live')}
-          chevron
-        />
-        {opening ? <Row title="Opening day" detail={opening} onClick={() => go('about')} chevron /> : null}
-      </Group>
       <Group header="Inside">
         <Row title="Kuha Ko Coffee" subtitle="Espresso drinks named after the racks" onClick={() => go('menu')} chevron />
         <Row title="Kuha Ko Thrift" subtitle="Pre-loved, one of a kind" onClick={() => go('thrift')} chevron />
@@ -128,7 +117,6 @@ export function ThriftScreen() {
   const shirts = shirtsFrom(products);
   const shop = useShop();
   const [open, setOpen] = useState<Shirt | null>(null);
-  const items = useRackItems();
   const rack = useRef<HTMLUListElement>(null);
   useRackSway(rack);
   const arrival = useArrival(rack);
@@ -137,15 +125,13 @@ export function ThriftScreen() {
       <p className="app-lede">Hand-picked ukay finds behind the coffee bar, a fitting room and a vintage mirror.</p>
       <h2 className="app-section-title">On the rack</h2>
       <ul className={`app-rack is-${arrival}`} ref={rack} aria-label="On the rack" tabIndex={0}>
-        {items.map((r, i) => (
-          <li key={r.key} style={{ '--i': i } as CSSProperties}>
-            <RackItemPiece item={r} no={i + 1} />
+        {photos.rack.map((p, i) => (
+          <li key={p.src} style={{ '--i': i } as CSSProperties}>
+            <RackPiece slot={p} no={i + 1} />
           </li>
         ))}
       </ul>
-      <p className="app-footnote">
-        {items.some((r) => r.product) ? 'Tap a piece for its photos, measurements and price.' : 'Pieces for sale online hang here once they’re in.'}
-      </p>
+      <OnlineThrift variant="app" />
       <h2 className="app-section-title">Our own shirts</h2>
       <ul className="app-shirts">
         {shirts.map((s) => (
@@ -159,7 +145,7 @@ export function ThriftScreen() {
                 else setOpen(s);
               }}
             >
-              <Photo slot={s.photo} className="photo--mockup" />
+              <Photo slot={s.photo} />
               <span className="app-shirts__name">{s.name}</span>
               <span className="app-shirts__meta">{s.price ?? 'Price at opening'}</span>
             </button>
