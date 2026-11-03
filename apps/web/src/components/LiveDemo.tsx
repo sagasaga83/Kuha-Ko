@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { prefersReducedMotion, useInView } from '../hooks/motion';
+import { ClaimStamp } from '../shop/ClaimStamp';
+
+/** The piece being shown in the example: one of the sample cut-outs. */
+const PIECE = { src: '/photos/rack/denim-jacket.webp', no: '0142', name: 'Denim jacket', size: 'M' };
 
 // An example of how a live sale plays out. Not real comments.
 const script = [
@@ -14,6 +18,8 @@ export function LiveDemo() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref);
   const [shown, setShown] = useState(script.length);
+  const winAt = script.findIndex((c) => c.win);
+  const claimed = shown > winAt;
 
   useEffect(() => {
     if (!inView || prefersReducedMotion()) {
@@ -35,7 +41,18 @@ export function LiveDemo() {
       <div className="live-demo__bar">
         <span className="live-demo__dot" />
         <span>Live</span>
-        <span className="live-demo__piece">Now showing No. 0142 · Denim jacket · Size M</span>
+        <span className="live-demo__host">Kuha Ko Thrift</span>
+      </div>
+      <div className={`live-demo__pinned${claimed ? ' is-claimed' : ''}`}>
+        <span className="live-demo__thumb">
+          <img src={PIECE.src} alt="" loading="lazy" />
+        </span>
+        <span className="live-demo__tag">
+          <span className="live-demo__no">No. {PIECE.no}</span>
+          <span className="live-demo__name">{PIECE.name}</span>
+          <span className="live-demo__size">Size {PIECE.size} · One of one</span>
+        </span>
+        {claimed ? <ClaimStamp fresh={shown === winAt + 1} className="live-demo__stamp" /> : null}
       </div>
       <ul className="live-demo__thread">
         {script.slice(0, shown).map((c, i) => (

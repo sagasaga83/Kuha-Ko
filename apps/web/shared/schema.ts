@@ -35,6 +35,8 @@ export const productInputSchema = z.object({
   /** Coffee: the drink style ("Latte"). Thrift: size and measurements. */
   detail: z.string().trim().max(200).default(''),
   photoUrl: z.string().max(500).nullable().default(null),
+  /** More photos after the main one: close-ups, the back, and any flaw (the brand shows flaws before anyone asks). */
+  gallery: z.array(z.string().max(500)).max(6).default([]),
   /** null until the price is set: shown as "Price at opening" and can't be ordered. */
   price: centavos.nullable().default(null),
   options: z.array(optionGroupSchema).max(6).default([]),
@@ -78,10 +80,18 @@ export const paymentSettingsSchema = z.object({
 });
 export type PaymentSettings = z.infer<typeof paymentSettingsSchema>;
 
+/** Live selling on the thrift page. */
+export const liveSettingsSchema = z.object({
+  /** When the next live starts, as an ISO date-time with its offset ("2026-11-14T20:00:00+08:00"), or null. */
+  nextAt: z.string().datetime({ offset: true }).nullable().default(null),
+});
+export type LiveSettings = z.infer<typeof liveSettingsSchema>;
+
 export const settingsSchema = z.object({
   delivery: deliverySettingsSchema,
   ordering: orderingSettingsSchema,
   payment: paymentSettingsSchema,
+  live: liveSettingsSchema.default({ nextAt: null }),
 });
 export type Settings = z.infer<typeof settingsSchema>;
 
@@ -122,4 +132,11 @@ export const profileSchema = z.object({
   address: z.string().trim().max(300).default(''),
   notes: z.string().trim().max(300).default(''),
   pin: z.object(latLng).nullable().default(null),
+});
+
+/** POST /api/subscribe: someone asking for the live schedule by email. */
+export const subscribeRequestSchema = z.object({
+  email: z.string().trim().toLowerCase().email('Check your email address').max(120),
+  /** A field people never see; bots fill it in. */
+  website: z.string().max(200).optional(),
 });

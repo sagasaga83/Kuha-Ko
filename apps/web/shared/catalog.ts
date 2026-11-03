@@ -3,7 +3,7 @@
 // Validation schemas live in ./schema.ts, so the customer bundle doesn't carry zod.
 import type { OrderingSettings, PaymentSettings, Product, Settings } from './schema';
 import type { PaymentMethod } from './order';
-export type { DeliverySettings, OptionGroup, OrderingSettings, PaymentSettings, Product, ProductInput, Settings } from './schema';
+export type { DeliverySettings, LiveSettings, OptionGroup, OrderingSettings, PaymentSettings, Product, ProductInput, Settings } from './schema';
 
 export const KINDS = ['coffee', 'shirt', 'thrift'] as const;
 export type Kind = (typeof KINDS)[number];
@@ -18,6 +18,7 @@ export const DEFAULT_SETTINGS: Settings = {
   delivery: { origin: null, radiusKm: 8, baseFee: 4900, baseKm: 3, perKm: 1000 },
   ordering: { coffee: false, shirt: false, thrift: false },
   payment: { gcashQrUrl: null, qrUrl: null },
+  live: { nextAt: null },
 };
 
 /** What GET /api/catalog returns. */
@@ -28,6 +29,8 @@ export interface Catalog {
   deliveryReady: boolean;
   /** Ways customers can pay right now: each one once its QR code is uploaded. */
   paymentMethods: PaymentMethod[];
+  /** When the next live selling starts (ISO date-time), or null while it isn't set. */
+  nextLive: string | null;
 }
 
 export function availablePaymentMethods(p: PaymentSettings): PaymentMethod[] {

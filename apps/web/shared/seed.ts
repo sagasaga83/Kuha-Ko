@@ -34,6 +34,7 @@ export function seedProducts(): Product[] {
         description: d.description,
         detail: d.kind,
         photoUrl: null,
+        gallery: [],
         price: base,
         options: [
           {
@@ -64,6 +65,7 @@ export function seedProducts(): Product[] {
       description: s.description,
       detail: '',
       photoUrl: s.photo.src,
+      gallery: [],
       price: peso(s.price),
       options: [
         {

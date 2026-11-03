@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import type { PhotoSlot } from '../data/photos';
 import { swingOnTouch } from '../swing';
 import { Photo } from './Photo';
+import { ClaimStamp } from '../shop/ClaimStamp';
 
 /** The wooden hanger photo (547 × 310): the wood's crown is 97 px below the hook's top. */
 const HANGER = { src: '/photos/rack/hanger.webp', crown: 97 / 547, aspect: 310 / 547 };
@@ -19,7 +20,27 @@ const u = (n: number) => `calc(${n.toFixed(1)} * var(--u))`;
  * clipped to the neck opening, so the wood shows inside the collar, in front of the back
  * of the shirt and behind the front neckline. Each cut-out says where its neck is.
  */
-export function RackPiece({ slot, no }: { slot: PhotoSlot; no: number }) {
+export function RackPiece({
+  slot,
+  no,
+  note = 'One of one',
+  sold,
+  onOpen,
+  label,
+  claimed,
+}: {
+  slot: PhotoSlot;
+  no: number;
+  /** The tag's second line: size and price, "Sold", or "One of one". */
+  note?: string;
+  sold?: boolean;
+  /** Makes the piece a button (for real pieces): opens its sheet. */
+  onOpen?: () => void;
+  /** What the button says to screen readers: "Denim jacket, size M, ₱450". */
+  label?: string;
+  /** In the customer's cart: stamped KUHA KO!, freshly when just added. */
+  claimed?: 'fresh' | boolean;
+}) {
   const width = slot.hanger?.width ?? 400;
   const crown = slot.hanger?.crown ?? 120;
   const neck = slot.hanger?.neck;
@@ -41,10 +62,15 @@ export function RackPiece({ slot, no }: { slot: PhotoSlot; no: number }) {
   }
 
   return (
-    <div className="hang" style={{ '--off': off.toFixed(1) } as CSSProperties} {...swingOnTouch}>
+    <div
+      className={`hang${slot.cutout ? '' : ' hang--framed'}`}
+      data-sold={sold || undefined}
+      style={{ '--off': (slot.cutout ? off : 60).toFixed(1) } as CSSProperties}
+      {...swingOnTouch}
+    >
       <img className="hang__hanger" src={HANGER.src} alt="" style={place} loading="lazy" decoding="async" />
       <Photo slot={slot} />
-      {clip ? (
+      {clip && slot.cutout ? (
         <img
           className="hang__hanger hang__hanger--front"
           src={HANGER.src}
@@ -56,8 +82,14 @@ export function RackPiece({ slot, no }: { slot: PhotoSlot; no: number }) {
       ) : null}
       <p className="hang__tag">
         <span>No. {String(no).padStart(4, '0')}</span>
-        <span className="hang__note">One of one</span>
+        <span className="hang__note">{note}</span>
       </p>
+      {claimed ? <ClaimStamp fresh={claimed === 'fresh'} className="hang__stamp" /> : null}
+      {onOpen ? (
+        <button type="button" className="hang__open" onClick={onOpen}>
+          <span className="visually-hidden">{label ?? slot.alt}</span>
+        </button>
+      ) : null}
     </div>
   );
 }

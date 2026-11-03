@@ -41,6 +41,8 @@ export const photos: {
   menu: Record<string, PhotoSlot>;
   rack: PhotoSlot[];
   shop: PhotoSlot;
+  /** The people behind the two shops, for the About page. */
+  people: { coffee: PhotoSlot; thrift: PhotoSlot };
 } = {
   hero: {
     src: '/photos/hero-iced-latte.jpg',
@@ -123,5 +125,19 @@ export const photos: {
     alt: 'The Kuha Ko shop front from the street',
     brief: 'The shop front from across the street, sign in frame.',
     ratio: '3 / 2',
+  },
+  people: {
+    coffee: {
+      src: null,
+      alt: 'The owner of Kuha Ko Coffee behind the bar',
+      brief: 'The owner behind the bar, pulling a shot. Daylight from the window.',
+      ratio: '4 / 5',
+    },
+    thrift: {
+      src: null,
+      alt: 'The partner behind Kuha Ko Thrift at the rack',
+      brief: 'The partner at the rack, tying a tag on a piece.',
+      ratio: '4 / 5',
+    },
   },
 };

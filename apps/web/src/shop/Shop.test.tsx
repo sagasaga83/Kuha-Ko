@@ -99,17 +99,17 @@ describe('ordering on the one-page site', () => {
   it('shows Add buttons only for orderable items', () => {
     window.history.replaceState(null, '', '/menu');
     withShop(open, <App />);
-    expect(screen.getAllByRole('button', { name: /Add to order/ }).map((b) => b.textContent)).toEqual(['Add to order: The Kuha']);
+    expect(screen.getAllByRole('button', { name: /to your order/ }).map((b) => b.textContent)).toEqual(['Add The Kuha to your order']);
   });
 
   it('shows no ordering while prices, ordering or delivery are not set up', () => {
     window.history.replaceState(null, '', '/menu');
     withShop(fallbackCatalog, <App />);
-    expect(screen.queryByRole('button', { name: /Add to order/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /to your order/ })).toBeNull();
     withShop({ ...open, deliveryReady: false }, <App />);
-    expect(screen.queryByRole('button', { name: /Add to order/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /to your order/ })).toBeNull();
     withShop({ ...open, paymentMethods: [] }, <App />);
-    expect(screen.queryByRole('button', { name: /Add to order/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /to your order/ })).toBeNull();
   });
 });
 
@@ -122,6 +122,7 @@ describe('claiming a thrift piece', () => {
     description: '',
     detail: 'Size M',
     photoUrl: null,
+    gallery: [],
     price: 65000,
     options: [],
     stock: 1,
@@ -134,11 +135,12 @@ describe('claiming a thrift piece', () => {
   it('stamps the piece once it is in the cart, and the basket shows it', () => {
     window.history.replaceState(null, '', '/thrift');
     withShop(rack, <App />);
-    const card = screen.getByRole('button', { name: /Denim jacket/ });
-    expect(card.textContent).not.toMatch(/In your cart/);
-    fireEvent.click(card);
+    // The piece hangs on the rack with its size and price on the tag.
+    const piece = screen.getByRole('button', { name: 'Denim jacket, M · ₱650' });
+    fireEvent.click(piece);
     fireEvent.click(within(screen.getByRole('dialog', { name: 'Denim jacket' })).getByRole('button', { name: /Add to order/ }));
-    expect(screen.getByRole('button', { name: /Denim jacket/ }).textContent).toMatch(/In your cart/);
+    expect(screen.getByRole('button', { name: 'Denim jacket, M · ₱650, in your cart' })).toBeTruthy();
+    expect(document.querySelector('.rack .claim-stamp')?.textContent).toBe('KUHA KO!');
     expect(screen.getByRole('status').textContent).toMatch(/Denim jacket added to your cart/);
     expect(screen.getByRole('button', { name: /Cart 1/ })).toBeTruthy();
   });
