@@ -22,7 +22,7 @@ export default function OrderPage({ id }: { id: string }) {
     try {
       const res = await fetch(`/api/order?id=${encodeURIComponent(id)}`, { headers: { accept: 'application/json' } });
       const data = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(data?.error ?? 'We can’t find that order.');
+      if (!res.ok || !data) throw new Error(data?.error ?? 'We can’t find that order.');
       setOrder(data);
       return data as OrderView;
     } catch (err) {

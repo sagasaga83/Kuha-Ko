@@ -153,7 +153,7 @@ Kuha Ko talks like a friend behind the counter: warm, local, a little playful an
 | canvas | #FFFFFF | #1E1611 | The website page ground: plain white in Linen, the evening brown in Evening. Linen stays the ground for print, signs and photo placeholders. |
 | linen | #F3EBDD | #1E1611 | Page, menu and wall background. The default ground for everything. |
 | paper | #FBF7EF | #2A201A | Raised panels on linen: cards, menu panels, the inside of a stamp. |
-| kraft | #E8D9BF | #6B5642 | Paper bags, hang tags and cup sleeves. Text on kraft is espresso or ink-muted; rust and sage-ink only at 24px and larger. |
+| kraft | #E8D9BF | #594736 | Paper bags, hang tags and cup sleeves. Text on kraft is espresso or ink-muted; rust and sage-ink only at 24px and larger. |
 | line | #D8CBB4 | #4A3A2C | Hairlines and card borders. Decorative only, never the only thing that separates two states. |
 | espresso | #3B2A20 | #F3EBDD | Main text and the logo, on linen, paper and kraft in both themes. |
 | ink-muted | #5E4B3C | #CDBEA8 | Secondary text, notes and captions, on linen, paper and kraft. |

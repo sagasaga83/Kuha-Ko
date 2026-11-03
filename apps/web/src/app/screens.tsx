@@ -123,7 +123,7 @@ export function ThriftScreen() {
       <h2 className="app-section-title">On the rack</h2>
       <ul className={`app-rack is-${arrival}`} ref={rack} aria-label="On the rack" tabIndex={0}>
         {photos.rack.map((p, i) => (
-          <li key={p.brief} style={{ '--i': i } as CSSProperties}>
+          <li key={p.src} style={{ '--i': i } as CSSProperties}>
             <RackPiece slot={p} no={i + 1} />
           </li>
         ))}
