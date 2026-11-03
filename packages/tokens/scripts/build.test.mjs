@@ -36,6 +36,8 @@ test('text colours meet 4.5:1 on their grounds in every theme', () => {
     ['ink-muted', 'linen'],
     ['rust', 'linen'],
     ['sage-ink', 'linen'],
+    ['espresso', 'kraft'],
+    ['ink-muted', 'kraft'],
     ['on-rust', 'rust'],
     ['on-board', 'board'],
     ['mustard', 'board'],

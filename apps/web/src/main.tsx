@@ -14,7 +14,7 @@ import { applyStoredTheme } from './theme';
 import { CatalogProvider } from './catalog/catalog';
 import { ShopProvider } from './shop/Shop';
 import { Splash } from './components/Splash';
-import { upgradeHashLink } from './router';
+import { pageFor, upgradeHashLink, usePath } from './router';
 import { AccountProvider } from './account/auth';
 
 applyStoredTheme();
@@ -30,9 +30,14 @@ const orderId = window.location.pathname.match(/^\/order\/([0-9a-f-]{36})\/?$/)?
 const AccountPage = lazy(() => import('./account/AccountPage'));
 const isAccountPath = /^\/account(\/sign-up)?\/?$/.test(window.location.pathname);
 
-/** Picks the app layout or the one-page site, and switches if the window is resized across the phone size. */
+/**
+ * Picks the app layout or the one-page site, and switches if the window is resized across the phone size.
+ * An address that isn't a page gets the site's "can't find that page" screen in both layouts,
+ * rather than the app quietly opening on its Home tab.
+ */
 function Root() {
   const [app, setApp] = useState(isApp);
+  const known = pageFor(usePath()) !== null;
   useEffect(() => {
     const mq = window.matchMedia?.(PHONE_QUERY);
     if (!mq) return;
@@ -40,7 +45,7 @@ function Root() {
     mq.addEventListener('change', update);
     return () => mq.removeEventListener('change', update);
   }, []);
-  return app ? <MobileApp /> : <App />;
+  return app && known ? <MobileApp /> : <App />;
 }
 
 createRoot(document.getElementById('root')!).render(

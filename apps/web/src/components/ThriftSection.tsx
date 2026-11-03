@@ -73,7 +73,7 @@ export function ThriftSection() {
       <div className="rack" data-reveal>
         <ul className={`rack__track is-${arrival}`} ref={track} onScroll={update} aria-label="On the rack" tabIndex={0}>
           {photos.rack.map((p, i) => (
-            <li key={p.brief} className="rack__item" style={{ '--i': i } as CSSProperties}>
+            <li key={p.src} className="rack__item" style={{ '--i': i } as CSSProperties}>
               <RackPiece slot={p} no={i + 1} />
             </li>
           ))}
