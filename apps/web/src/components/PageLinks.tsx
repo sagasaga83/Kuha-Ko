@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Stamp } from '@kuhako/ui';
 import { photos } from '../data/photos';
 import { Link } from '../router';
@@ -59,8 +59,8 @@ export function PageLinks() {
           Explore
         </h2>
         <ul className="page-links">
-          {pages.map((p, i) => (
-            <li key={p.href} data-reveal style={{ '--d': i } as CSSProperties}>
+          {pages.map((p) => (
+            <li key={p.href}>
               <Link className="page-link" href={p.href}>
                 <span className="page-link__visual" aria-hidden="true">
                   {p.visual}
@@ -68,9 +68,6 @@ export function PageLinks() {
                 <span className={`page-link__label section-head__label--${p.accent}`}>{p.label}</span>
                 <span className="page-link__title">{p.title}</span>
                 <span className="page-link__line">{p.line}</span>
-                <span className="page-link__arrow" aria-hidden="true">
-                  →
-                </span>
               </Link>
             </li>
           ))}

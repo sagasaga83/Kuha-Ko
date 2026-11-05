@@ -65,7 +65,7 @@ p { text-wrap: pretty; }
 }
 .muted { margin: 0; color: var(--ink-muted); }
 
-/* A plain link with an arrow that slides on hover. */
+/* A plain link: a hairline underline that fills in on hover. */
 .text-link {
   display: inline-flex;
   align-items: center;
@@ -78,9 +78,7 @@ p { text-wrap: pretty; }
     linear-gradient(var(--line), var(--line)) left calc(100% - 10px) / 100% 1px no-repeat;
   transition: background-size 300ms var(--ease-out), color 150ms ease;
 }
-.text-link::after { content: '→'; transition: transform 300ms var(--ease-out); }
 .text-link:hover { color: var(--rust); background-size: 100% 1px, 100% 1px; }
-.text-link:hover::after { transform: translateX(6px); }
 
 .icon-btn {
   display: inline-grid;
@@ -123,15 +121,6 @@ body::before {
   height: var(--safe-t);
   background: var(--canvas);
 }
-
-/* Scroll reveal: only armed once the script has checked for motion support. */
-.reveal-ready [data-reveal] {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 900ms var(--ease-out), transform 900ms var(--ease-out);
-  transition-delay: calc(var(--d, 0) * 110ms);
-}
-.reveal-ready [data-reveal].is-in { opacity: 1; transform: none; }
 
 /* Announcement bar */
 .announce {
@@ -822,8 +811,7 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
   gap: var(--space-4);
 }
 .promises li { border-top: 1px solid var(--line); padding-top: var(--space-3); }
-.promises__no { font-family: var(--font-mono); font-size: 14px; color: var(--sage-ink); }
-.promises h3 { margin: var(--space-3) 0 0; font-family: var(--font-display); font-weight: 600; font-size: 22px; line-height: 1.25; }
+.promises h3 { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 22px; line-height: 1.25; }
 .promises p { margin: var(--space-2) 0 0; font-size: 15px; color: var(--ink-muted); }
 @media (max-width: 760px) { .promises { grid-template-columns: minmax(0, 1fr); } }
 
@@ -1243,7 +1231,7 @@ html.lamp-vt::view-transition-new(root) { animation-duration: 700ms; animation-t
   flex-direction: column;
   gap: var(--space-1);
   height: 100%;
-  padding: var(--space-4) var(--space-5) var(--space-4) 0;
+  padding: var(--space-4) var(--space-3) var(--space-4) 0;
   color: var(--espresso);
   text-decoration: none;
 }
@@ -1271,14 +1259,5 @@ html.lamp-vt::view-transition-new(root) { animation-duration: 700ms; animation-t
   letter-spacing: -0.01em;
 }
 .page-link:hover .page-link__visual .photo img { transform: scale(1.04); }
-.page-link__arrow {
-  position: absolute;
-  right: var(--space-3);
-  bottom: var(--space-4);
-  font-size: 22px;
-  color: var(--rust);
-  transition: transform 300ms var(--ease-out);
-}
 .page-link:hover .page-link__title { color: var(--rust); }
-.page-link:hover .page-link__arrow { transform: translateX(6px); }
 .page-link:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }

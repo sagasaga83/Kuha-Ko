@@ -42,7 +42,7 @@ export function MenuSection() {
           title="The menu"
           lede="Espresso drinks named after the racks, hot or iced. Prices go up when we open."
         />
-        <div className="menu" data-reveal>
+        <div className="menu">
           <div className="menu__media">
             <div className="menu__frame">
               {menu.map((g) => (

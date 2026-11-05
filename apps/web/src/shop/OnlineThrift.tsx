@@ -57,7 +57,7 @@ export function OnlineThrift({ variant }: { variant: 'app' | 'site' }) {
   }
   return (
     <section className="shop-online" aria-labelledby="shop-online-title">
-      <header className="shirts__head" data-reveal>
+      <header className="shirts__head">
         <h3 id="shop-online-title" className="shirts__title">
           Shop the rack online
         </h3>

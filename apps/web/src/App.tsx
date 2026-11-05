@@ -11,7 +11,6 @@ import { LiveSelling } from './components/LiveSelling';
 import { AboutSection } from './components/AboutSection';
 import { SiteFooter } from './components/SiteFooter';
 import { BackToTop } from './components/BackToTop';
-import { useReveal } from './hooks/motion';
 import { Link, PAGES, pageFor, usePath, type PageId } from './router';
 
 function Page({ id }: { id: PageId | null }) {
@@ -53,7 +52,6 @@ function Page({ id }: { id: PageId | null }) {
 
 /** The full website: one page per section (/, /menu, /thrift, /live, /about). */
 export function App() {
-  useReveal();
   const path = usePath();
   const id = pageFor(path);
 

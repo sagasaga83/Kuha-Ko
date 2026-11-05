@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { openingDayText, site } from '../data/site';
 import { photos } from '../data/photos';
 import { Photo } from './Photo';
@@ -42,25 +41,25 @@ export function AboutSection() {
       <section id="about" className="container section section--first about" aria-labelledby="about-title">
         <div className="about__top">
           <div>
-            <h1 id="about-title" className="about__title" data-reveal>
+            <h1 id="about-title" className="about__title">
               About Kuha Ko
             </h1>
-            <p className="about__intro" data-reveal>
+            <p className="about__intro">
               A coffee bar and a thrift boutique under one roof in {site.city}. The name is Hiligaynon: <em>kuha</em> is
               to take or to get, <em>ko</em> is I or my. “Kuha ko” is what you say when you find the right piece or order
               your usual: I’ll take it.
             </p>
-            <p className="about__say" data-reveal>
+            <p className="about__say">
               Say it KOO-ha’ ko · /ˈku.haʔ ko/
             </p>
           </div>
-          <div className="about__photo" data-reveal>
+          <div className="about__photo">
             <Photo slot={photos.shop} />
           </div>
         </div>
         <dl className={`about__cols about__cols--${cols.length}`}>
-          {cols.map((c, i) => (
-            <div key={c.label} data-reveal style={{ '--d': i } as CSSProperties}>
+          {cols.map((c) => (
+            <div key={c.label}>
               <dt className="label">{c.label}</dt>
               <dd>{c.value}</dd>
             </div>
@@ -73,8 +72,8 @@ export function AboutSection() {
             Two shops, one roof
           </h2>
           <ul className="shops">
-            {shops.map((s, i) => (
-              <li key={s.key} data-reveal style={{ '--d': i } as CSSProperties}>
+            {shops.map((s) => (
+              <li key={s.key}>
                 <Photo slot={photos.people[s.key]} />
                 <p className={`section-head__label section-head__label--${s.accent} shops__label`}>{s.label}</p>
                 <p className="shops__body">{s.body}</p>

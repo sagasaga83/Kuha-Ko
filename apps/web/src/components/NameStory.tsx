@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { SectionHead } from './SectionHead';
 
 export function NameStory() {
@@ -12,15 +11,15 @@ export function NameStory() {
           lede="It’s what you say in Hiligaynon when you spot the right piece on the rack, or order your usual. So we named the shop after it."
         />
         <dl className="words">
-          <div data-reveal>
+          <div>
             <dt>kuha</dt>
             <dd>to take, to get; also a photo you take</dd>
           </div>
-          <div data-reveal style={{ '--d': 1 } as CSSProperties}>
+          <div>
             <dt>ko</dt>
             <dd>I, me, my: the one who takes it</dd>
           </div>
-          <div data-reveal style={{ '--d': 2 } as CSSProperties}>
+          <div>
             <dt>
               <span className="words__beat">KOO</span>-ha’ ko
             </dt>

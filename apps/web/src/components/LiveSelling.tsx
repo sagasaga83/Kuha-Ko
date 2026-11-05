@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { ClaimBanner } from '@kuhako/ui';
 import { formatPeso } from '../../shared/catalog';
 import { useCatalog } from '../catalog/catalog';
@@ -31,7 +30,7 @@ export function LiveSelling() {
             lede="Before the shop opens, Kuha Ko Thrift sells online. Join the lives on our Facebook page and claim a piece in the comments."
           />
           <div className="live">
-            <div className="live__claim" data-reveal>
+            <div className="live__claim">
               <ClaimBanner>
                 <p>
                   Comment <strong>KUHA KO!</strong> and the item number.
@@ -43,7 +42,7 @@ export function LiveSelling() {
                 <SignupForm source="live" />
               </div>
             </div>
-            <div data-reveal style={{ '--d': 1 } as CSSProperties}>
+            <div>
               <LiveDemo />
             </div>
           </div>
@@ -56,7 +55,7 @@ export function LiveSelling() {
           </h2>
           <ol className="steps">
             {liveSteps.map((s, i) => (
-              <li key={s.title} data-reveal style={{ '--d': i } as CSSProperties}>
+              <li key={s.title}>
                 <span className="steps__no" aria-hidden="true">
                   {String(i + 1).padStart(2, '0')}
                 </span>
@@ -66,7 +65,7 @@ export function LiveSelling() {
             ))}
           </ol>
           {claimed.length ? (
-            <div className="claimed" data-reveal>
+            <div className="claimed">
               <h2 className="label band-title">Claimed lately</h2>
               <ul className="claimed__list">
                 {claimed.map((p) => (

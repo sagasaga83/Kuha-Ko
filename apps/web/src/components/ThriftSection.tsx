@@ -70,7 +70,7 @@ export function ThriftSection() {
           lede="Behind the coffee bar: racks of hand-picked ukay finds, a fitting room and a vintage mirror. Grab a cup and take your time."
         />
       </div>
-      <div className="rack" data-reveal>
+      <div className="rack">
         <ul className={`rack__track is-${arrival}`} ref={track} onScroll={update} aria-label="On the rack" tabIndex={0}>
           {photos.rack.map((p, i) => (
             <li key={p.src} className="rack__item" style={{ '--i': i } as CSSProperties}>
@@ -97,7 +97,7 @@ export function ThriftSection() {
       <div className="container">
         <OnlineThrift variant="site" />
         <section className="shirts" aria-labelledby="shirts-title">
-          <header className="shirts__head" data-reveal>
+          <header className="shirts__head">
             <h3 id="shirts-title" className="shirts__title">
               Our own shirts
             </h3>
@@ -108,7 +108,7 @@ export function ThriftSection() {
           </header>
           <ul className="shirts__grid">
             {shirts.map((s, i) => (
-              <li key={s.name} className="shirts__item" data-reveal style={{ '--d': i % 3 } as CSSProperties}>
+              <li key={s.name} className="shirts__item">
                 <Photo slot={s.photo} />
                 <p className="shirts__no">Design {String(i + 1).padStart(2, '0')}</p>
                 <div className="shirts__row">
@@ -129,17 +129,14 @@ export function ThriftSection() {
             ))}
           </ul>
         </section>
-        <ol className="promises">
-          {promises.map((p, i) => (
-            <li key={p.title} data-reveal style={{ '--d': i } as CSSProperties}>
-              <span className="promises__no" aria-hidden="true">
-                {String(i + 1).padStart(2, '0')}
-              </span>
+        <ul className="promises">
+          {promises.map((p) => (
+            <li key={p.title}>
               <h3>{p.title}</h3>
               <p>{p.body}</p>
             </li>
           ))}
-        </ol>
+        </ul>
       </div>
     </section>
   );

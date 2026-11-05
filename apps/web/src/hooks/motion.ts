@@ -3,40 +3,6 @@ import { useEffect, useState, type RefObject } from 'react';
 export const prefersReducedMotion = () =>
   typeof window !== 'undefined' && Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
 
-/**
- * Fades elements marked `data-reveal` up into place as they scroll into view.
- * Without IntersectionObserver, or with reduced motion, everything simply stays visible.
- */
-export function useReveal() {
-  useEffect(() => {
-    if (typeof IntersectionObserver === 'undefined' || prefersReducedMotion()) return;
-    const root = document.documentElement;
-    root.classList.add('reveal-ready');
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) {
-            e.target.classList.add('is-in');
-            io.unobserve(e.target);
-          }
-        }
-      },
-      { rootMargin: '0px 0px -4% 0px', threshold: 0 },
-    );
-    const watch = () =>
-      document.querySelectorAll('[data-reveal]:not(.is-in)').forEach((el) => io.observe(el));
-    watch();
-    // Catch elements that mount later (tab panels, for example).
-    const mo = new MutationObserver(watch);
-    mo.observe(document.body, { childList: true, subtree: true });
-    return () => {
-      io.disconnect();
-      mo.disconnect();
-      root.classList.remove('reveal-ready');
-    };
-  }, []);
-}
-
 /** Scroll position facts for the header: past the top, and the last direction. */
 export function useScrollState() {
   const [state, setState] = useState({ scrolled: false, goingDown: false });
