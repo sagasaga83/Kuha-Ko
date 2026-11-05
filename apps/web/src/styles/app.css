@@ -327,6 +327,17 @@ html.kk-app body::before { display: none; }
   animation: app-sheet-up 380ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
 }
 @keyframes app-sheet-up { from { transform: translateY(100%); } }
+/* Pulled past open (it rubber-bands) or bouncing back, the sheet's edge mustn't lift off the screen:
+   its background carries on beyond it. */
+.app-sheet__panel::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 50vh;
+  background: var(--canvas);
+}
 /* On the full site (tablets and up), the sheet is a drawer from the right instead. */
 @media (min-width: 768px) {
   html:not(.kk-app) .app-sheet__panel {
@@ -338,12 +349,20 @@ html.kk-app body::before { display: none; }
     border-left: 1px solid var(--line);
     animation-name: app-sheet-in;
   }
+  html:not(.kk-app) .app-sheet__panel::after { top: 0; bottom: 0; left: 100%; right: auto; width: 50vw; height: auto; }
   html:not(.kk-app) .app-sheet__grabber { display: none; }
   html:not(.kk-app) .app-sheet__bar { padding-inline: var(--space-4); border-bottom: 1px solid var(--line); }
   html:not(.kk-app) .app-sheet__body { padding: var(--space-4); }
 }
 @keyframes app-sheet-in { from { transform: translateX(100%); } }
 .app-sheet__grabber { width: 36px; height: 5px; margin: 6px auto 0; border-radius: var(--radius-pill); background: var(--line); }
+/* The grabber and title bar drag the sheet (src/app/ui.tsx); the page mustn't scroll under the finger.
+   An invisible area around the grabber's pill makes it easier to catch. */
+.app-sheet__grabber,
+.app-sheet__bar { touch-action: none; cursor: grab; }
+.app-sheet__grabber { position: relative; }
+.app-sheet__grabber::before { content: ''; position: absolute; inset: -6px -24px -4px; }
+.app-sheet__bar:active { cursor: grabbing; }
 .app-sheet__bar {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -365,6 +384,7 @@ html.kk-app body::before { display: none; }
   font-weight: 700;
   cursor: pointer;
 }
+.app-sheet__done:active { opacity: 0.5; }
 .app-sheet__body {
   overflow-y: auto;
   padding: var(--space-2) var(--app-gutter-r, 16px) calc(var(--safe-b) + var(--space-4)) var(--app-gutter, 16px);

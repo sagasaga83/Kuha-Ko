@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type PointerEvent, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { prefersReducedMotion, project, rubberband, spring, velocityTracker } from '../motion';
 
 /**
  * One tab's screen: a large title that scrolls away into a small one in the
@@ -163,25 +164,137 @@ export function Segmented<T extends string>({
   );
 }
 
-/** A bottom sheet over the current screen. Closes on the backdrop, the Done button or Escape. */
+/** The full site's wide-screen drawer comes in from the right; everywhere else the sheet rises from the bottom. */
+const isDrawer = () =>
+  window.matchMedia?.('(min-width: 768px)').matches && !document.documentElement.classList.contains('kk-app');
+
+/**
+ * A bottom sheet over the current screen (a drawer from the right on the wide full site).
+ * Closes on the backdrop, the Done button or Escape, and leaves the way it came in.
+ * Its grabber and title bar can be dragged: the sheet follows the finger, resists being
+ * pulled the wrong way, and a flick decides whether it closes or springs back.
+ */
 export function Sheet({ title, open, onClose, children }: { title: string; open: boolean; onClose: () => void; children: ReactNode }) {
   const done = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+  const backdrop = useRef<HTMLButtonElement>(null);
+  const motion = useRef({ offset: 0, stop: () => {}, closing: false });
+
+  // The sheet's offset along its axis, in px: 0 is fully open, its size is fully closed.
+  const place = (offset: number) => {
+    const p = panel.current;
+    if (!p) return;
+    motion.current.offset = offset;
+    const drawer = isDrawer();
+    const size = drawer ? p.offsetWidth : p.offsetHeight;
+    p.style.animation = 'none';
+    p.style.transform = drawer ? `translateX(${offset}px)` : `translateY(${offset}px)`;
+    if (backdrop.current) {
+      backdrop.current.style.animation = 'none';
+      backdrop.current.style.opacity = String(Math.max(0, Math.min(1, 1 - offset / size)));
+    }
+  };
+
+  /** Take over from the opening animation (or a running spring) at the exact spot it has reached. */
+  const grab = () => {
+    const p = panel.current;
+    motion.current.stop();
+    motion.current.closing = false;
+    if (!p) return 0;
+    const m = new DOMMatrixReadOnly(getComputedStyle(p).transform);
+    const now = isDrawer() ? m.m41 : m.m42;
+    place(now);
+    return now;
+  };
+
+  /** Spring to open or closed, carrying the finger's speed. */
+  const settle = (close: boolean, velocity = 0) => {
+    const p = panel.current;
+    if (!p) return close ? onClose() : undefined;
+    const size = isDrawer() ? p.offsetWidth : p.offsetHeight;
+    motion.current.closing = close;
+    motion.current.stop = spring({
+      from: motion.current.offset,
+      to: close ? size : 0,
+      velocity,
+      // A flick earns a little bounce on the way back; a plain close settles without one.
+      damping: close ? 1 : 0.85,
+      response: 0.32,
+      onUpdate: place,
+      onDone: close ? onClose : undefined,
+    });
+  };
+
+  const requestClose = () => {
+    if (motion.current.closing) return;
+    // Without animation support (or with reduced motion) the sheet just goes.
+    if (prefersReducedMotion() || !panel.current || typeof panel.current.animate !== 'function') return onClose();
+    grab();
+    settle(true);
+  };
+  const close = useRef(requestClose);
+  close.current = requestClose;
+
   useEffect(() => {
     if (!open) return;
+    motion.current = { offset: 0, stop: () => {}, closing: false };
     done.current?.focus();
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && close.current();
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      motion.current.stop();
+    };
+  }, [open]);
+
+  // Dragging the grabber or the title bar.
+  const drag = useRef({ id: -1, start: 0, from: 0, moved: false, track: velocityTracker() });
+  const axisOf = (e: PointerEvent<HTMLElement>) => (isDrawer() ? e.clientX : e.clientY);
+  const onPointerDown = (e: PointerEvent<HTMLElement>) => {
+    if (e.button !== 0 || (e.target as HTMLElement).closest('button')) return;
+    const d = drag.current;
+    d.id = e.pointerId;
+    d.start = axisOf(e);
+    d.from = grab(); // grabbing a moving sheet catches it where it is
+    d.moved = false;
+    d.track.reset();
+    d.track.add(d.start);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+  const onPointerMove = (e: PointerEvent<HTMLElement>) => {
+    const d = drag.current;
+    const p = panel.current;
+    if (e.pointerId !== d.id || !p) return;
+    const pos = axisOf(e);
+    d.track.add(pos);
+    const raw = d.from + pos - d.start;
+    if (!d.moved && Math.abs(pos - d.start) < 4) return;
+    d.moved = true;
+    const size = isDrawer() ? p.offsetWidth : p.offsetHeight;
+    place(raw < 0 ? rubberband(raw, size) : raw);
+  };
+  const onPointerUp = (e: PointerEvent<HTMLElement>) => {
+    const d = drag.current;
+    const p = panel.current;
+    if (e.pointerId !== d.id || !p) return;
+    d.id = -1;
+    const velocity = e.type === 'pointercancel' ? 0 : d.track.velocity();
+    const size = isDrawer() ? p.offsetWidth : p.offsetHeight;
+    // Close if the flick would carry the sheet past halfway, or it's moving away fast.
+    const landing = motion.current.offset + project(velocity);
+    settle(landing > size / 2 || velocity > 900, velocity);
+  };
+  const handle = { onPointerDown, onPointerMove, onPointerUp, onPointerCancel: onPointerUp };
+
   if (!open) return null;
   return createPortal(
     <div className="app-sheet" role="dialog" aria-modal="true" aria-label={title}>
-      <button type="button" className="app-sheet__backdrop" aria-label="Close" tabIndex={-1} onClick={onClose} />
-      <div className="app-sheet__panel">
-        <div className="app-sheet__grabber" aria-hidden="true" />
-        <div className="app-sheet__bar">
+      <button type="button" ref={backdrop} className="app-sheet__backdrop" aria-label="Close" tabIndex={-1} onClick={requestClose} />
+      <div className="app-sheet__panel" ref={panel}>
+        <div className="app-sheet__grabber" aria-hidden="true" {...handle} />
+        <div className="app-sheet__bar" {...handle}>
           <span className="app-sheet__title">{title}</span>
-          <button type="button" ref={done} className="app-sheet__done" onClick={onClose}>
+          <button type="button" ref={done} className="app-sheet__done" onClick={requestClose}>
             Done
           </button>
         </div>

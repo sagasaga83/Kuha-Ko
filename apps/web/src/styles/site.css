@@ -94,10 +94,11 @@ p { text-wrap: pretty; }
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, transform 100ms ease-out;
 }
 .icon-btn:hover:not(:disabled) { background: var(--espresso); border-color: var(--espresso); color: var(--canvas); }
 .icon-btn:disabled { opacity: 0.35; cursor: default; }
+.icon-btn:active:not(:disabled) { transform: scale(0.92); }
 
 .skip-link {
   position: absolute;

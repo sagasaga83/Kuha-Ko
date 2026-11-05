@@ -192,8 +192,10 @@
   font-weight: 700;
   text-decoration: none;
   border: 2px solid transparent;
-  transition: background-color 150ms ease, color 150ms ease;
+  transition: background-color 150ms ease, color 150ms ease, transform 100ms ease-out;
 }
+/* Feedback the instant it's pressed, not when the finger lifts. */
+.kk-button:active:not(:disabled) { transform: scale(0.97); }
 .kk-button--primary { background: var(--rust); color: var(--on-rust); }
 .kk-button--primary:hover { background: var(--espresso); color: var(--linen); }
 .kk-button--secondary { background: transparent; color: var(--espresso); border-color: var(--espresso); }

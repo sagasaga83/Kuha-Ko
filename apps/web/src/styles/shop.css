@@ -212,6 +212,15 @@
 #thrift .shop-add:hover { background: var(--sage-ink); color: var(--canvas); }
 .shop-cartbtn:focus-visible,
 .shop-add:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+/* Press feedback lands on the press, not the release (and stays put with reduced motion: no transition). */
+.shop-add,
+.shop-stepper button { transition: transform 100ms ease-out; }
+.shop-add:active,
+.shop-stepper button:active:not(:disabled) { transform: scale(0.94); }
+@media (prefers-reduced-motion: reduce) {
+  .shop-add,
+  .shop-stepper button { transition: none; }
+}
 
 /* Thrift pieces for sale online */
 /* Same gap above as the shirts below it; the shirts section adds the gap after. */
