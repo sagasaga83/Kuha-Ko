@@ -14,51 +14,25 @@ export function SiteFooter() {
   const opening = openingDayText();
   // The live page has its own sign-up, just above.
   const onLive = usePath() === '/live';
+  // Only links that exist; About already says the pages are coming soon.
   const follow = [
-    { name: 'Instagram', detail: site.instagram.handle, url: site.instagram.url },
-    { name: 'Facebook', detail: site.facebook.name, url: site.facebook.url },
-  ];
+    { name: 'Instagram', url: site.instagram.url },
+    { name: 'Facebook', url: site.facebook.url },
+  ].filter((f): f is { name: string; url: string } => Boolean(f.url));
   return (
     <footer className="site-footer">
       <div className="container site-footer__top">
         <div className="site-footer__brand">
-          <Wordmark size={40} />
-          <p className="site-footer__tagline">Something to sip, something to keep.</p>
-          <p className="site-footer__where">
-            Coffee &amp; thrift · {site.city}
-            {opening ? (
-              <>
-                <br />
-                Opening {opening}
-              </>
-            ) : null}
-          </p>
-        </div>
-        <nav className="site-footer__col" aria-label="Footer">
-          <p className="label">Pages</p>
-          <ul>
-            {nav.map((n) => (
-              <li key={n.href}>
-                <Link href={n.href}>{n.label}</Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        <div className="site-footer__col">
-          <p className="label">Follow</p>
-          <ul>
-            {follow.map((f) => (
-              <li key={f.name}>
-                {f.url ? (
-                  <a href={f.url} target="_blank" rel="noreferrer">
-                    {f.name}
-                  </a>
-                ) : (
-                  <span className="muted">{f.name} (coming soon)</span>
-                )}
-              </li>
-            ))}
-          </ul>
+          <Wordmark size={30} />
+          <nav aria-label="Footer">
+            <ul className="site-footer__nav">
+              {nav.map((n) => (
+                <li key={n.href}>
+                  <Link href={n.href}>{n.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
         {onLive ? null : (
           <div className="site-footer__signup">
@@ -67,7 +41,26 @@ export function SiteFooter() {
         )}
       </div>
       <div className="container site-footer__base">
-        <p className="site-footer__meta">Say it KOO-ha ko · © {new Date().getFullYear()} Kuha Ko</p>
+        <p className="site-footer__meta">
+          Coffee &amp; thrift · {site.city}
+          {opening ? (
+            <>
+              {' · '}
+              <span className="site-footer__opening">Opening {opening}</span>
+            </>
+          ) : null}
+        </p>
+        <p className="site-footer__meta">
+          {follow.map((f) => (
+            <span key={f.name}>
+              <a href={f.url} target="_blank" rel="noreferrer">
+                {f.name}
+              </a>
+              {' · '}
+            </span>
+          ))}
+          Say it KOO-ha ko · © {new Date().getFullYear()} Kuha Ko
+        </p>
       </div>
     </footer>
   );
