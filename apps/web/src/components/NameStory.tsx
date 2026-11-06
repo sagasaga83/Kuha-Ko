@@ -16,7 +16,7 @@ const words = [
 const TITLE_AT = 1;
 const LEDE_AT = TITLE_AT + TITLE.split(' ').length + 1;
 const CARDS_AT = LEDE_AT + 2;
-// When the pronunciation card has landed, it says itself once.
+// When the pronunciation card has landed, it says itself.
 const SAY_AFTER_MS = 1000;
 // Where the scroll can't be watched, or the reader prefers less motion, the text is simply there.
 const canReveal = () => typeof IntersectionObserver !== 'undefined' && !prefersReducedMotion();
@@ -34,8 +34,8 @@ function Line({ at, word, children }: { at: number; word?: boolean; children: Re
 }
 
 /**
- * The name and what it means. The text rises in once, the first time the section
- * comes into view; after that the cards answer a touch: a rust hairline draws across
+ * The name and what it means. The text rises in each time the section scrolls into
+ * view, from either direction. The cards also answer a touch: a rust hairline draws across
  * the one under the pointer (or the one tapped), and the pronunciation is "said"
  * syllable by syllable, stress on KOO, each time it's reached.
  */
@@ -52,20 +52,35 @@ export function NameStory() {
 
   useEffect(() => {
     const el = ref.current;
-    if (shown || !el) return;
+    if (!el || !canReveal()) return;
     const html = document.documentElement;
+    let isShown = false;
     let wait: MutationObserver | undefined;
     let sayTimer: number | undefined;
     const reveal = () => {
+      isShown = true;
       setShown(true);
       sayTimer = window.setTimeout(say, SAY_AFTER_MS);
     };
+    const reset = () => {
+      isShown = false;
+      wait?.disconnect();
+      window.clearTimeout(sayTimer);
+      setShown(false);
+    };
+    // Rises in whenever a quarter of the section scrolls into view, from above or below,
+    // and resets once it has left the screen entirely, so it plays again on the way back.
     const io = new IntersectionObserver(
       ([entry]) => {
-        if (!entry?.isIntersecting) return;
-        io.disconnect();
+        if (!entry) return;
+        if (!entry.isIntersecting) {
+          if (isShown) reset();
+          return;
+        }
+        if (isShown || entry.intersectionRatio < 0.25) return;
         // Opened straight onto this section: let the splash lift first.
         if (!html.classList.contains('is-splashing')) return reveal();
+        wait?.disconnect();
         wait = new MutationObserver(() => {
           if (html.classList.contains('is-splashing')) return;
           wait?.disconnect();
@@ -73,7 +88,7 @@ export function NameStory() {
         });
         wait.observe(html, { attributes: true, attributeFilter: ['class'] });
       },
-      { threshold: 0.25 },
+      { threshold: [0, 0.25] },
     );
     io.observe(el);
     return () => {

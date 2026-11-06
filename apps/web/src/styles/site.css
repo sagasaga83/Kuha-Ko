@@ -471,19 +471,21 @@ body::before {
   opacity: 0;
   transform: translateY(var(--stagger-distance));
   filter: blur(var(--stagger-blur));
+  will-change: transform, opacity, filter;
+}
+.t-stagger-line--word { display: inline-block; }
+
+/* The transition lives on the shown state only, so leaving the screen resets the
+   lines instantly (out of sight) and the reveal plays again on the way back. */
+.t-stagger.is-shown .t-stagger-line {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
   transition:
     opacity   var(--stagger-dur) var(--stagger-ease),
     transform var(--stagger-dur) var(--stagger-ease),
     filter    var(--stagger-dur) var(--stagger-ease);
   transition-delay: calc(var(--stagger-stagger) * var(--i, 0));
-  will-change: transform, opacity, filter;
-}
-.t-stagger-line--word { display: inline-block; }
-
-.t-stagger.is-shown .t-stagger-line {
-  opacity: 1;
-  transform: translateY(0);
-  filter: blur(0);
 }
 
 @media (prefers-reduced-motion: reduce) {
