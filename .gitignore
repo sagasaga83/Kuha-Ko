@@ -9,3 +9,6 @@ coverage
 
 # Impeccable's compiled engine (17 MB, per platform); its launcher downloads and checksum-verifies it on first use.
 .claude/skills/impeccable/scripts/bin/
+
+# Browser-test screenshots and logs from the Playwright MCP
+.playwright-mcp/
