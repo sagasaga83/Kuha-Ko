@@ -19,7 +19,7 @@ Turborepo monorepo, npm workspaces, React 18 + Vite + TypeScript.
 - `packages/ui`: brand components (`Wordmark`, `Stamp`, `HangTag`, `MenuItem`, `ClaimBanner`, `SubBrandLabel`, `ButtonLink`, `Eyebrow`) and `styles.css`. Consumed as TypeScript source (no build step).
 - `packages/tsconfig`: shared TypeScript configs.
 - `docs/brand-guidelines.md`: the full brand guidelines. Read it before changing copy or visuals.
-- `.claude/skills/`: project skills (apple-design, impeccable, transitions-dev, transitions-polish; versions in `skills-lock.json`). Impeccable's engine binary is not committed: its launcher downloads and checksum-verifies it on first use. Its hooks (`.claude/settings.local.json`) run the design detector after edits; detector hits on brand-mandated choices (Courier labels in capitals, the italic hero line, hanger clip-paths) are false positives.
+- `.claude/skills/`: project skills (apple-design, impeccable, transitions-dev, transitions-polish; versions in `skills-lock.json`. babysit, design-is, do, handoff, make-plan and what-the are copied from claude-mem 15.10.1's plugin and aren't in the lock file). Impeccable's engine binary is not committed: its launcher downloads and checksum-verifies it on first use. Its hooks (`.claude/settings.local.json`) run the design detector after edits; detector hits on brand-mandated choices (Courier labels in capitals, the italic hero line, hanger clip-paths) are false positives.
 
 ## Commands
 
