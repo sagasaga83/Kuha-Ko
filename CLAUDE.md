@@ -12,17 +12,21 @@ Turborepo monorepo, npm workspaces, React 18 + Vite + TypeScript.
   Ordering: `src/shop/` (cart in localStorage, product sheet, checkout), `src/order/` (the customer's `/order/:id` page), `server/orders.ts` (holds stock 30 minutes). No payment gateway: customers scan the shop's GCash QR or Maya QR Ph code and send the reference number; the shop confirms it in the admin's Orders tab. The server re-prices every order from the database.
   Customer accounts at `/account` (`src/account/`, optional; guests can still order): Clerk sign-in, saved checkout details and order history; the token goes to the API as `Authorization: Bearer`, checked in `server/customers.ts`.
   Shop admin at `/admin` (`src/admin/`, loaded only there): one shared password, signed httpOnly cookie scoped to `/api/admin`. Database schema in `db/migrations/`. How to run the shop: `docs/online-orders.md`.
-  On phones (and when opened from the home screen, via `public/manifest.webmanifest`) it switches to an iOS-style tab layout (`src/app/`). `?app` forces that layout on a desktop; `?web` forces the full site on a phone. There are no store apps: the installable web app is the app.
+  On phones (and when opened from the home screen, via `public/manifest.webmanifest`) it switches to an iOS-style tab layout (`src/app/`). `?app` forces that layout on a desktop; `?web` forces the full site on a phone. There are no store apps: the installable web app is the app. In the full site at 760px and under, the cart is a bar pinned to the bottom (`CartBar site` in `src/shop/Shop.tsx`), not a header button: the phone header only has room for the wordmark, the lamp and Explore.
+  Motion: `src/motion.ts` holds the spring, momentum projection and rubber-band helpers; the sheet (`src/app/ui.tsx`) drags to dismiss with them and the rack (`src/useDragScroll.ts`) glides after a mouse push. Durations are tokens on `:root` in `src/styles/site.css` (`--duration-quick` 150ms … `--duration-very-slow` 500ms, picked by what the motion does: closes quicker than opens, hovers in quick and out softer) with the site's own `--ease-out`. No fade-in-on-scroll; the hero entrance and the rack's arrival are the only entrances, and the signature moments (splash, swinging hang tags, stamp, lamp) keep their own timing.
+  Design context for Impeccable: `apps/web/PRODUCT.md` (users, positioning, what not to invent) and `apps/web/DESIGN.md` (the visual system, "The Tagged Rack", with its sidecar `.impeccable/design.json`). Update DESIGN.md when the system changes.
 - `packages/tokens`: design tokens. `src/tokens.json` is the source (copied from the Kuha Ko design system); `npm run build` writes `dist/tokens.css` (CSS variables, light + dark) and a typed JS object. Never edit `dist/`.
 - `packages/ui`: brand components (`Wordmark`, `Stamp`, `HangTag`, `MenuItem`, `ClaimBanner`, `SubBrandLabel`, `ButtonLink`, `Eyebrow`) and `styles.css`. Consumed as TypeScript source (no build step).
 - `packages/tsconfig`: shared TypeScript configs.
 - `docs/brand-guidelines.md`: the full brand guidelines. Read it before changing copy or visuals.
+- `.claude/skills/`: project skills (apple-design, impeccable, transitions-dev, transitions-polish; versions in `skills-lock.json`). Impeccable's engine binary is not committed: its launcher downloads and checksum-verifies it on first use. Its hooks (`.claude/settings.local.json`) run the design detector after edits; detector hits on brand-mandated choices (Courier labels in capitals, the italic hero line, hanger clip-paths) are false positives.
 
 ## Commands
 
-- `npm install`, then `npm run dev` (site at http://localhost:5173)
+- `npm install`, then `npm run dev` (site at http://localhost:5173; if another project holds that port, run `npx vite apps/web --port 5180` from the repo root)
 - `npm run build`, `npm run typecheck`, `npm test` (all through turbo)
 - With the API and admin: `vercel env pull` (repo root, writes `.env.local`), then `vercel dev`. Database: `npm run db:migrate --workspace @kuhako/web`, then `db:seed` (never overwrites existing rows)
+- Shipping: work on a branch and push it; Vercel builds a preview at `https://kuha-ko-git-<branch>-kuha-ko.vercel.app`. Merging to `main` deploys production (https://kuha-ko-kuha-ko.vercel.app).
 - Env vars: `DATABASE_URL` (Neon), `BLOB_READ_WRITE_TOKEN` (product photos), `ADMIN_PASSWORD` (12+ characters), `ADMIN_SESSION_SECRET` (32+ random characters); accounts: `CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (from the Clerk integration); ordering: `VITE_GOOGLE_MAPS_KEY`, `VITE_GOOGLE_MAP_ID`, `GOOGLE_ROUTES_KEY`, `RESEND_API_KEY`, `SHOP_EMAIL`, `EMAIL_FROM`. Each one missing degrades gracefully; see `docs/online-orders.md`
 
 ## Brand rules that matter in code
