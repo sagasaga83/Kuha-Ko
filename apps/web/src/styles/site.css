@@ -447,7 +447,64 @@ body::before {
 .hero__stamp .kk-stamp { animation: spin 40s linear infinite; }
 
 .hero__in { animation: rise 900ms var(--ease-out) both; animation-delay: calc(var(--d, 0) * 120ms + 100ms); }
-.hero__line > .hero__in { animation-name: rise-line; }
+
+/* The hero's words arrive the way each face works in the shop (src/components/Hero.tsx).
+   The typewriter label types itself out, one step per character (Courier Prime is
+   monospaced, so equal steps are whole characters). */
+.hero__typed {
+  display: inline-block;
+  white-space: nowrap;
+  animation: type-in calc(var(--n, 28) * 28ms) steps(var(--n, 28), end) 100ms both;
+}
+@keyframes type-in {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+/* The painted sign: each word rises from its line and settles from a tilt, as if hung. */
+.hero__word {
+  transform-origin: 0% 100%;
+  animation: hang-word 1000ms var(--ease-out) both;
+  animation-delay: calc(250ms + var(--w, 0) * 130ms);
+}
+@keyframes hang-word {
+  0% { transform: translateY(105%) rotate(5deg); }
+  60% { transform: translateY(0) rotate(-1deg); }
+  100% { transform: none; }
+}
+/* The hand: "Kuha ko." is written in from the left behind a soft ink edge… */
+.hero:not(.is-settled) .hero__write {
+  -webkit-mask-image: linear-gradient(90deg, #000 45%, transparent 55%);
+  mask-image: linear-gradient(90deg, #000 45%, transparent 55%);
+  -webkit-mask-size: 240% 100%;
+  mask-size: 240% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  animation: write-in 1100ms cubic-bezier(0.45, 0.05, 0.3, 1) 650ms both;
+}
+@keyframes write-in {
+  from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+  to { -webkit-mask-position: 0% 0; mask-position: 0% 0; }
+}
+/* …and its full stop lands last, like a stamp. */
+.hero__dot {
+  display: inline-block;
+  transform-origin: 50% 85%;
+  animation: dot-stamp 380ms cubic-bezier(0.2, 1.4, 0.4, 1) 1750ms both;
+}
+@keyframes dot-stamp {
+  from { transform: scale(2.4); opacity: 0; }
+  50% { opacity: 1; }
+  to { transform: none; opacity: 1; }
+}
+/* Once everything has landed, a word under the pointer gives the small nudge of a claim. */
+@media (hover: hover) {
+  .hero.is-settled .hero__word:hover,
+  .hero.is-settled .hero__write:hover { animation: word-nudge 460ms var(--ease-out); }
+}
+@keyframes word-nudge {
+  35% { transform: translateY(-0.04em) rotate(-1.5deg) scale(1.02); }
+  100% { transform: none; }
+}
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
 @keyframes rise-line { from { transform: translateY(105%); } }
 @keyframes unveil { from { clip-path: inset(100% 0 0 0); } to { clip-path: inset(0 0 0 0); } }
@@ -1190,7 +1247,11 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
 /* Opening splash (src/components/Splash.tsx): wordmark, tagline, a filling hairline, then it lifts away.
    While it is up, the hero's entrance waits so it plays as the page is revealed. */
 html.is-splashing { overflow: hidden; }
-html.is-splashing .hero__in { animation-play-state: paused; }
+html.is-splashing .hero__in,
+html.is-splashing .hero__typed,
+html.is-splashing .hero__word,
+html.is-splashing .hero .hero__write, /* outranks .hero:not(.is-settled) .hero__write */
+html.is-splashing .hero__dot { animation-play-state: paused; }
 
 .splash {
   position: fixed;
