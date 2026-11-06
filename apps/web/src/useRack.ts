@@ -23,14 +23,19 @@ export interface RackEntry {
   pickLabel?: string;
 }
 
-/** A thrift piece as it hangs: its cut-out if it has one, else its photo on a card. */
+/**
+ * A thrift piece as it hangs: its cut-out if it has one, else its photo on a card. A piece
+ * using one of the display cut-outs from photos.ts keeps that cut-out's hanger fit.
+ */
 function slotFor(p: Product): PhotoSlot {
+  const display = p.rackPhotoUrl ? photos.rack.find((s) => s.src === p.rackPhotoUrl) : undefined;
   return {
     src: p.rackPhotoUrl ?? p.photoUrl,
-    alt: p.name,
+    alt: display?.alt ?? p.name,
     brief: p.name,
-    ratio: '3 / 4',
+    ratio: display?.ratio ?? '3 / 4',
     cutout: Boolean(p.rackPhotoUrl),
+    hanger: display?.hanger,
   };
 }
 
