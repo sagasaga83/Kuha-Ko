@@ -1330,3 +1330,57 @@ html.lamp-vt::view-transition-new(root) { animation-duration: 700ms; animation-t
 .page-link__title { transition: color var(--duration-quick) ease; }
 .page-link:hover .page-link__title { color: var(--rust); }
 .page-link:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+/* Explore's arrival (src/components/PageLinks.tsx): the rail draws across, then each card
+   hangs on it in turn, its picture unveiling from the top like the hero photo and its words
+   settling in behind. .is-armed is set only where the scroll is watched; the transitions live
+   on .is-in, so leaving the screen resets everything instantly, out of sight. */
+.explore.is-armed .page-links { border-top-color: transparent; }
+.explore.is-armed .page-links::before {
+  content: '';
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 1px;
+  background: var(--espresso);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.page-links { position: relative; }
+.explore.is-armed .page-link__visual { clip-path: inset(0 0 100% 0); }
+.explore.is-armed .page-link > :not(.page-link__visual) { opacity: 0; transform: translateY(10px); }
+.explore.is-in .page-links::before { transform: scaleX(1); transition: transform 700ms var(--ease-out); }
+.explore.is-in .page-link__visual {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 900ms var(--ease-out) calc(250ms + var(--i, 0) * 110ms);
+}
+.explore.is-in .page-link > :not(.page-link__visual) {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--duration-very-slow) var(--ease-out),
+    transform var(--duration-very-slow) var(--ease-out);
+  transition-delay: calc(500ms + var(--i, 0) * 110ms);
+}
+
+/* Each card answers a hand in its own object's way. Pressing gives a little. */
+.page-link__visual { transition: transform var(--duration-quick) ease; }
+.page-link:active .page-link__visual { transform: scale(0.98); }
+.page-link__claim { display: inline-block; }
+@media (hover: hover) {
+  /* The piece swings on its hanger, as on the rack. */
+  .page-link--thrift .page-link__cutout { transform-origin: 50% 6%; }
+  .page-link--thrift:hover .page-link__cutout { animation: hang-swing 1600ms cubic-bezier(0.3, 0.7, 0.4, 1); }
+  /* The claim word lands like a first comment. */
+  .page-link--live:hover .page-link__claim { animation: claim-punch 380ms cubic-bezier(0.2, 1.4, 0.4, 1); }
+  /* The stamp thunks down. */
+  .page-link--about:hover .page-link__stamp .kk-stamp { animation: stamp-press 420ms cubic-bezier(0.2, 1.4, 0.4, 1); }
+}
+@keyframes claim-punch {
+  from { transform: scale(1.22) rotate(-4deg); opacity: 0.5; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes stamp-press {
+  0% { transform: none; }
+  35% { transform: scale(0.86) rotate(-10deg); }
+  100% { transform: none; }
+}
