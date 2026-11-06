@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 
 interface SectionHeadProps {
   id: string;
-  label: string;
+  label: ReactNode;
   title: ReactNode;
   lede?: ReactNode;
   /** Accent for the label: coffee (rust), thrift (sage-ink) or the shared shop (muted). */

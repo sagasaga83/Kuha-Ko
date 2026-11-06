@@ -133,7 +133,7 @@ The site is a well-kept rack in a small shop: plain white walls, a hairline rail
 
 Density is low and the pace is unhurried. Sections breathe (80 to 152px of space between them), headings are large, and lists read like menus and tag cards rather than dashboards. Depth comes from paper, not light: linen and paper panels, hairline rules and the occasional dark sign board. Nothing floats on a shadow.
 
-The interface is warm and playful in its details. Things that hang react when a hand reaches them: rack pieces and price tags swing, a stamp thunks onto a claimed item, the basket nods, the receipt prints, the lamp chain switches the evening theme, the name's word cards draw a rust hairline and say "KOO-ha' ko" syllable by syllable. Motion that answers a touch is welcome; motion that plays on its own is rationed to a few signature moments (the hero's entrance, the rack's pieces sliding along the rail). The photography rule is the same as the tag rule: real drinks and real pieces in daylight, nothing staged or generated.
+The interface is warm and playful in its details. Things that hang react when a hand reaches them: rack pieces and price tags swing, a stamp thunks onto a claimed item, the basket nods, the receipt prints, the lamp chain switches the evening theme, the name's word cards draw a rust hairline and say "KOO-ha' ko" syllable by syllable. Motion that answers a touch is welcome; motion that plays on its own is rationed to a few signature moments (the hero's entrance, the rack's pieces sliding along the rail, and the name section's text rising in word by word the first time it comes into view, using transitions.dev's texts reveal). The photography rule is the same as the tag rule: real drinks and real pieces in daylight, nothing staged or generated.
 
 **Key Characteristics:**
 - White canvas, linen and paper bands, one dark board per page at most.
@@ -282,5 +282,5 @@ The product and cart sheet rises from the bottom on phones and slides in from th
 - **Don't** use the accented Kúha outside the logo artwork.
 - **Don't** use emoji, stock photos or AI-made images of products the shop sells.
 - **Don't** hard-code colours; every colour comes from a token so the Evening theme works.
-- **Don't** fade and slide sections in as they scroll into view; keep entrance motion to the hero and the rack.
+- **Don't** fade and slide sections in as they scroll into view; keep entrance motion to the hero, the rack and the name section.
 - **Don't** append arrows to links or number things that aren't a sequence.

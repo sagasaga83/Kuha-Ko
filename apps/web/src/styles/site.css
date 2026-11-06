@@ -18,6 +18,12 @@
   --duration-medium: 350ms;   /* panel close, hover out, toast open */
   --duration-slow: 400ms;     /* panel open */
   --duration-very-slow: 500ms; /* text reveal */
+  /* Texts reveal (transitions.dev 18), used by the name section's entrance. */
+  --stagger-dur: 500ms;
+  --stagger-distance: 12px;
+  --stagger-stagger: 40ms;
+  --stagger-blur: 3px;
+  --stagger-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --header-h: 76px;
   /* Screen-edge insets (notch, status bar, home bar). */
   --safe-t: env(safe-area-inset-top, 0px);
@@ -456,6 +462,34 @@ body::before {
 }
 
 /* Name */
+/* Texts reveal (transitions.dev 18): lines start translated down, blurred and
+   invisible; .is-shown on the section flips them to rest. Each line is held back
+   by --i steps of --stagger-stagger, set inline, so the eye reads in order:
+   label, the heading word by word, the lede, then card after card. */
+.t-stagger-line {
+  display: block;
+  opacity: 0;
+  transform: translateY(var(--stagger-distance));
+  filter: blur(var(--stagger-blur));
+  transition:
+    opacity   var(--stagger-dur) var(--stagger-ease),
+    transform var(--stagger-dur) var(--stagger-ease),
+    filter    var(--stagger-dur) var(--stagger-ease);
+  transition-delay: calc(var(--stagger-stagger) * var(--i, 0));
+  will-change: transform, opacity, filter;
+}
+.t-stagger-line--word { display: inline-block; }
+
+.t-stagger.is-shown .t-stagger-line {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .t-stagger-line { transition: none !important; }
+}
+
 .words {
   margin-top: var(--space-6);
   margin-bottom: 0;
