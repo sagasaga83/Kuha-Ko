@@ -5,13 +5,15 @@ import { photos } from '../data/photos';
 import { Photo } from './Photo';
 import { Link } from '../router';
 import { useScrollIn } from '../useScrollIn';
+import { useHeroMotion } from '../useHeroMotion';
 
 /**
  * The hero. Its words arrive the way each typeface works in the shop: the Courier label
  * types itself out, the painted serif "Kape ko." is hung word by word (each rises from
  * the line and settles from a tilt), the italic "Kuha ko." is written in behind a soft
- * ink edge, and its full stop lands last like a stamp. Once settled, a word under the
- * pointer gives the little nudge of a claim. Scroll away and back and it plays again.
+ * ink edge, and its full stop lands last like a stamp. Once settled the words keep
+ * hanging: scrolling sways them, the lines drift toward a mouse pointer, and a word under
+ * the pointer gives the little nudge of a claim. Scroll away and back and it plays again.
  */
 export function Hero() {
   const label = `Coffee & thrift · ${site.city}`;
@@ -21,6 +23,9 @@ export function Hero() {
   const [round, setRound] = useState(0);
   const [settled, setSettled] = useState(false);
   const left = useRef(false);
+  // Once settled and on screen, the words keep hanging: they sway as the page scrolls
+  // and the lines drift toward the pointer.
+  useHeroMotion(ref, settled && seen !== 'out');
 
   useEffect(() => {
     if (seen === 'out') left.current = true;

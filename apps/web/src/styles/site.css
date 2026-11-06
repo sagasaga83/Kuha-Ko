@@ -446,29 +446,32 @@ body::before {
 }
 .hero__stamp .kk-stamp { animation: spin 40s linear infinite; }
 
-.hero__in { animation: rise 900ms var(--ease-out) both; animation-delay: calc(var(--d, 0) * 120ms + 100ms); }
+/* The hero's words arrive the way each face works in the shop (src/components/Hero.tsx),
+   in about 1.6s, each step overlapping the last. Signature timing, so the title keeps its
+   own durations; the lede and links use the transitions.dev texts reveal once it lands. */
 
-/* The hero's words arrive the way each face works in the shop (src/components/Hero.tsx).
-   The typewriter label types itself out, one step per character (Courier Prime is
+/* The typewriter label types itself out, one step per character (Courier Prime is
    monospaced, so equal steps are whole characters). */
 .hero__typed {
   display: inline-block;
   white-space: nowrap;
-  animation: type-in calc(var(--n, 28) * 28ms) steps(var(--n, 28), end) 100ms both;
+  animation: type-in calc(var(--n, 28) * 20ms) steps(var(--n, 28), end) 80ms both;
 }
 @keyframes type-in {
   from { clip-path: inset(0 100% 0 0); }
   to { clip-path: inset(0 0 0 0); }
 }
-/* The painted sign: each word rises from its line and settles from a tilt, as if hung. */
+/* The painted sign: each word rises from its line and settles from a tilt, as if hung.
+   Words are large items, so they step --duration-micro apart. */
 .hero__word {
-  transform-origin: 0% 100%;
-  animation: hang-word 1000ms var(--ease-out) both;
-  animation-delay: calc(250ms + var(--w, 0) * 130ms);
+  transform-origin: 50% 0;
+  animation: hang-word 800ms var(--ease-out) both;
+  animation-delay: calc(200ms + var(--w, 0) * var(--duration-micro));
 }
 @keyframes hang-word {
-  0% { transform: translateY(105%) rotate(5deg); }
-  60% { transform: translateY(0) rotate(-1deg); }
+  0% { transform: translateY(105%) rotate(6deg); }
+  55% { transform: translateY(0) rotate(-1.5deg); }
+  80% { transform: rotate(0.6deg); }
   100% { transform: none; }
 }
 /* The hand: "Kuha ko." is written in from the left behind a soft ink edge… */
@@ -479,30 +482,50 @@ body::before {
   mask-size: 240% 100%;
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  animation: write-in 1100ms cubic-bezier(0.45, 0.05, 0.3, 1) 650ms both;
+  animation: write-in 900ms cubic-bezier(0.45, 0.05, 0.3, 1) 420ms both;
 }
 @keyframes write-in {
   from { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
   to { -webkit-mask-position: 0% 0; mask-position: 0% 0; }
 }
-/* …and its full stop lands last, like a stamp. */
+/* …and its full stop lands as the writing ends, like a stamp. */
 .hero__dot {
   display: inline-block;
   transform-origin: 50% 85%;
-  animation: dot-stamp 380ms cubic-bezier(0.2, 1.4, 0.4, 1) 1750ms both;
+  animation: dot-stamp 340ms cubic-bezier(0.2, 1.4, 0.4, 1) 1300ms both;
 }
 @keyframes dot-stamp {
   from { transform: scale(2.4); opacity: 0; }
   50% { opacity: 1; }
   to { transform: none; opacity: 1; }
 }
-/* Once everything has landed, a word under the pointer gives the small nudge of a claim. */
+/* The lede and links: the texts reveal (12px rise, 3px blur, 500ms), once the title lands. */
+.hero__in {
+  animation: hero-reveal var(--stagger-dur) var(--stagger-ease) both;
+  animation-delay: calc(760ms + var(--d, 0) * var(--duration-micro));
+}
+@keyframes hero-reveal {
+  from { opacity: 0; transform: translateY(var(--stagger-distance)); filter: blur(var(--stagger-blur)); }
+}
+
+/* After the entrance the words keep hanging (useHeroMotion): scrolling the page sways
+   them on a spring (--sway), and on a desktop the two lines drift a few pixels toward
+   the pointer, the italic further, for depth (--px, --py). The lines stop clipping once
+   settled so a swaying word isn't cut. */
+.hero__word,
+.hero__write { rotate: var(--sway, 0deg); }
+.hero__write { transform-origin: 50% 0; }
+.hero.is-settled .hero__line { overflow: visible; }
+.hero__line { transition: translate 700ms var(--ease-out); }
+.hero__line:first-child { translate: calc(var(--px, 0) * 6px) calc(var(--py, 0) * 4px); }
+.hero__line:last-child { translate: calc(var(--px, 0) * 12px) calc(var(--py, 0) * 7px); }
+/* A word under the pointer gives the small nudge of a claim: quick in, soft out. */
 @media (hover: hover) {
   .hero.is-settled .hero__word:hover,
-  .hero.is-settled .hero__write:hover { animation: word-nudge 460ms var(--ease-out); }
+  .hero.is-settled .hero__write:hover { animation: word-nudge var(--duration-medium) var(--ease-out); }
 }
 @keyframes word-nudge {
-  35% { transform: translateY(-0.04em) rotate(-1.5deg) scale(1.02); }
+  30% { transform: translateY(-0.04em) rotate(-1.5deg) scale(1.02); }
   100% { transform: none; }
 }
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
