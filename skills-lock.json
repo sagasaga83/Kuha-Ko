@@ -7,6 +7,14 @@
       "skillPath": "skills/apple-design/SKILL.md",
       "computedHash": "0190417d092a0df447b000154e39733ea6d97efad6d3bec8a6ce3845aeb88914"
     },
+    "impeccable": {
+      "source": "pbakaus/impeccable",
+      "ref": "main",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/impeccable/SKILL.md",
+      "computedHash": "36333aac7a25536c9739f38a9c4f1ae359ffd38602cc83e0be1b4cf46c088863",
+      "installMode": "copy"
+    },
     "transitions-dev": {
       "source": "Jakubantalik/transitions.dev",
       "sourceType": "github",
