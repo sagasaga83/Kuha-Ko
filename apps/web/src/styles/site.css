@@ -463,9 +463,11 @@ body::before {
 
 /* Name */
 /* Texts reveal (transitions.dev 18): lines start translated down, blurred and
-   invisible; .is-shown on the section flips them to rest. Each line is held back
-   by --i steps of --stagger-stagger, set inline, so the eye reads in order:
-   label, the heading word by word, the lede, then card after card. */
+   invisible; .is-in on a line flips it to rest. NameStory adds .is-in as each line
+   scrolls into view (from above or below) and sets --i so lines arriving together
+   rise in reading order, one --stagger-stagger apart. It removes .is-in once a line
+   is fully off screen; the transition lives on .is-in only, so that reset is instant
+   and out of sight. .is-static (reduced motion, no observer) just shows the text. */
 .t-stagger-line {
   display: block;
   opacity: 0;
@@ -475,12 +477,13 @@ body::before {
 }
 .t-stagger-line--word { display: inline-block; }
 
-/* The transition lives on the shown state only, so leaving the screen resets the
-   lines instantly (out of sight) and the reveal plays again on the way back. */
-.t-stagger.is-shown .t-stagger-line {
+.t-stagger-line.is-in,
+.t-stagger.is-static .t-stagger-line {
   opacity: 1;
   transform: translateY(0);
   filter: blur(0);
+}
+.t-stagger-line.is-in {
   transition:
     opacity   var(--stagger-dur) var(--stagger-ease),
     transform var(--stagger-dur) var(--stagger-ease),

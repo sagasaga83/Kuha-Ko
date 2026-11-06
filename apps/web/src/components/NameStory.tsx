@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type PointerEvent, type ReactNode } from 'react';
 import { SectionHead } from './SectionHead';
 import { prefersReducedMotion } from '../motion';
 
@@ -11,22 +11,27 @@ const words = [
   { key: 'ko', term: 'ko', meaning: 'I, me, my: the one who takes it' },
 ] as const;
 
-// Reveal order (each step is one --stagger-stagger): label, the heading word by word,
-// the lede, then each card's word and meaning, one card after another.
+// Reading order: label, the heading word by word, the lede, then each card's word and
+// meaning, one card after another. Lines that come into view together rise in this order,
+// one --stagger-stagger apart.
 const TITLE_AT = 1;
 const LEDE_AT = TITLE_AT + TITLE.split(' ').length + 1;
 const CARDS_AT = LEDE_AT + 2;
-// When the pronunciation card has landed, it says itself.
-const SAY_AFTER_MS = 1000;
-// Where the scroll can't be watched, or the reader prefers less motion, the text is simply there.
+// Once the pronunciation has risen in, it says itself (about when its rise settles).
+const SAY_AFTER_MS = 450;
+// A line rises in once it is this far inside the screen: clear of the sticky header at
+// the top (it slides back in when scrolling up), a little way up from the bottom...
+const ENTER_MARGIN = '-15% 0px -8% 0px';
+// ...and resets only when it is fully off screen, so nobody sees it disappear.
 const canReveal = () => typeof IntersectionObserver !== 'undefined' && !prefersReducedMotion();
 
-/** A line in the staggered texts reveal (transitions.dev 18), held back by `at` steps. */
-function Line({ at, word, children }: { at: number; word?: boolean; children: ReactNode }) {
+/** A line in the staggered texts reveal (transitions.dev 18); `at` is its place in reading order. */
+function Line({ at, word, say, children }: { at: number; word?: boolean; say?: boolean; children: ReactNode }) {
   return (
     <span
       className={word ? 't-stagger-line t-stagger-line--word' : 't-stagger-line'}
-      style={{ '--i': at } as CSSProperties}
+      data-at={at}
+      data-say={say ? '' : undefined}
     >
       {children}
     </span>
@@ -34,14 +39,14 @@ function Line({ at, word, children }: { at: number; word?: boolean; children: Re
 }
 
 /**
- * The name and what it means. The text rises in each time the section scrolls into
- * view, from either direction. The cards also answer a touch: a rust hairline draws across
- * the one under the pointer (or the one tapped), and the pronunciation is "said"
- * syllable by syllable, stress on KOO, each time it's reached.
+ * The name and what it means. Each line of text rises in whenever it scrolls into view,
+ * from above or below, and resets out of sight so it rises again next time. The cards
+ * also answer a touch: a rust hairline draws across the one under the pointer (or the one
+ * tapped), and the pronunciation is "said" syllable by syllable, stress on KOO.
  */
 export function NameStory() {
   const ref = useRef<HTMLElement>(null);
-  const [shown, setShown] = useState(() => !canReveal());
+  const [still] = useState(() => !canReveal());
   const [on, setOn] = useState<string | null>(null);
   const [said, setSaid] = useState(0);
 
@@ -52,57 +57,67 @@ export function NameStory() {
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || !canReveal()) return;
-    const html = document.documentElement;
-    let isShown = false;
-    let wait: MutationObserver | undefined;
-    let sayTimer: number | undefined;
-    const reveal = () => {
-      isShown = true;
-      setShown(true);
-      sayTimer = window.setTimeout(say, SAY_AFTER_MS);
+    if (!el || still) return;
+    const lines = Array.from(el.querySelectorAll<HTMLElement>('.t-stagger-line'));
+    const timers = new Set<number>();
+    const later = (fn: () => void, ms: number) => {
+      const t = window.setTimeout(() => {
+        timers.delete(t);
+        fn();
+      }, ms);
+      timers.add(t);
     };
-    const reset = () => {
-      isShown = false;
-      wait?.disconnect();
-      window.clearTimeout(sayTimer);
-      setShown(false);
-    };
-    // Rises in whenever a quarter of the section scrolls into view, from above or below,
-    // and resets once it has left the screen entirely, so it plays again on the way back.
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry) return;
-        if (!entry.isIntersecting) {
-          if (isShown) reset();
-          return;
-        }
-        if (isShown || entry.intersectionRatio < 0.25) return;
-        // Opened straight onto this section: let the splash lift first.
-        if (!html.classList.contains('is-splashing')) return reveal();
-        wait?.disconnect();
-        wait = new MutationObserver(() => {
-          if (html.classList.contains('is-splashing')) return;
-          wait?.disconnect();
-          reveal();
+
+    // Lines that arrive in the same frame rise together, staggered in reading order.
+    const enter = new IntersectionObserver(
+      (entries) => {
+        const arriving = entries
+          .filter((e) => e.isIntersecting && !e.target.classList.contains('is-in'))
+          .map((e) => e.target as HTMLElement)
+          .sort((a, b) => Number(a.dataset.at) - Number(b.dataset.at));
+        arriving.forEach((line, i) => {
+          line.style.setProperty('--i', String(i));
+          line.classList.add('is-in');
+          if (line.dataset.say !== undefined) later(say, SAY_AFTER_MS + i * 40);
         });
-        wait.observe(html, { attributes: true, attributeFilter: ['class'] });
       },
-      { threshold: [0, 0.25] },
+      { rootMargin: ENTER_MARGIN },
     );
-    io.observe(el);
-    return () => {
-      io.disconnect();
-      wait?.disconnect();
-      window.clearTimeout(sayTimer);
+    const leave = new IntersectionObserver((entries) => {
+      for (const e of entries) if (!e.isIntersecting) e.target.classList.remove('is-in');
+    });
+
+    const html = document.documentElement;
+    let wait: MutationObserver | undefined;
+    const start = () => {
+      for (const line of lines) {
+        enter.observe(line);
+        leave.observe(line);
+      }
     };
-  }, []);
+    // Opened onto the page: let the splash lift before anything rises.
+    if (html.classList.contains('is-splashing')) {
+      wait = new MutationObserver(() => {
+        if (html.classList.contains('is-splashing')) return;
+        wait?.disconnect();
+        start();
+      });
+      wait.observe(html, { attributes: true, attributeFilter: ['class'] });
+    } else start();
+
+    return () => {
+      enter.disconnect();
+      leave.disconnect();
+      wait?.disconnect();
+      timers.forEach((t) => window.clearTimeout(t));
+    };
+  }, [still]);
 
   return (
     <section
       ref={ref}
       id="name"
-      className={shown ? 'section t-stagger is-shown' : 'section t-stagger'}
+      className={still ? 'section t-stagger is-static' : 'section t-stagger'}
       aria-labelledby="name-title"
     >
       <div className="container">
@@ -139,7 +154,7 @@ export function NameStory() {
             }}
           >
             <dt>
-              <Line at={CARDS_AT + 2}>
+              <Line at={CARDS_AT + 2} say>
                 {/* Remounting on each "say" restarts the syllable beat. */}
                 <span key={said} className={said ? 'words__say is-saying' : 'words__say'}>
                   <span className="words__syl words__beat">KOO</span>-<span className="words__syl">ha’</span>{' '}
