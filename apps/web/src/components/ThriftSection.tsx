@@ -34,6 +34,8 @@ export function ThriftSection() {
   useDragScroll(track);
   useRackSway(track);
   const arrival = useArrival(track);
+  /** The piece picked off the rail, by its place on the rack. */
+  const [picked, setPicked] = useState<number | null>(null);
 
   const update = () => {
     const el = track.current;
@@ -74,7 +76,7 @@ export function ThriftSection() {
         <ul className={`rack__track is-${arrival}`} ref={track} onScroll={update} aria-label="On the rack" tabIndex={0}>
           {photos.rack.map((p, i) => (
             <li key={p.src} className="rack__item" style={{ '--i': i } as CSSProperties}>
-              <RackPiece slot={p} no={i + 1} />
+              <RackPiece slot={p} no={i + 1} picked={picked === i} onPick={() => setPicked(picked === i ? null : i)} />
             </li>
           ))}
         </ul>

@@ -218,7 +218,8 @@ html.kk-app body::before { display: none; }
   gap: var(--space-3);
   list-style: none;
   margin: 0;
-  padding: 0 var(--app-gutter-r) var(--space-1) var(--app-gutter);
+  /* --lift (site.css): headroom above the rail for a picked piece */
+  padding: var(--lift) var(--app-gutter-r) var(--space-1) var(--app-gutter);
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scroll-padding-inline: var(--app-gutter);
@@ -226,8 +227,9 @@ html.kk-app body::before { display: none; }
 }
 .app-rack::-webkit-scrollbar { display: none; }
 .app-rack li { flex: 0 0 62%; max-width: 260px; scroll-snap-align: start; }
-/* Room between the heading and the rail the hangers hook onto. */
-.app-rack { margin-top: var(--space-3); }
+/* Room between the heading and the rail the hangers hook onto (less the headroom kept
+   above the rail for a picked piece, so the rail stays where it was). */
+.app-rack { margin-top: calc(var(--space-3) - var(--lift)); }
 
 .app-shirts {
   list-style: none;

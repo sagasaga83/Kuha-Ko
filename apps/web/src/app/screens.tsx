@@ -114,6 +114,7 @@ export function ThriftScreen() {
   const rack = useRef<HTMLUListElement>(null);
   useRackSway(rack);
   const arrival = useArrival(rack);
+  const [picked, setPicked] = useState<number | null>(null);
   return (
     <>
       <p className="app-lede">Hand-picked ukay finds behind the coffee bar, a fitting room and a vintage mirror.</p>
@@ -121,7 +122,7 @@ export function ThriftScreen() {
       <ul className={`app-rack is-${arrival}`} ref={rack} aria-label="On the rack" tabIndex={0}>
         {photos.rack.map((p, i) => (
           <li key={p.src} style={{ '--i': i } as CSSProperties}>
-            <RackPiece slot={p} no={i + 1} />
+            <RackPiece slot={p} no={i + 1} picked={picked === i} onPick={() => setPicked(picked === i ? null : i)} />
           </li>
         ))}
       </ul>

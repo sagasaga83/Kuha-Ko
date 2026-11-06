@@ -713,10 +713,15 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
 
 /* A piece on the rack (RackPiece, on the site and in the app): the rail is drawn as the
    track's background, so it stays put while the hangers slide along it. */
+/* --lift is headroom above the rail for a piece picked off it (the track scrolls sideways,
+   so anything above its box would be cropped); the negative margin keeps the layout put. */
 .rack__track,
 .app-rack {
-  background: linear-gradient(var(--espresso), var(--espresso)) 0 3px / 100% 2px no-repeat;
+  --lift: 16px;
+  padding-top: var(--lift);
+  background: linear-gradient(var(--espresso), var(--espresso)) 0 calc(var(--lift) + 3px) / 100% 2px no-repeat;
 }
+.rack__track { margin-top: calc(-1 * var(--lift)); }
 .hang {
   /* one unit of the cut-out's 900-wide drawing, for the hanger, neck and tag */
   --u: calc(100cqw / 900);
@@ -766,6 +771,39 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
   transform-origin: 50% calc(-1 * var(--string));
 }
 .hang__note { font-weight: 400; font-size: 12px; color: var(--ink-muted); }
+/* Picking a piece off the rail (RackPiece onPick): it lifts clear of the rail, its tag
+   turns over to "Kuha ko." and the KUHA KO! stamp thunks onto it. Putting it back is
+   quicker than taking it. Only a picked look: nothing is reserved. */
+.hang { translate: 0 0; transition: translate var(--duration-medium) var(--ease-out); }
+.hang.is-picked { translate: 0 calc(-1 * var(--lift, 16px)); transition-duration: var(--duration-slow); }
+.hang__pick {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.rack__track.is-dragging .hang__pick { cursor: grabbing; }
+.hang__pick:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
+.hang__faces { display: grid; perspective: 400px; }
+.hang__face {
+  grid-area: 1 / 1;
+  display: grid;
+  align-content: center;
+  backface-visibility: hidden;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+.hang__face--back {
+  justify-items: center;
+  transform: rotateY(-180deg);
+  font: italic 400 18px/1.1 var(--font-display);
+  color: var(--sage-ink);
+}
+.hang.is-picked .hang__face { transform: rotateY(180deg); }
+.hang.is-picked .hang__face--back { transform: rotateY(0deg); }
+.hang__stamp { z-index: 3; top: 42%; font-size: 20px; }
 /* The punched hole, and the string up to the hanger. */
 .hang__tag::before,
 .shop-pieces__tag::before {

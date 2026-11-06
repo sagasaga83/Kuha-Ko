@@ -252,7 +252,7 @@ The components are tactile objects with a little play in them: they press, swing
 - **Phone (app layout):** a translucent bottom tab bar of five tabs, line icons with short labels; the selected tab is rust.
 
 ### Hang Tag (signature)
-A kraft tag with a punched hole, a rounded top, a 2px espresso edge, the item's name in Fraunces italic (sage-ink) and its facts typed below in Courier Prime. On the rack, each piece hangs from the rail on a wire with its tag tied on; reaching a piece sets it and its tag swinging. Item numbers read "No. 0001" and one-off pieces say "One of one".
+A kraft tag with a punched hole, a rounded top, a 2px espresso edge, the item's name in Fraunces italic (sage-ink) and its facts typed below in Courier Prime. On the rack, each piece hangs from the rail on a wire with its tag tied on; reaching a piece sets it and its tag swinging. Clicking or tapping a piece picks it off the rail: it lifts clear of the rail, its tag turns over to "Kuha ko." and the KUHA KO! stamp thunks onto it; click it again (or pick another) to put it back. Picking is only a look; nothing is reserved. Item numbers read "No. 0001" and one-off pieces say "One of one".
 
 ### Claim Banner (signature)
 A board panel with KUHA KO! in large Fraunces (mustard), a small mustard label, and the how-to in on-board text. It is the live-selling call and appears where claiming is explained.

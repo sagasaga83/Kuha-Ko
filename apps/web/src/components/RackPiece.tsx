@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import type { PhotoSlot } from '../data/photos';
 import { swingOnTouch } from '../swing';
 import { Photo } from './Photo';
+import { ClaimStamp } from '../shop/ClaimStamp';
 
 /** The wooden hanger photo (547 × 310): the wood's crown is 97 px below the hook's top. */
 const HANGER = { src: '/photos/rack/hanger.webp', crown: 97 / 547, aspect: 310 / 547 };
@@ -18,8 +19,23 @@ const u = (n: number) => `calc(${n.toFixed(1)} * var(--u))`;
  * once behind the garment (the hook and the crown above the collar), and once in front,
  * clipped to the neck opening, so the wood shows inside the collar, in front of the back
  * of the shirt and behind the front neckline. Each cut-out says where its neck is.
+ *
+ * With `onPick`, a click picks the piece off the rail: it lifts from the rail, its tag
+ * turns over to "Kuha ko." and the KUHA KO! stamp lands on it. Click again to put it
+ * back. It's only a picked look: nothing is reserved or added to the cart.
  */
-export function RackPiece({ slot, no }: { slot: PhotoSlot; no: number }) {
+export function RackPiece({
+  slot,
+  no,
+  picked = false,
+  onPick,
+}: {
+  slot: PhotoSlot;
+  no: number;
+  picked?: boolean;
+  onPick?: () => void;
+}) {
+  const number = `No. ${String(no).padStart(4, '0')}`;
   const width = slot.hanger?.width ?? 400;
   const crown = slot.hanger?.crown ?? 120;
   const neck = slot.hanger?.neck;
@@ -41,7 +57,11 @@ export function RackPiece({ slot, no }: { slot: PhotoSlot; no: number }) {
   }
 
   return (
-    <div className="hang" style={{ '--off': off.toFixed(1) } as CSSProperties} {...swingOnTouch}>
+    <div
+      className={`hang${picked ? ' is-picked' : ''}`}
+      style={{ '--off': off.toFixed(1) } as CSSProperties}
+      {...swingOnTouch}
+    >
       <img className="hang__hanger" src={HANGER.src} alt="" style={place} loading="lazy" decoding="async" />
       <Photo slot={slot} />
       {clip ? (
@@ -55,9 +75,25 @@ export function RackPiece({ slot, no }: { slot: PhotoSlot; no: number }) {
         />
       ) : null}
       <p className="hang__tag">
-        <span>No. {String(no).padStart(4, '0')}</span>
-        <span className="hang__note">One of one</span>
+        <span className="hang__faces">
+          <span className="hang__face">
+            <span>{number}</span>
+            <span className="hang__note">One of one</span>
+          </span>
+          <span className="hang__face hang__face--back" aria-hidden="true">
+            Kuha ko.
+          </span>
+        </span>
       </p>
+      {/* Mounts on each pick, so the stamp lands with a thunk every time. */}
+      {picked ? <ClaimStamp fresh className="hang__stamp" /> : null}
+      {onPick ? (
+        <button type="button" className="hang__pick" aria-pressed={picked} onClick={onPick}>
+          <span className="visually-hidden">
+            {picked ? 'Put back' : 'Pick'} {number}: {slot.alt}
+          </span>
+        </button>
+      ) : null}
     </div>
   );
 }
