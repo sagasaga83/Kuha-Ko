@@ -4,7 +4,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { DEFAULT_SETTINGS, formatPeso, type Catalog, type Product } from '../../shared/catalog';
 import { seedProducts } from '../../shared/seed';
-import { menu as menuGroups, addOns as staticAddOns, type MenuGroup } from '../data/menu';
+import { menu as menuGroups, type MenuGroup } from '../data/menu';
 import { shirts as staticShirts, type Shirt } from '../data/shirts';
 
 export const fallbackCatalog: Catalog = {
@@ -64,13 +64,6 @@ export function menuFrom(products: Product[]): MenuGroup[] {
         })),
     }))
     .filter((g) => g.drinks.length > 0);
-}
-
-/** Add-ons with their prices, from the first drink that has the add-on group. */
-export function addOnsFrom(products: Product[]): { name: string; price?: string }[] {
-  const group = products.find((p) => p.kind === 'coffee')?.options.find((g) => g.id === 'add-ons');
-  if (!group) return staticAddOns;
-  return group.values.map((v) => ({ name: v.label, price: v.delta > 0 ? `+${formatPeso(v.delta)}` : undefined }));
 }
 
 /** The shirts, with live prices; built-in photos and alt text are kept for the original five. */

@@ -1,6 +1,6 @@
 import { useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
 import { MenuItem } from '@kuhako/ui';
-import { addOnsFrom, menuFrom, useCatalog } from '../catalog/catalog';
+import { menuFrom, useCatalog } from '../catalog/catalog';
 import { useShop } from '../shop/Shop';
 import { photos } from '../data/photos';
 import { Photo } from './Photo';
@@ -10,7 +10,6 @@ export function MenuSection() {
   const { products } = useCatalog();
   const shop = useShop();
   const menu = menuFrom(products);
-  const addOns = addOnsFrom(products);
   const [active, setActive] = useState(menu[0]?.id ?? '');
   /** The drink being pointed at or focused: the photo column shows it. */
   const [pointed, setPointed] = useState<string | null>(null);
@@ -118,17 +117,6 @@ export function MenuSection() {
                   </div>
                 );
               })}
-            </div>
-            <div className="addons">
-              <p className="label">Add-ons</p>
-              <ul className="addons__list">
-                {addOns.map((a) => (
-                  <li key={a.name}>
-                    <span>{a.name}</span>
-                    <span className="addons__price">{a.price ?? 'Price at opening'}</span>
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
         </div>

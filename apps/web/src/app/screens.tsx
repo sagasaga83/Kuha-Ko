@@ -3,7 +3,7 @@ import { ClaimBanner, Wordmark } from '@kuhako/ui';
 import type { Drink } from '../data/menu';
 import { photos } from '../data/photos';
 import type { Shirt } from '../data/shirts';
-import { addOnsFrom, menuFrom, shirtsFrom, useCatalog } from '../catalog/catalog';
+import { menuFrom, shirtsFrom, useCatalog } from '../catalog/catalog';
 import { useShop } from '../shop/Shop';
 import { OnlineThrift } from '../shop/OnlineThrift';
 import { openingDayText, site } from '../data/site';
@@ -56,7 +56,6 @@ export function MenuScreen() {
   const shop = useShop();
   const productOf = (id: string) => products.find((p) => p.id === id);
   const menu = menuFrom(products);
-  const addOns = addOnsFrom(products);
   const [active, setActive] = useState(menu[0]?.id ?? '');
   const group = menu.find((g) => g.id === active) ?? menu[0];
   if (!group) return null;
@@ -96,11 +95,6 @@ export function MenuScreen() {
           />
           );
         })}
-      </Group>
-      <Group header="Add-ons" footer="Prices go up when we open.">
-        {addOns.map((a) => (
-          <Row key={a.name} title={a.name} detail={a.price ?? 'Price at opening'} />
-        ))}
       </Group>
     </>
   );

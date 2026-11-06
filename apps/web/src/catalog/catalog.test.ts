@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addOnsFrom, menuFrom, shirtsFrom, fallbackCatalog } from './catalog';
+import { menuFrom, shirtsFrom, fallbackCatalog } from './catalog';
 import { menu } from '../data/menu';
 import { shirts } from '../data/shirts';
 
@@ -25,11 +25,5 @@ describe('catalog adapters', () => {
   it('drops hidden drinks and empty groups', () => {
     const onlyClassics = products.filter((p) => p.kind !== 'coffee' || p.category === 'classics');
     expect(menuFrom(onlyClassics).map((g) => g.id)).toEqual(['classics']);
-  });
-
-  it('shows add-on prices once set', () => {
-    expect(addOnsFrom(products)[0].price).toBeUndefined();
-    const priced = products.map((p) => ({ ...p, options: p.options.map((g) => (g.id === 'add-ons' ? { ...g, values: g.values.map((v) => ({ ...v, delta: 3000 })) } : g)) }));
-    expect(addOnsFrom(priced)[0].price).toBe('+₱30');
   });
 });

@@ -591,29 +591,10 @@ body::before {
 .menu__item.is-orderable .kk-menuitem__desc { padding-right: 7ch; }
 .menu__item.is-orderable:hover .menu__plus { transform: translateX(-4px); }
 
-.addons { margin-top: var(--space-5); }
-.addons__list {
-  list-style: none;
-  margin: var(--space-3) 0 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 var(--space-5);
-}
-.addons__list li {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding-block: var(--space-2);
-  border-top: 1px solid var(--line);
-  font-size: 15px;
-}
-.addons__price { font-family: var(--font-mono); font-size: 14px; color: var(--ink-muted); white-space: nowrap; }
 @media (max-width: 900px) {
   .menu { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
   .menu__media { position: relative; top: 0; max-width: 420px; }
 }
-@media (max-width: 640px) { .addons__list { grid-template-columns: minmax(0, 1fr); } }
 
 /* Thrift rack: a scroll-snap row that bleeds past the container. */
 .rack { margin-top: var(--space-6); }
