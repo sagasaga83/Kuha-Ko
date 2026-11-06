@@ -35,6 +35,8 @@ export const productInputSchema = z.object({
   /** Coffee: the drink style ("Latte"). Thrift: size and measurements. */
   detail: z.string().trim().max(200).default(''),
   photoUrl: z.string().max(500).nullable().default(null),
+  /** Thrift: a cut-out of the piece on a transparent background, hung on the rack. */
+  rackPhotoUrl: z.string().max(500).nullable().default(null),
   /** null until the price is set: shown as "Price at opening" and can't be ordered. */
   price: centavos.nullable().default(null),
   options: z.array(optionGroupSchema).max(6).default([]),

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { photos } from '../data/photos';
 import { shirtsFrom, useCatalog } from '../catalog/catalog';
 import { useShop } from '../shop/Shop';
 import { OnlineThrift } from '../shop/OnlineThrift';
@@ -9,6 +8,7 @@ import { RackPiece } from './RackPiece';
 import { useDragScroll } from '../useDragScroll';
 import { useRackSway } from '../useRackSway';
 import { useArrival } from '../useArrival';
+import { useRack } from '../useRack';
 
 const promises = [
   {
@@ -34,8 +34,7 @@ export function ThriftSection() {
   useDragScroll(track);
   useRackSway(track);
   const arrival = useArrival(track);
-  /** The piece picked off the rail, by its place on the rack. */
-  const [picked, setPicked] = useState<number | null>(null);
+  const rack = useRack();
 
   const update = () => {
     const el = track.current;
@@ -74,9 +73,9 @@ export function ThriftSection() {
       </div>
       <div className="rack">
         <ul className={`rack__track is-${arrival}`} ref={track} onScroll={update} aria-label="On the rack" tabIndex={0}>
-          {photos.rack.map((p, i) => (
-            <li key={p.src} className="rack__item" style={{ '--i': i } as CSSProperties}>
-              <RackPiece slot={p} no={i + 1} picked={picked === i} onPick={() => setPicked(picked === i ? null : i)} />
+          {rack.map(({ key, ...r }, i) => (
+            <li key={key} className="rack__item" style={{ '--i': i } as CSSProperties}>
+              <RackPiece {...r} />
             </li>
           ))}
         </ul>

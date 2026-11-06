@@ -15,6 +15,8 @@ export function rowToProduct(r: Row): Product {
     description: r.description as string,
     detail: r.detail as string,
     photoUrl: (r.photo_url as string | null) ?? null,
+    // Missing before migration 006 ran: read as no cut-out.
+    rackPhotoUrl: (r.rack_photo_url as string | null | undefined) ?? null,
     price: (r.price as number | null) ?? null,
     options: (r.options as Product['options']) ?? [],
     stock: (r.stock as number | null) ?? null,
@@ -73,8 +75,8 @@ export async function createProduct(input: ProductInput): Promise<Product> {
   for (let n = 1; n < 50; n++) {
     const id = n === 1 ? base : `${base.slice(0, 56)}-${n}`;
     const rows = await sql`
-      INSERT INTO products (id, kind, category, name, description, detail, photo_url, price, options, stock, active, featured, sort)
-      VALUES (${id}, ${input.kind}, ${input.category}, ${input.name}, ${input.description}, ${input.detail}, ${input.photoUrl},
+      INSERT INTO products (id, kind, category, name, description, detail, photo_url, rack_photo_url, price, options, stock, active, featured, sort)
+      VALUES (${id}, ${input.kind}, ${input.category}, ${input.name}, ${input.description}, ${input.detail}, ${input.photoUrl}, ${input.rackPhotoUrl},
               ${input.price}, ${JSON.stringify(input.options)}::jsonb, ${input.stock}, ${input.active}, ${input.featured}, ${input.sort})
       ON CONFLICT (id) DO NOTHING
       RETURNING *`;
@@ -88,7 +90,7 @@ export async function updateProduct(id: string, input: ProductInput): Promise<Pr
   const rows = await db()`
     UPDATE products SET
       kind = ${input.kind}, category = ${input.category}, name = ${input.name}, description = ${input.description},
-      detail = ${input.detail}, photo_url = ${input.photoUrl}, price = ${input.price},
+      detail = ${input.detail}, photo_url = ${input.photoUrl}, rack_photo_url = ${input.rackPhotoUrl}, price = ${input.price},
       options = ${JSON.stringify(input.options)}::jsonb, stock = ${input.stock}, active = ${input.active},
       featured = ${input.featured}, sort = ${input.sort}, updated_at = now()
     WHERE id = ${id}

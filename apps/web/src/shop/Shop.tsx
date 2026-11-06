@@ -2,7 +2,7 @@
 // by the one-page site and the app layout. Components call useShop().
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import { formatPeso, type Product } from '../../shared/catalog';
-import { MAX_QUANTITY } from '../../shared/order';
+import { MAX_QUANTITY, defaultChoices } from '../../shared/order';
 import { useCatalog } from '../catalog/catalog';
 import { Sheet } from '../app/ui';
 import { canOrder, lastOrderId, useCart, type Cart } from './cart';
@@ -18,6 +18,10 @@ interface Shop {
   openCart: () => void;
   /** Whether a product is already in the cart (thrift pieces show the claim stamp). */
   inCart: (p: Product) => boolean;
+  /** Put a one-off piece straight in the cart (picked off the rack): stamp, toast and all. */
+  claim: (p: Product) => void;
+  /** Take a piece back out of the cart (put back on the rack). */
+  release: (p: Product) => void;
   /** The product added most recently, for one stamp landing; null once it has. */
   justAdded: string | null;
   /** How many things were added since the page opened: each one nods the basket. */
@@ -45,6 +49,15 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const closeProduct = useCallback(() => setProduct(null), []);
   const closeCart = useCallback(() => setCartStep('closed'), []);
 
+  /** What happens after anything goes in the cart: the toast, one stamp landing, a basket nod. */
+  const announce = useCallback((p: Product) => {
+    setAdded(`${p.name} added to your cart`);
+    setJustAdded(p.id);
+    setToastKey((k) => k + 1);
+    window.setTimeout(() => setAdded(''), 2500);
+    window.setTimeout(() => setJustAdded(null), 1200);
+  }, []);
+
   const value = useMemo<Shop>(
     () => ({
       cart,
@@ -52,10 +65,16 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       openProduct,
       openCart,
       inCart: (p) => cart.lines.some((l) => l.productId === p.id),
+      claim: (p) => {
+        if (cart.lines.some((l) => l.productId === p.id)) return;
+        cart.add({ productId: p.id, quantity: 1, choices: defaultChoices(p) });
+        announce(p);
+      },
+      release: (p) => cart.lines.filter((l) => l.productId === p.id).forEach((l) => cart.remove(l.key)),
       justAdded,
       adds: toastKey,
     }),
-    [cart, catalog, openProduct, openCart, justAdded, toastKey],
+    [cart, catalog, openProduct, openCart, announce, justAdded, toastKey],
   );
 
   return (
@@ -69,11 +88,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
             onAdd={(line) => {
               cart.add(line);
               setProduct(null);
-              setAdded(`${product.name} added to your cart`);
-              setJustAdded(product.id);
-              setToastKey((k) => k + 1);
-              window.setTimeout(() => setAdded(''), 2500);
-              window.setTimeout(() => setJustAdded(null), 1200);
+              announce(product);
             }}
           />
         ) : null}

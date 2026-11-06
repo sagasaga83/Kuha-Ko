@@ -20,6 +20,7 @@ Go to `/admin` on the site (for example `https://<your-domain>/admin`) and sign 
 
 **Products**
 - *Add a thrift piece* for each piece you want to sell online: photo, name, size and measurements, condition and any flaw, price. Stock starts at 1. When it sells offline, open it and tap *Mark as sold*.
+  Every thrift piece also hangs on the thrift page's rack, with its price on the tag; tapping it there puts it straight in the customer's cart (the KUHA KO! stamp lands on it), and tapping it again takes it out. For it to hang properly, add a *rack cut-out*: the piece photographed flat against a plain wall with the background removed (PNG or WebP, collar near the top). Without one, the rack hangs its ordinary photo. Until there is at least one thrift piece, the rack shows display photos that can't be bought.
 - Drinks and shirts start from the current menu. Set a price to make an item orderable; an empty price shows "Price at opening".
 - *Options* are the choices a customer picks: hot or iced, add-ons, colour, size. Each choice can add to the price (for example Iced +₱20, Oat milk +₱30).
 - Untick *Show on the site* to take something off for now; *Delete* removes it for good.

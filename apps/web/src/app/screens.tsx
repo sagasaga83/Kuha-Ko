@@ -11,6 +11,7 @@ import { googleCalendarUrl, useNextLive } from '../live';
 import { SignupForm } from '../components/SignupForm';
 import { liveSteps } from '../components/LiveSelling';
 import { RackPiece } from '../components/RackPiece';
+import { useRack as useRackEntries } from '../useRack';
 import { useRackSway } from '../useRackSway';
 import { useArrival } from '../useArrival';
 import { Photo } from '../components/Photo';
@@ -114,15 +115,15 @@ export function ThriftScreen() {
   const rack = useRef<HTMLUListElement>(null);
   useRackSway(rack);
   const arrival = useArrival(rack);
-  const [picked, setPicked] = useState<number | null>(null);
+  const pieces = useRackEntries();
   return (
     <>
       <p className="app-lede">Hand-picked ukay finds behind the coffee bar, a fitting room and a vintage mirror.</p>
       <h2 className="app-section-title">On the rack</h2>
       <ul className={`app-rack is-${arrival}`} ref={rack} aria-label="On the rack" tabIndex={0}>
-        {photos.rack.map((p, i) => (
-          <li key={p.src} style={{ '--i': i } as CSSProperties}>
-            <RackPiece slot={p} no={i + 1} picked={picked === i} onPick={() => setPicked(picked === i ? null : i)} />
+        {pieces.map(({ key, ...r }, i) => (
+          <li key={key} style={{ '--i': i } as CSSProperties}>
+            <RackPiece {...r} />
           </li>
         ))}
       </ul>

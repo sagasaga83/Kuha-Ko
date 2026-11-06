@@ -121,7 +121,7 @@ describe('claiming a thrift piece', () => {
     name: 'Denim jacket',
     description: '',
     detail: 'Size M',
-    photoUrl: null,
+    photoUrl: null, rackPhotoUrl: null,
     price: 65000,
     options: [],
     stock: 1,
@@ -131,18 +131,38 @@ describe('claiming a thrift piece', () => {
   };
   const rack: Catalog = { ...open, ordering: { ...open.ordering, thrift: true }, products: [...open.products, jacket] };
 
+  /** The piece's card in "Shop online" (the rack hangs it too, as its own button). */
+  const onlineCard = () =>
+    screen.getAllByRole('button', { name: /Denim jacket/ }).find((b) => b.classList.contains('shop-pieces__card'))!;
+
   it('stamps the piece once it is in the cart, and the basket shows it', () => {
     window.history.replaceState(null, '', '/thrift');
     withShop(rack, <App />);
-    const card = screen.getByRole('button', { name: /Denim jacket/ });
+    const card = onlineCard();
     expect(card.textContent).not.toMatch(/In your cart/);
     fireEvent.click(card);
     fireEvent.click(within(screen.getByRole('dialog', { name: 'Denim jacket' })).getByRole('button', { name: /Add to order/ }));
-    expect(screen.getByRole('button', { name: /Denim jacket/ }).textContent).toMatch(/In your cart/);
+    expect(onlineCard().textContent).toMatch(/In your cart/);
     expect(screen.getByRole('status').textContent).toMatch(/Denim jacket added to your cart/);
     expect(screen.getByRole('button', { name: /Cart 1/ })).toBeTruthy();
     // Phones get the cart as a bar at the bottom instead (the header has no room); CSS picks one.
     expect(screen.getByRole('button', { name: /View cart.*1 item/ })).toBeTruthy();
+  });
+
+  it('picking the piece off the rack puts it in the cart, and picking it again puts it back', () => {
+    window.history.replaceState(null, '', '/thrift');
+    withShop(rack, <App />);
+    // The rack hangs the shop's pieces (not the display photos) with the price on the tag.
+    const pick = screen.getByRole('button', { name: /Kuha ko: add Denim jacket, ₱650, to your cart/ });
+    expect(pick.getAttribute('aria-pressed')).toBe('false');
+    fireEvent.click(pick);
+    expect(screen.getByRole('status').textContent).toMatch(/Denim jacket added to your cart/);
+    expect(screen.getByRole('button', { name: /Cart 1/ })).toBeTruthy();
+    const back = screen.getByRole('button', { name: /Put Denim jacket back/ });
+    expect(back.getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(back);
+    expect(screen.queryByRole('button', { name: /Cart 1/ })).toBeNull();
+    expect(screen.getByRole('button', { name: /Kuha ko: add Denim jacket/ }).getAttribute('aria-pressed')).toBe('false');
   });
 });
 

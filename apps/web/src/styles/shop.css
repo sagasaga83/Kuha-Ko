@@ -126,6 +126,8 @@
   z-index: 40;
   margin: 0;
   padding: 10px 16px;
+  /* Sized to its text: centring with left: 50% would otherwise squeeze it into half the screen. */
+  width: max-content;
   max-width: calc(100% - 32px);
   background: var(--espresso);
   color: var(--canvas);
@@ -140,6 +142,7 @@
 .shop-toast { display: flex; align-items: center; gap: 10px; }
 .shop-toast .claim-stamp {
   position: static;
+  flex: none;
   padding: 1px 6px;
   border-width: 2px;
   color: inherit;

@@ -22,6 +22,7 @@ export function blankProduct(kind: Kind): Product {
     description: '',
     detail: '',
     photoUrl: null,
+    rackPhotoUrl: null,
     price: null,
     options:
       kind === 'shirt'
@@ -106,7 +107,7 @@ export function ProductEditor({
   const [price, setPrice] = useState(pesoText(initial.price));
   const [stock, setStock] = useState(initial.stock === null ? '' : String(initial.stock));
   const [groups, setGroups] = useState<GroupDraft[]>(initial.options.map(toDraft));
-  const [busy, setBusy] = useState<'' | 'save' | 'photo' | 'delete'>('');
+  const [busy, setBusy] = useState<'' | 'save' | 'photo' | 'rack' | 'delete'>('');
   const [error, setError] = useState('');
 
   const set = <K extends keyof Product>(key: K, value: Product[K]) => setP((cur) => ({ ...cur, [key]: value }));
@@ -162,14 +163,15 @@ export function ProductEditor({
     }
   };
 
-  const pickPhoto = async (file: File | undefined) => {
+  const pickPhoto = async (file: File | undefined, field: 'photoUrl' | 'rackPhotoUrl' = 'photoUrl') => {
     if (!file) return;
-    setBusy('photo');
+    setBusy(field === 'photoUrl' ? 'photo' : 'rack');
     setError('');
     try {
-      set('photoUrl', await uploadPhoto(file));
+      set(field, await uploadPhoto(file));
     } catch (err) {
-      setError(err instanceof ApiError || err instanceof Error ? `Photo: ${err.message}` : 'Photo upload failed.');
+      const what = field === 'photoUrl' ? 'Photo' : 'Rack cut-out';
+      setError(err instanceof ApiError || err instanceof Error ? `${what}: ${err.message}` : `${what} upload failed.`);
     } finally {
       setBusy('');
     }
@@ -215,6 +217,32 @@ export function ProductEditor({
           ) : null}
         </div>
       </div>
+
+      {p.kind === 'thrift' ? (
+        <div className="adm-photo adm-photo--rack">
+          {p.rackPhotoUrl ? <img src={p.rackPhotoUrl} alt="" /> : <span className="adm-photo__empty">No cut-out</span>}
+          <div className="adm-photo__actions">
+            <label className="kk-button kk-button--secondary adm-file">
+              {busy === 'rack' ? 'Uploading…' : p.rackPhotoUrl ? 'Change rack cut-out' : 'Add rack cut-out'}
+              <input
+                type="file"
+                accept="image/png,image/webp"
+                onChange={(e) => pickPhoto(e.target.files?.[0], 'rackPhotoUrl')}
+                disabled={busy !== ''}
+              />
+            </label>
+            {p.rackPhotoUrl ? (
+              <button type="button" className="adm-link" onClick={() => set('rackPhotoUrl', null)}>
+                Remove cut-out
+              </button>
+            ) : null}
+            <p className="adm-note">
+              Hangs the piece on the thrift page&rsquo;s rack. Shoot it flat against a plain wall, remove the background
+              (PNG or WebP), and keep the collar near the top. Without one, the rack hangs the photo above.
+            </p>
+          </div>
+        </div>
+      ) : null}
 
       <label className="adm-field">
         <span>Name</span>

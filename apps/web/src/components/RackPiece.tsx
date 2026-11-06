@@ -20,22 +20,29 @@ const u = (n: number) => `calc(${n.toFixed(1)} * var(--u))`;
  * clipped to the neck opening, so the wood shows inside the collar, in front of the back
  * of the shirt and behind the front neckline. Each cut-out says where its neck is.
  *
- * With `onPick`, a click picks the piece off the rail: it lifts from the rail, its tag
- * turns over to "Kuha ko." and the KUHA KO! stamp lands on it. Click again to put it
- * back. It's only a picked look: nothing is reserved or added to the cart.
+ * With `onPick`, a click or tap picks the piece: `picked` lifts it clear of the rail,
+ * turns its tag over to "Kuha ko." and lands the KUHA KO! stamp on it. What a pick means
+ * is up to the rack (useRack): a real piece goes in the cart, a display photo only looks
+ * picked.
  */
 export function RackPiece({
   slot,
-  no,
+  tag,
   picked = false,
+  fresh = true,
   onPick,
+  pickLabel,
 }: {
   slot: PhotoSlot;
-  no: number;
+  /** The tag's two typed lines: the item number or price, then "One of one" (or "Sold"). */
+  tag: [string, string];
   picked?: boolean;
+  /** Land the stamp with a thunk (a pick just now) rather than show it already there. */
+  fresh?: boolean;
   onPick?: () => void;
+  /** What a pick does, for screen readers ("Add … to your cart"). */
+  pickLabel?: string;
 }) {
-  const number = `No. ${String(no).padStart(4, '0')}`;
   const width = slot.hanger?.width ?? 400;
   const crown = slot.hanger?.crown ?? 120;
   const neck = slot.hanger?.neck;
@@ -77,21 +84,19 @@ export function RackPiece({
       <p className="hang__tag">
         <span className="hang__faces">
           <span className="hang__face">
-            <span>{number}</span>
-            <span className="hang__note">One of one</span>
+            <span>{tag[0]}</span>
+            <span className="hang__note">{tag[1]}</span>
           </span>
           <span className="hang__face hang__face--back" aria-hidden="true">
             Kuha ko.
           </span>
         </span>
       </p>
-      {/* Mounts on each pick, so the stamp lands with a thunk every time. */}
-      {picked ? <ClaimStamp fresh className="hang__stamp" /> : null}
+      {/* Mounts on each pick, so a fresh stamp lands with a thunk every time. */}
+      {picked ? <ClaimStamp fresh={fresh} className="hang__stamp" /> : null}
       {onPick ? (
         <button type="button" className="hang__pick" aria-pressed={picked} onClick={onPick}>
-          <span className="visually-hidden">
-            {picked ? 'Put back' : 'Pick'} {number}: {slot.alt}
-          </span>
+          <span className="visually-hidden">{pickLabel ?? slot.alt}</span>
         </button>
       ) : null}
     </div>
