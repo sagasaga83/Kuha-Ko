@@ -39,7 +39,13 @@ export function SiteHeader() {
     <header className={cls}>
       <div className="container site-header__inner">
         <Link href="/" className="site-header__home" aria-label="Kuha Ko, home" onClick={() => setOpen(false)}>
-          <Wordmark size={40} aria-hidden="true" role="presentation" aria-label={undefined} />
+          <Wordmark
+            size={40}
+            style={{ fontSize: 'var(--header-wordmark, 40px)' }}
+            aria-hidden="true"
+            role="presentation"
+            aria-label={undefined}
+          />
         </Link>
         <CartButton />
         <button

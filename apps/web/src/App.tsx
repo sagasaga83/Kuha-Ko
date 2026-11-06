@@ -11,6 +11,7 @@ import { LiveSelling } from './components/LiveSelling';
 import { AboutSection } from './components/AboutSection';
 import { SiteFooter } from './components/SiteFooter';
 import { BackToTop } from './components/BackToTop';
+import { CartBar } from './shop/Shop';
 import { Link, PAGES, pageFor, usePath, type PageId } from './router';
 
 function Page({ id }: { id: PageId | null }) {
@@ -70,6 +71,7 @@ export function App() {
         <Page id={id} />
       </main>
       <SiteFooter />
+      <CartBar site />
       <BackToTop />
     </>
   );

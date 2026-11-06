@@ -141,6 +141,8 @@ describe('claiming a thrift piece', () => {
     expect(screen.getByRole('button', { name: /Denim jacket/ }).textContent).toMatch(/In your cart/);
     expect(screen.getByRole('status').textContent).toMatch(/Denim jacket added to your cart/);
     expect(screen.getByRole('button', { name: /Cart 1/ })).toBeTruthy();
+    // Phones get the cart as a bar at the bottom instead (the header has no room); CSS picks one.
+    expect(screen.getByRole('button', { name: /View cart.*1 item/ })).toBeTruthy();
   });
 });
 

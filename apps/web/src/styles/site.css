@@ -263,7 +263,17 @@ body::before {
   .is-open .site-nav a { opacity: 1; transform: none; }
   .site-nav a::after { display: none; }
   .nav-toggle { order: 2; }
-  .site-header__lamp { order: 1; margin-left: calc(var(--space-5) * -0.5); }
+  .site-header__lamp { order: 1; }
+  /* Three things share the row on a phone: the wordmark, the lamp and Explore. The cart
+     moves to a bar at the bottom of the screen (shop.css), in thumb reach. */
+  .site-header__inner { gap: var(--space-3); }
+}
+/* Small phones (360px and 320px wide): narrower margins and gaps, and the wordmark scales
+   down, never under the brand's 120px-wide floor (font-size 30px). */
+@media (max-width: 400px) {
+  .site-header .container { padding-left: max(16px, var(--safe-l)); padding-right: max(16px, var(--safe-r)); }
+  .site-header__inner { gap: var(--space-2); }
+  :root { --header-wordmark: clamp(30px, 10vw, 40px); }
 }
 
 /* Sections */

@@ -157,12 +157,16 @@ function NoddingBasket({ adds }: { adds: number }) {
   );
 }
 
-/** The bar above the tab bar in the app layout: shows while the cart has something in it. */
-export function CartBar() {
+/**
+ * The cart bar: shows while the cart has something in it. In the app layout it sits above
+ * the tab bar; on the full site (`site`) it is the phone's cart, at the bottom in thumb reach,
+ * where the header has no room for a cart button (styles/shop.css).
+ */
+export function CartBar({ site = false }: { site?: boolean }) {
   const shop = useShop();
   if (!shop || shop.cart.count === 0) return null;
   return (
-    <button type="button" className="shop-cartbar" onClick={shop.openCart}>
+    <button type="button" className={`shop-cartbar${site ? ' shop-cartbar--site' : ''}`} onClick={shop.openCart}>
       <span className="shop-cartbar__title">
         <NoddingBasket adds={shop.adds} /> View cart
       </span>
@@ -173,7 +177,7 @@ export function CartBar() {
   );
 }
 
-/** The cart button in the site header. */
+/** The cart button in the site header (wider screens; phones get the cart bar instead). */
 export function CartButton() {
   const shop = useShop();
   if (!shop || shop.cart.count === 0) return null;

@@ -177,6 +177,21 @@
 .shop-cartbar__meta { font: 400 14px var(--font-mono); }
 .shop-cartbar:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .app:has(.shop-cartbar) .app-screen { padding-bottom: calc(var(--tabbar-h) + var(--safe-b) + var(--space-5) + 64px); }
+/* The full site's cart on phones: the same bar, pinned to the bottom edge instead of above a
+   tab bar. On wider screens the header's cart button does the job. */
+.shop-cartbar--site { display: none; }
+@media (max-width: 760px) {
+  .site-header .shop-cartbtn { display: none; }
+  .shop-cartbar--site {
+    display: flex;
+    left: max(16px, var(--safe-l));
+    right: max(16px, var(--safe-r));
+    bottom: calc(max(16px, var(--safe-b)) + 4px);
+  }
+  /* Keep the end of the page and the back-to-top button clear of the bar. */
+  body:has(.shop-cartbar--site) { padding-bottom: 76px; }
+  body:has(.shop-cartbar--site) .to-top { bottom: calc(max(16px, var(--safe-b)) + 4px + 52px + var(--space-2)); }
+}
 
 /* One-page site */
 .shop-cartbtn {
