@@ -31,6 +31,12 @@ export interface PhotoSlot {
    * opening; leave `neck` out for a back view.
    */
   hanger?: { width?: number; crown?: number; neck?: { cx: number; cy: number; rx: number; ry: number } };
+  /**
+   * A cut-out: how far down the garment's middle is, in the cut-out's units (900 × 1200),
+   * so the KUHA KO! stamp lands on its centre when the piece is picked. Measured from the
+   * image's opaque area; default 600 (the middle of the image).
+   */
+  middle?: number;
   /** Set while a slot uses a temporary stock photo: where it came from. */
   stockSource?: string;
 }
@@ -161,6 +167,7 @@ export const photos: {
   rack: [
     {
       src: '/photos/rack/denim-jacket.webp',
+      middle: 583,
       alt: 'A dark-wash denim jacket with chest and hip pockets',
       brief: 'Denim jacket on its hanger, front on, against a plain wall.',
       ratio: '3 / 4',
@@ -170,6 +177,7 @@ export const photos: {
     },
     {
       src: '/photos/rack/orange-tee.webp',
+      middle: 532,
       alt: 'A boxy orange cotton T-shirt',
       brief: 'A tee on its hanger, front on, against a plain wall.',
       ratio: '3 / 4',
@@ -179,6 +187,7 @@ export const photos: {
     },
     {
       src: '/photos/rack/blazer.webp',
+      middle: 616,
       alt: 'The back of a light beige linen-blend blazer',
       brief: 'Blazer on its hanger, back view, against a plain wall.',
       ratio: '3 / 4',
@@ -187,6 +196,7 @@ export const photos: {
     },
     {
       src: '/photos/rack/pink-tee.webp',
+      middle: 654,
       alt: 'An oversized dusty-pink T-shirt',
       brief: 'An oversized tee on its hanger, against a plain wall.',
       ratio: '3 / 4',
@@ -196,6 +206,7 @@ export const photos: {
     },
     {
       src: '/photos/rack/yellow-tee.webp',
+      middle: 562,
       alt: 'A pale butter-yellow T-shirt with a curved hem',
       brief: 'A tee on its hanger, front on, against a plain wall.',
       ratio: '3 / 4',

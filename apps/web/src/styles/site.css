@@ -791,7 +791,9 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
    off with opacity and the independent scale property. */
 .hang__tag { transition: opacity var(--duration-medium) ease, scale var(--duration-medium) var(--ease-out); }
 .hang.is-picked .hang__tag { opacity: 0; scale: 0.8; transition-duration: var(--duration-quick); }
-.hang__stamp { z-index: 3; top: 42%; font-size: 20px; }
+/* Centred on the garment: across at the middle, down at the cut-out's measured middle (--mid).
+   Two classes, to win over .claim-stamp's own top: 50% (shop.css loads after this file). */
+.hang .hang__stamp { z-index: 3; top: calc((var(--off) + var(--mid, 600)) * var(--u)); font-size: 20px; }
 /* The punched hole, and the string up to the hanger. */
 .hang__tag::before,
 .shop-pieces__tag::before {

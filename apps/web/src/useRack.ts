@@ -36,6 +36,7 @@ function slotFor(p: Product): PhotoSlot {
     ratio: display?.ratio ?? '3 / 4',
     cutout: Boolean(p.rackPhotoUrl),
     hanger: display?.hanger,
+    middle: display?.middle,
   };
 }
 

@@ -66,7 +66,7 @@ export function RackPiece({
   return (
     <div
       className={`hang${picked ? ' is-picked' : ''}`}
-      style={{ '--off': off.toFixed(1) } as CSSProperties}
+      style={{ '--off': off.toFixed(1), '--mid': slot.middle ?? 600 } as CSSProperties}
       {...swingOnTouch}
     >
       <img className="hang__hanger" src={HANGER.src} alt="" style={place} loading="lazy" decoding="async" />
