@@ -2,7 +2,7 @@ import { useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
 import { MenuItem } from '@kuhako/ui';
 import { menuFrom, useCatalog } from '../catalog/catalog';
 import { useShop } from '../shop/Shop';
-import { photos } from '../data/photos';
+import { photos, type PhotoSlot } from '../data/photos';
 import { Photo } from './Photo';
 import { SectionHead } from './SectionHead';
 
@@ -17,7 +17,15 @@ export function MenuSection() {
   const group = menu.find((g) => g.id === active) ?? menu[0];
   if (!group) return null;
   const drink = group.drinks.find((d) => d.id && d.id === pointed);
-  const drinkPhoto = drink?.id ? products.find((x) => x.id === drink.id)?.photoUrl : null;
+  // A drink's own photo: one uploaded in the admin page, else its stand-in from photos.ts.
+  const photoFor = (id: string | undefined): PhotoSlot | null => {
+    if (!id) return null;
+    const uploaded = products.find((x) => x.id === id)?.photoUrl;
+    const standIn = photos.drinks[id];
+    if (uploaded) return { src: uploaded, alt: '', brief: '', ratio: '4 / 5' };
+    return standIn?.src ? standIn : null;
+  };
+  const drinkPhoto = photoFor(drink?.id);
   const price = (d: (typeof group.drinks)[number]) =>
     d.hot && d.iced ? `Hot ${d.hot} · Iced ${d.iced}` : (d.hot ?? d.iced ?? 'Price at opening');
 
@@ -49,11 +57,19 @@ export function MenuSection() {
                   {photos.menu[g.id] ? <Photo slot={photos.menu[g.id]} /> : null}
                 </div>
               ))}
-              {drinkPhoto && drink ? (
-                <div key={drinkPhoto} className="menu__photo is-active">
-                  <Photo slot={{ src: drinkPhoto, alt: drink.name, brief: drink.name, ratio: '4 / 5' }} />
-                </div>
-              ) : null}
+              {/* The open group's drinks sit stacked under it and cross-fade in as each is pointed at. */}
+              {group.drinks.map((d) => {
+                const slot = photoFor(d.id);
+                if (!slot) return null;
+                return (
+                  <div
+                    key={`${group.id}-${d.id}`}
+                    className={`menu__photo menu__photo--drink${d.id === drink?.id ? ' is-active' : ''}`}
+                  >
+                    <Photo slot={{ ...slot, alt: slot.alt || d.name, brief: slot.brief || d.name }} />
+                  </div>
+                );
+              })}
             </div>
             <p className="menu__caption" aria-hidden="true">
               <span className="menu__caption-name">{drink ? drink.name : group.title}</span>

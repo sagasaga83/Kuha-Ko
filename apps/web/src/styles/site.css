@@ -562,6 +562,10 @@ body::before {
   transition: opacity 600ms ease, transform 900ms var(--ease-out);
 }
 .menu__photo.is-active { opacity: 1; transform: none; }
+/* A drink's photo answers the pointer, so it fades quicker than a group change:
+   in at the fast token, back out softer at the medium one. */
+.menu__photo--drink { transition: opacity var(--duration-medium) ease, transform 900ms var(--ease-out); }
+.menu__photo--drink.is-active { transition-duration: var(--duration-fast), 900ms; }
 
 .tabs { display: flex; flex-wrap: wrap; gap: 0 var(--space-4); border-bottom: 1px solid var(--line); }
 .tabs__tab {

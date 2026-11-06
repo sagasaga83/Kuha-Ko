@@ -39,6 +39,11 @@ export const photos: {
   hero: PhotoSlot;
   /** One per menu group, keyed by the group id in menu.ts. */
   menu: Record<string, PhotoSlot>;
+  /**
+   * One per drink, keyed by its product id: the menu shows it while the drink is pointed
+   * at. A photo uploaded for the product in the admin page takes its place.
+   */
+  drinks: Record<string, PhotoSlot>;
   rack: PhotoSlot[];
   shop: PhotoSlot;
   /** The people behind the two shops, for the About page. */
@@ -71,6 +76,85 @@ export const photos: {
       alt: 'A matcha latte with latte art in a white cup',
       stockSource: 'https://images.unsplash.com/photo-1515823064-d6e0c04616a7',
       brief: 'Green Tag Matcha and Hand-Me-Down Chocolate.',
+      ratio: '4 / 5',
+    },
+  },
+  drinks: {
+    'the-kuha': {
+      src: '/photos/drinks/the-kuha.jpg',
+      alt: 'A latte with rosetta latte art in a white cup on a wooden table',
+      stockSource: 'https://images.unsplash.com/photo-1630040995437-80b01c5dd52d',
+      brief: 'The Kuha, hot, on the counter.',
+      ratio: '4 / 5',
+    },
+    'thrift-y-americano': {
+      src: '/photos/drinks/thrift-y-americano.jpg',
+      alt: 'A cup of black coffee seen from above on a wooden table',
+      stockSource: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd',
+      brief: 'Thrift-y Americano, hot, from above.',
+      ratio: '4 / 5',
+    },
+    'pre-loved-cappuccino': {
+      src: '/photos/drinks/pre-loved-cappuccino.jpg',
+      alt: 'A cappuccino with thick foam in a white cup and saucer',
+      stockSource: 'https://images.unsplash.com/photo-1622240506921-042a4e71c172',
+      brief: 'Pre-Loved Cappuccino, foam up close.',
+      ratio: '4 / 5',
+    },
+    'marked-down-macchiato': {
+      src: '/photos/drinks/marked-down-macchiato.jpg',
+      alt: 'A short espresso in a small glass in window light',
+      stockSource: 'https://images.unsplash.com/photo-1559496417-e7f25cb247f3',
+      brief: 'Marked-Down Macchiato in a short glass, daylight.',
+      ratio: '4 / 5',
+    },
+    'green-tag-matcha-latte': {
+      src: '/photos/drinks/green-tag-matcha-latte.jpg',
+      alt: 'An iced matcha latte in a glass with a straw',
+      stockSource: 'https://images.unsplash.com/photo-1749280447307-31a68eb38673',
+      brief: 'Green Tag Matcha Latte, iced, with its tag.',
+      ratio: '4 / 5',
+    },
+    'hand-me-down-chocolate': {
+      src: '/photos/drinks/hand-me-down-chocolate.jpg',
+      alt: 'A mug of hot chocolate beside cinnamon sticks',
+      stockSource: 'https://images.unsplash.com/photo-1497048363455-6f3e84db1cae',
+      brief: 'Hand-Me-Down Chocolate in a thrifted mug.',
+      ratio: '4 / 5',
+    },
+    'what-a-steal-spanish-latte': {
+      src: '/photos/drinks/what-a-steal-spanish-latte.jpg',
+      alt: 'An iced latte with milk swirling through it in a glass on a wooden table',
+      stockSource: 'https://images.unsplash.com/photo-1671759545218-831c32bfe92d',
+      brief: 'What-a-Steal Spanish Latte, iced, on the counter.',
+      ratio: '4 / 5',
+    },
+    'vintage-caramel-macchiato': {
+      src: '/photos/drinks/vintage-caramel-macchiato.jpg',
+      alt: 'An iced caramel latte with caramel down the glass on a wooden coaster',
+      stockSource: 'https://images.unsplash.com/photo-1662047102608-a6f2e492411f',
+      brief: 'Vintage Caramel Macchiato, iced, caramel down the glass.',
+      ratio: '4 / 5',
+    },
+    'retro-tablea-mocha': {
+      src: '/photos/drinks/retro-tablea-mocha.jpg',
+      alt: 'A mocha in a glass mug on a wooden table',
+      stockSource: 'https://images.unsplash.com/photo-1618576230663-9714aecfb99a',
+      brief: 'Retro Tablea Mocha with a tablea disc beside it.',
+      ratio: '4 / 5',
+    },
+    'ukay-muscovado-latte': {
+      src: '/photos/drinks/ukay-muscovado-latte.jpg',
+      alt: 'A layered iced latte in a tall glass on a wooden tray',
+      stockSource: 'https://images.unsplash.com/photo-1527156231393-7023794f363c',
+      brief: 'Ukay Muscovado Latte, iced, layered.',
+      ratio: '4 / 5',
+    },
+    'mix-match-latte': {
+      src: '/photos/drinks/mix-match-latte.jpg',
+      alt: 'A small latte with latte art in a glass on a wooden table',
+      stockSource: 'https://images.unsplash.com/photo-1616866860951-417035eda234',
+      brief: 'Mix & Match Latte, in a mismatched glass.',
       ratio: '4 / 5',
     },
   },
