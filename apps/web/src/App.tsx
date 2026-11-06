@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Announcement } from './components/Announcement';
 import { SiteHeader } from './components/SiteHeader';
 import { Hero } from './components/Hero';
-import { Marquee } from './components/Marquee';
 import { NameStory } from './components/NameStory';
 import { PageLinks } from './components/PageLinks';
 import { MenuSection } from './components/MenuSection';
@@ -20,7 +19,6 @@ function Page({ id }: { id: PageId | null }) {
       return (
         <>
           <Hero />
-          <Marquee />
           <NameStory />
           <PageLinks />
         </>
