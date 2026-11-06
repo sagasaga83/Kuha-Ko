@@ -21,7 +21,7 @@ const u = (n: number) => `calc(${n.toFixed(1)} * var(--u))`;
  * of the shirt and behind the front neckline. Each cut-out says where its neck is.
  *
  * With `onPick`, a click or tap picks the piece: `picked` lifts it clear of the rail,
- * turns its tag over to "Kuha ko." and lands the KUHA KO! stamp on it. What a pick means
+ * takes its tag off and lands the KUHA KO! stamp in its place. What a pick means
  * is up to the rack (useRack): a real piece goes in the cart, a display photo only looks
  * picked.
  */
@@ -82,15 +82,8 @@ export function RackPiece({
         />
       ) : null}
       <p className="hang__tag">
-        <span className="hang__faces">
-          <span className="hang__face">
-            <span>{tag[0]}</span>
-            <span className="hang__note">{tag[1]}</span>
-          </span>
-          <span className="hang__face hang__face--back" aria-hidden="true">
-            Kuha ko.
-          </span>
-        </span>
+        <span>{tag[0]}</span>
+        <span className="hang__note">{tag[1]}</span>
       </p>
       {/* Mounts on each pick, so a fresh stamp lands with a thunk every time. */}
       {picked ? <ClaimStamp fresh={fresh} className="hang__stamp" /> : null}

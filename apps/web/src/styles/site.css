@@ -772,8 +772,8 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
 }
 .hang__note { font-weight: 400; font-size: 12px; color: var(--ink-muted); }
 /* Picking a piece off the rail (RackPiece onPick): it lifts clear of the rail, its tag
-   turns over to "Kuha ko." and the KUHA KO! stamp thunks onto it. Putting it back is
-   quicker than taking it. Only a picked look: nothing is reserved. */
+   comes off and the KUHA KO! stamp thunks on in its place. Putting it back is quicker
+   than taking it, and the tag comes back softer than it went. */
 .hang { translate: 0 0; transition: translate var(--duration-medium) var(--ease-out); }
 .hang.is-picked { translate: 0 calc(-1 * var(--lift, 16px)); transition-duration: var(--duration-slow); }
 .hang__pick {
@@ -787,22 +787,10 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
 }
 .rack__track.is-dragging .hang__pick { cursor: grabbing; }
 .hang__pick:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 4px; }
-.hang__faces { display: grid; perspective: 400px; }
-.hang__face {
-  grid-area: 1 / 1;
-  display: grid;
-  align-content: center;
-  backface-visibility: hidden;
-  transition: transform var(--duration-slow) var(--ease-out);
-}
-.hang__face--back {
-  justify-items: center;
-  transform: rotateY(-180deg);
-  font: italic 400 18px/1.1 var(--font-display);
-  color: var(--sage-ink);
-}
-.hang.is-picked .hang__face { transform: rotateY(180deg); }
-.hang.is-picked .hang__face--back { transform: rotateY(0deg); }
+/* The tag uses rotate and translate (sway, centring) and transform (swing), so it comes
+   off with opacity and the independent scale property. */
+.hang__tag { transition: opacity var(--duration-medium) ease, scale var(--duration-medium) var(--ease-out); }
+.hang.is-picked .hang__tag { opacity: 0; scale: 0.8; transition-duration: var(--duration-quick); }
 .hang__stamp { z-index: 3; top: 42%; font-size: 20px; }
 /* The punched hole, and the string up to the hanger. */
 .hang__tag::before,
