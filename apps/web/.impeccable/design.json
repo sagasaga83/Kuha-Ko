@@ -1,0 +1,544 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-06T04:21:56+00:00",
+  "title": "Design System: Kuha Ko",
+  "extensions": {
+    "colorMeta": {
+      "linen": {
+        "role": "neutral",
+        "displayName": "Linen",
+        "canonical": "#F3EBDD",
+        "oklch": "oklch(94.3% 0.021 81.8)",
+        "dark": "#1E1611",
+        "usage": "Page, menu and wall background. The default ground for everything.",
+        "tonalRamp": [
+          "#0C0B0A",
+          "#272520",
+          "#46413A",
+          "#676055",
+          "#888175",
+          "#AAA49B",
+          "#CCC9C3",
+          "#EFEEEC"
+        ]
+      },
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Canvas",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "dark": "#1E1611",
+        "usage": "The website page ground: plain white in Linen, the evening brown in Evening. Linen stays the ground for print, signs and photo placeholders.",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "canonical": "#FBF7EF",
+        "oklch": "oklch(97.7% 0.011 84.6)",
+        "dark": "#2A201A",
+        "usage": "Raised panels on linen: cards, menu panels, the inside of a stamp.",
+        "tonalRamp": [
+          "#0B0B0A",
+          "#262522",
+          "#44423D",
+          "#64615A",
+          "#85827B",
+          "#A7A59F",
+          "#CAC9C6",
+          "#EFEEED"
+        ]
+      },
+      "kraft": {
+        "role": "neutral",
+        "displayName": "Kraft",
+        "canonical": "#E8D9BF",
+        "oklch": "oklch(89.1% 0.038 81.5)",
+        "dark": "#594736",
+        "usage": "Paper bags, hang tags and cup sleeves. Text on kraft is espresso or ink-muted; rust and sage-ink only at 24px and larger.",
+        "tonalRamp": [
+          "#0C0B09",
+          "#29241C",
+          "#494132",
+          "#6C5F49",
+          "#8E8069",
+          "#AEA493",
+          "#CEC8BE",
+          "#F0EEEA"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "canonical": "#D8CBB4",
+        "oklch": "oklch(84.7% 0.034 82.0)",
+        "dark": "#4A3A2C",
+        "usage": "Hairlines and card borders. Decorative only, never the only thing that separates two states.",
+        "tonalRamp": [
+          "#0C0B09",
+          "#28241D",
+          "#484134",
+          "#6B604C",
+          "#8D816C",
+          "#ADA495",
+          "#CEC8BF",
+          "#F0EEEB"
+        ]
+      },
+      "espresso": {
+        "role": "neutral",
+        "displayName": "Espresso",
+        "canonical": "#3B2A20",
+        "oklch": "oklch(30.2% 0.031 51.7)",
+        "dark": "#F3EBDD",
+        "usage": "Main text and the logo, on linen, paper and kraft in both themes.",
+        "tonalRamp": [
+          "#0D0B09",
+          "#2A2320",
+          "#4C3F38",
+          "#705D52",
+          "#927E72",
+          "#B1A299",
+          "#D0C7C2",
+          "#F1EEEC"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Ink Muted",
+        "canonical": "#5E4B3C",
+        "oklch": "oklch(42.8% 0.035 59.9)",
+        "dark": "#CDBEA8",
+        "usage": "Secondary text, notes and captions, on linen, paper and kraft.",
+        "tonalRamp": [
+          "#0D0B09",
+          "#2A241E",
+          "#4C3F35",
+          "#705D4E",
+          "#927E6E",
+          "#B1A296",
+          "#D1C7C0",
+          "#F1EEEB"
+        ]
+      },
+      "rust": {
+        "role": "primary",
+        "displayName": "Rust",
+        "canonical": "#9A4A26",
+        "oklch": "oklch(50.4% 0.118 43.3)",
+        "dark": "#E08A5E",
+        "usage": "The Kuha Ko Coffee accent: prices, sale marks, links, the grave accent in the logo. As text on linen and paper; as a fill under on-rust text.",
+        "tonalRamp": [
+          "#120906",
+          "#381D11",
+          "#65311B",
+          "#964824",
+          "#BB6946",
+          "#D1957B",
+          "#E6C0B0",
+          "#FAEBE5"
+        ]
+      },
+      "on-rust": {
+        "role": "neutral",
+        "displayName": "On Rust",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "dark": "#1E1611",
+        "usage": "Text and marks on a rust fill.",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "sage": {
+        "role": "secondary",
+        "displayName": "Sage",
+        "canonical": "#7A8C5A",
+        "oklch": "oklch(61.3% 0.074 124.6)",
+        "dark": "#8FA36B",
+        "usage": "Decorative fills only: plants, the Kuha Ko Thrift block, cover shapes. Never small text.",
+        "tonalRamp": [
+          "#0A0C07",
+          "#222817",
+          "#3C4728",
+          "#586839",
+          "#798A59",
+          "#9EAB88",
+          "#C5CDB8",
+          "#EDF0E8"
+        ]
+      },
+      "sage-ink": {
+        "role": "secondary",
+        "displayName": "Sage Ink",
+        "canonical": "#556640",
+        "oklch": "oklch(48.6% 0.061 128.1)",
+        "dark": "#A9BD86",
+        "usage": "The Kuha Ko Thrift accent as text, on linen and paper; on kraft at 24px and larger.",
+        "tonalRamp": [
+          "#0A0C08",
+          "#21271A",
+          "#3B462E",
+          "#576843",
+          "#788A63",
+          "#9DAB8E",
+          "#C4CDBB",
+          "#EDF0E9"
+        ]
+      },
+      "mustard": {
+        "role": "tertiary",
+        "displayName": "Mustard",
+        "canonical": "#D9A15A",
+        "oklch": "oklch(74.8% 0.111 71.3)",
+        "dark": "#E3B26F",
+        "usage": "Highlights on board only: the live-selling claim, lamp-light details. Never text on linen.",
+        "tonalRamp": [
+          "#100A05",
+          "#332109",
+          "#5B3A07",
+          "#875500",
+          "#AB762F",
+          "#C49D6F",
+          "#DCC5AA",
+          "#F6EDE3"
+        ]
+      },
+      "board": {
+        "role": "neutral",
+        "displayName": "Board",
+        "canonical": "#3B2A20",
+        "oklch": "oklch(30.2% 0.031 51.7)",
+        "dark": "#4A372A",
+        "usage": "Dark panels: the shop sign, menu board, live-selling banner. Text on it is on-board or mustard.",
+        "tonalRamp": [
+          "#0D0B09",
+          "#2A2320",
+          "#4C3F38",
+          "#705D52",
+          "#927E72",
+          "#B1A299",
+          "#D0C7C2",
+          "#F1EEEC"
+        ]
+      },
+      "on-board": {
+        "role": "neutral",
+        "displayName": "On Board",
+        "canonical": "#F3EBDD",
+        "oklch": "oklch(94.3% 0.021 81.8)",
+        "dark": "#F3EBDD",
+        "usage": "Text and logo on board.",
+        "tonalRamp": [
+          "#0C0B0A",
+          "#272520",
+          "#46413A",
+          "#676055",
+          "#888175",
+          "#AAA49B",
+          "#CCC9C3",
+          "#EFEEEC"
+        ]
+      },
+      "focus-ring": {
+        "role": "primary",
+        "displayName": "Focus Ring",
+        "canonical": "#9A4A26",
+        "oklch": "oklch(50.4% 0.118 43.3)",
+        "dark": "#E08A5E",
+        "usage": "Keyboard focus on any screen: a solid 2px ring with a 2px gap in the ground colour. Meets 3:1 on linen, paper and board.",
+        "tonalRamp": [
+          "#120906",
+          "#381D11",
+          "#65311B",
+          "#964824",
+          "#BB6946",
+          "#D1957B",
+          "#E6C0B0",
+          "#FAEBE5"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The hero line only; the second line in italic 400, rust."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Page and section titles, sentence case."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Menu item names, card, panel and sheet titles."
+      },
+      "tagline": {
+        "displayName": "Tagline",
+        "purpose": "Taglines and pull quotes, italic."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Descriptions and running text; ledes at 18px, 40 to 52ch."
+      },
+      "small": {
+        "displayName": "Small",
+        "purpose": "Notes and fine print; the smallest reading size."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Capitals with 3px tracking: section labels, nav, stamps."
+      },
+      "tag": {
+        "displayName": "Tag",
+        "purpose": "Hang tags, prices, item numbers, receipts."
+      }
+    },
+    "themes": [
+      {
+        "id": "light",
+        "name": "Linen (light)"
+      },
+      {
+        "id": "dark",
+        "name": "Evening (dark)",
+        "note": "Every colour token swaps to its dark value; see colorMeta.<name>.dark."
+      }
+    ],
+    "shadows": [],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+        "purpose": "The site's easing for surfaces, slides, reveals and hovers."
+      },
+      {
+        "name": "duration-stagger",
+        "value": "40ms",
+        "purpose": "Per item in a staggered list."
+      },
+      {
+        "name": "duration-quick",
+        "value": "150ms",
+        "purpose": "Hover colour changes; dropdown close."
+      },
+      {
+        "name": "duration-fast",
+        "value": "250ms",
+        "purpose": "Hover in, dropdown open, tabs, icon swaps, toast close."
+      },
+      {
+        "name": "duration-medium",
+        "value": "350ms",
+        "purpose": "Hover out, panel close, toast open."
+      },
+      {
+        "name": "duration-slow",
+        "value": "400ms",
+        "purpose": "Panel and sheet open."
+      },
+      {
+        "name": "duration-very-slow",
+        "value": "500ms",
+        "purpose": "Text reveal."
+      },
+      {
+        "name": "press",
+        "value": "scale(0.97), 100ms ease-out",
+        "purpose": "Feedback on press for every button."
+      },
+      {
+        "name": "sheet-spring",
+        "value": "spring: damping 0.85 to 1, response 0.32s, carries release velocity",
+        "purpose": "Dragging and dismissing the bottom sheet (src/motion.ts)."
+      },
+      {
+        "name": "hang-swing",
+        "value": "1600ms cubic-bezier(0.3, 0.7, 0.4, 1)",
+        "purpose": "Rack pieces and price tags swinging when touched."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "560px"
+      },
+      {
+        "name": "one-column",
+        "value": "760px"
+      },
+      {
+        "name": "section-head-stack",
+        "value": "860px"
+      },
+      {
+        "name": "hero-stack",
+        "value": "900px"
+      },
+      {
+        "name": "drawer",
+        "value": "768px",
+        "note": "The sheet becomes a right-hand drawer on the full site from here up."
+      },
+      {
+        "name": "container",
+        "value": "1240px",
+        "note": "Maximum content width."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The main action: add to order, place order, sign up.",
+      "html": "<button class=\"ds-btn-primary\">Add to order</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; min-height: 48px; padding: 0 24px; font: 700 16px var(--font-sans); color: var(--on-rust); background: var(--rust); border: 2px solid transparent; border-radius: var(--radius-sm); cursor: pointer; transition: background-color 150ms ease, color 150ms ease, transform 100ms ease-out; } .ds-btn-primary:hover { background: var(--espresso); color: var(--linen); } .ds-btn-primary:active { transform: scale(0.97); } .ds-btn-primary:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "A second choice next to a primary button.",
+      "html": "<button class=\"ds-btn-secondary\">See the menu</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; min-height: 48px; padding: 0 24px; font: 700 16px var(--font-sans); color: var(--espresso); background: transparent; border: 2px solid var(--espresso); border-radius: var(--radius-sm); cursor: pointer; transition: background-color 150ms ease, color 150ms ease, transform 100ms ease-out; } .ds-btn-secondary:hover { background: var(--espresso); color: var(--linen); } .ds-btn-secondary:active { transform: scale(0.97); } .ds-btn-secondary:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Link",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "A plain link whose hairline underline fills in rust on hover.",
+      "html": "<a class=\"ds-text-link\" href=\"#\">Join the live selling</a>",
+      "css": ".ds-text-link { display: inline-flex; align-items: center; min-height: 44px; font: 500 16px var(--font-sans); color: var(--espresso); text-decoration: none; background: linear-gradient(currentColor, currentColor) left calc(100% - 10px) / 0 1px no-repeat, linear-gradient(var(--line), var(--line)) left calc(100% - 10px) / 100% 1px no-repeat; transition: background-size 250ms cubic-bezier(0.2, 0.7, 0.2, 1), color 150ms ease; } .ds-text-link:hover { color: var(--rust); background-size: 100% 1px, 100% 1px; } .ds-text-link:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Checkout and account fields; 16px text so phones don't zoom.",
+      "html": "<label class=\"ds-field\"><span>Mobile number</span><input class=\"ds-input\" placeholder=\"0917 123 4567\"></label>",
+      "css": ".ds-field { display: grid; gap: 6px; font: 500 15px var(--font-sans); color: var(--espresso); } .ds-input { min-height: 48px; padding: 12px; font: 16px/1.4 var(--font-sans); color: var(--espresso); background: var(--canvas); border: 1px solid var(--line); border-radius: var(--radius-sm); } .ds-input::placeholder { color: var(--ink-muted); } .ds-input:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "Typewriter labels; a hairline draws under the hovered or current page.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\" aria-current=\"page\">Menu</a><a href=\"#\">Thrift</a><a href=\"#\">Live selling</a><a href=\"#\">About</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 24px; } .ds-nav a { position: relative; padding: 4px 0; font: 700 13px var(--font-mono); letter-spacing: 2px; text-transform: uppercase; text-decoration: none; color: var(--espresso); } .ds-nav a::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform 250ms cubic-bezier(0.2, 0.7, 0.2, 1); } .ds-nav a:hover::after, .ds-nav a[aria-current]::after { transform: scaleX(1); transform-origin: left; } .ds-nav a[aria-current] { color: var(--rust); } .ds-nav a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }"
+    },
+    {
+      "name": "Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "A paper panel on canvas, edged with a hairline, never a shadow.",
+      "html": "<div class=\"ds-panel\"><h3>Get the live schedule</h3><p>We’ll email you before each live. Nothing else.</p></div>",
+      "css": ".ds-panel { max-width: 320px; padding: 24px; background: var(--paper); color: var(--espresso); border: 1px solid var(--line); border-radius: var(--radius-sm); } .ds-panel h3 { margin: 0; font: 600 22px/1.2 var(--font-display); } .ds-panel p { margin: 8px 0 0; font: 15px/1.5 var(--font-sans); color: var(--ink-muted); }"
+    },
+    {
+      "name": "Hang Tag",
+      "kind": "custom",
+      "refersTo": "hang-tag",
+      "description": "The signature: a kraft tag with a punched hole, the piece's name and its typed facts. It swings when touched.",
+      "html": "<div class=\"ds-hangtag\"><span class=\"ds-hangtag__hole\"></span><p class=\"ds-hangtag__name\">Denim jacket</p><p class=\"ds-hangtag__shop\">KUHA KO THRIFT</p><hr><p class=\"ds-hangtag__lines\">No. 0142<br>Size M<br>One of one</p></div>",
+      "css": ".ds-hangtag { position: relative; width: 170px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; padding: 70px 16px 16px; background: var(--kraft); color: var(--espresso); border: 2px solid var(--espresso); border-radius: var(--radius-tag) var(--radius-tag) var(--radius-md) var(--radius-md); transform-origin: 50% 0; transition: transform 400ms cubic-bezier(0.3, 0.7, 0.4, 1); } .ds-hangtag:hover { transform: rotate(-3deg); } .ds-hangtag__hole { position: absolute; left: calc(50% - 12px); top: 24px; width: 20px; height: 20px; border-radius: var(--radius-pill); border: 2px solid var(--espresso); background: var(--linen); } .ds-hangtag__name { margin: 0; text-align: center; font: italic 600 30px var(--font-display); color: var(--sage-ink); } .ds-hangtag__shop { margin: 0; text-align: center; font: 700 12px var(--font-mono); letter-spacing: 3px; } .ds-hangtag hr { width: 100%; height: 1px; margin: 0; border: 0; background: var(--espresso); } .ds-hangtag__lines { margin: 0; font: 15px/1.6 var(--font-mono); }"
+    },
+    {
+      "name": "Claim Banner",
+      "kind": "custom",
+      "refersTo": "claim-banner",
+      "description": "The live-selling call: KUHA KO! in mustard on the dark board.",
+      "html": "<div class=\"ds-claim\"><p class=\"ds-claim__word\">KUHA KO!</p><div><p class=\"ds-claim__eyebrow\">LIVE ON KUHA KO THRIFT</p><p class=\"ds-claim__how\">Comment KUHA KO! and the item number. First comment gets it.</p></div></div>",
+      "css": ".ds-claim { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 40px; padding: 40px; background: var(--board); border-radius: var(--radius-sm); } .ds-claim__word { margin: 0; font: 800 64px/1 var(--font-display); color: var(--mustard); white-space: nowrap; } .ds-claim__eyebrow { margin: 0; font: 700 13px var(--font-mono); letter-spacing: 3px; color: var(--mustard); } .ds-claim__how { margin: 8px 0 0; font: 18px/1.5 var(--font-sans); color: var(--on-board); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Tagged Rack",
+    "overview": "**Creative North Star: \"The Tagged Rack\"**\n\nThe site is a well-kept rack in a small shop: plain white walls, a hairline rail, and on it one piece at a time, each with a kraft tag that tells you the truth about it. Fraunces is the painted sign above the rack, Courier Prime is the typewriter that fills in the tags and the receipts, and DM Sans is the friend behind the counter explaining things in plain words. The coffee side and the thrift side hang on the same rail; colour tells them apart (rust for coffee, sage-ink for thrift) only where a customer needs to know which is which.\n\nDensity is low and the pace is unhurried. Sections breathe (80 to 152px of space between them), headings are large, and lists read like menus and tag cards rather than dashboards. Depth comes from paper, not light: linen and paper panels, hairline rules and the occasional dark sign board. Nothing floats on a shadow.\n\nThe interface is warm and playful in its details. Things that hang react when a hand reaches them: rack pieces and price tags swing, a stamp thunks onto a claimed item, the basket nods, the receipt prints, the lamp chain switches the evening theme. Motion that answers a touch is welcome; motion that plays on its own is rationed to a few signature moments (the hero's entrance, the rack's pieces sliding along the rail). The photography rule is the same as the tag rule: real drinks and real pieces in daylight, nothing staged or generated.",
+    "keyCharacteristics": [
+      "White canvas, linen and paper bands, one dark board per page at most.",
+      "Square corners everywhere except the hang tag, which is the one rounded shape.",
+      "Hairlines instead of shadows.",
+      "Serif signs, typewriter tags, sans body: three faces, each with one job.",
+      "Things that hang, swing; things that are claimed, get stamped."
+    ],
+    "rules": [
+      {
+        "name": "The One Accent Rule",
+        "body": "A piece of the page belongs to one shop at a time: rust for coffee, sage-ink for thrift. The shared shop uses espresso alone, with rust only for prices. Never put both accents on the same component.",
+        "section": "colors"
+      },
+      {
+        "name": "The Board Rule",
+        "body": "Mustard lives only on board. If a highlight needs to appear on linen, canvas or paper, it is rust or sage-ink, never mustard.",
+        "section": "colors"
+      },
+      {
+        "name": "The Hairline Is Not a State Rule",
+        "body": "A line-coloured hairline decorates; it never alone tells two states apart. Selected, active and error states change text colour, weight or fill as well.",
+        "section": "colors"
+      },
+      {
+        "name": "The Capitals Are for Labels Rule",
+        "body": "Capitals appear only in the label style, the stamp and the claim word KUHA KO!. Headings, menu items and buttons are sentence case.",
+        "section": "typography"
+      },
+      {
+        "name": "The Typewriter Tells the Truth Rule",
+        "body": "Anything factual about an item (number, size, measurements, price, \"One of one\") is set in Courier Prime, like a tag filled in by hand at the counter.",
+        "section": "typography"
+      },
+      {
+        "name": "The Wordmark Rule",
+        "body": "Kúha Ko, with its acute accent, bold \"Kúha\" and light italic \"Ko\", exists only as logo artwork. In type and copy it is Kuha Ko.",
+        "section": "typography"
+      },
+      {
+        "name": "The Paper, Not Light Rule",
+        "body": "To lift something, change its paper (canvas to paper to kraft) or draw a hairline. Never add a box-shadow, glow or gradient.",
+        "section": "elevation"
+      },
+      {
+        "name": "The One Round Shape Rule",
+        "body": "If it isn't a hang tag, a stamp or a status chip, its corners are 4px. Rounded cards and pill buttons don't belong here.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do keep corners at 4px (radius-sm) on every card, panel, button and field; save the 60px arc for hang tags.",
+      "Do separate with 1px hairlines and paper panels.",
+      "Do give each piece of the page one accent: rust for coffee, sage-ink for thrift, espresso for the shared shop.",
+      "Do set item facts (numbers, sizes, measurements, prices) in Courier Prime.",
+      "Do keep every text pair at 4.5:1 contrast in both Linen and Evening.",
+      "Do show press feedback on press (scale 0.97) and let hanging things swing when touched.",
+      "Do use real photos of the shop's own drinks and pieces in daylight; until they exist, show the photo placeholder with its shot brief.",
+      "Do use simple line icons (1.5px stroke, espresso) with a word next to them."
+    ],
+    "donts": [
+      "Don't add drop shadows, glows or gradients.",
+      "Don't use mustard anywhere but on board, or sage as a text colour.",
+      "Don't set headings, buttons or menu items in capitals; capitals are for labels, the stamp and KUHA KO! only.",
+      "Don't use the accented Kúha outside the logo artwork.",
+      "Don't use emoji, stock photos or AI-made images of products the shop sells.",
+      "Don't hard-code colours; every colour comes from a token so the Evening theme works.",
+      "Don't fade and slide sections in as they scroll into view; keep entrance motion to the hero and the rack.",
+      "Don't append arrows to links or number things that aren't a sequence."
+    ]
+  }
+}
