@@ -463,7 +463,32 @@ body::before {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-4);
 }
-.words > div { border-top: 1px solid var(--line); padding-top: var(--space-3); }
+.words > div { position: relative; border-top: 1px solid var(--line); padding-top: var(--space-3); }
+/* A rust hairline draws across the card a hand reaches (hover, or the last one tapped).
+   It draws in at the slow token and lets go softer, at the very slow one. */
+.words > div::before {
+  content: '';
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 1px;
+  background: var(--rust);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-very-slow) var(--ease-out);
+}
+.words > div.is-on::before { transform: scaleX(1); transition-duration: var(--duration-slow); }
+@media (hover: hover) {
+  .words > div:hover::before { transform: scaleX(1); transition-duration: var(--duration-slow); }
+}
+/* The pronunciation is "said": each syllable lifts and warms in turn, KOO hardest and longest. */
+.words__syl { display: inline-block; }
+.words__say.is-saying .words__syl { animation: say 320ms var(--ease-out) backwards; }
+.words__say.is-saying .words__syl:nth-child(1) { animation-duration: 440ms; --say-scale: 1.08; }
+.words__say.is-saying .words__syl:nth-child(2) { animation-delay: 220ms; }
+.words__say.is-saying .words__syl:nth-child(3) { animation-delay: 380ms; }
+@keyframes say {
+  35% { transform: translateY(-0.14em) scale(var(--say-scale, 1)); color: var(--rust); }
+}
 .words dt { font-family: var(--font-display); font-weight: 400; font-style: italic; font-size: 32px; line-height: 1.2; }
 .words dd { margin: var(--space-1) 0 0; font-size: 15px; color: var(--ink-muted); }
 .words__beat { font-style: normal; font-weight: 600; }
