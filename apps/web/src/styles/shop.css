@@ -134,9 +134,9 @@
   transform: translate(-50%, 8px);
   opacity: 0;
   pointer-events: none;
-  transition: opacity 180ms ease, transform 180ms ease;
+  transition: opacity var(--duration-fast) var(--ease-out), transform var(--duration-fast) var(--ease-out);
 }
-.shop-toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+.shop-toast.is-on { opacity: 1; transform: translate(-50%, 0); transition-duration: var(--duration-medium); }
 .shop-toast { display: flex; align-items: center; gap: 10px; }
 .shop-toast .claim-stamp {
   position: static;
@@ -213,7 +213,7 @@
 .shop-cartbtn:focus-visible,
 .shop-add:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 /* Press feedback lands on the press, not the release (and stays put with reduced motion: no transition). */
-.shop-add,
+.shop-add { transition: transform 100ms ease-out, background-color var(--duration-quick) ease, color var(--duration-quick) ease; }
 .shop-stepper button { transition: transform 100ms ease-out; }
 .shop-add:active,
 .shop-stepper button:active:not(:disabled) { transform: scale(0.94); }

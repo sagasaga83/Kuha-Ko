@@ -8,6 +8,16 @@
 
 :root {
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* Motion durations, by what the motion does (the transitions.dev scale). Closes are
+     quicker than opens; hovers go in quick and come back softer. Signature moments
+     (splash, hero, rack, hang tags, lamp, claim) keep their own deliberate timing. */
+  --duration-stagger: 40ms;   /* per item in a staggered list */
+  --duration-micro: 80ms;     /* intent delays */
+  --duration-quick: 150ms;    /* hover colour, dropdown close */
+  --duration-fast: 250ms;     /* hover in, dropdown open, tabs, icon swap, toast close */
+  --duration-medium: 350ms;   /* panel close, hover out, toast open */
+  --duration-slow: 400ms;     /* panel open */
+  --duration-very-slow: 500ms; /* text reveal */
   --header-h: 76px;
   /* Screen-edge insets (notch, status bar, home bar). */
   --safe-t: env(safe-area-inset-top, 0px);
@@ -31,6 +41,7 @@ body {
 
 a { color: var(--espresso); text-decoration-thickness: 1px; text-underline-offset: 4px; }
 a:hover { color: var(--rust); }
+a { transition: color var(--duration-quick) ease; }
 :focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
 h1, h2, h3 { text-wrap: balance; }
@@ -76,7 +87,7 @@ p { text-wrap: pretty; }
   text-decoration: none;
   background: linear-gradient(currentColor, currentColor) left calc(100% - 10px) / 0 1px no-repeat,
     linear-gradient(var(--line), var(--line)) left calc(100% - 10px) / 100% 1px no-repeat;
-  transition: background-size 300ms var(--ease-out), color 150ms ease;
+  transition: background-size var(--duration-fast) var(--ease-out), color var(--duration-quick) ease;
 }
 .text-link:hover { color: var(--rust); background-size: 100% 1px, 100% 1px; }
 
@@ -92,7 +103,7 @@ p { text-wrap: pretty; }
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease, transform 100ms ease-out;
+  transition: background-color var(--duration-quick) ease, color var(--duration-quick) ease, border-color var(--duration-quick) ease, transform 100ms ease-out;
 }
 .icon-btn:hover:not(:disabled) { background: var(--espresso); border-color: var(--espresso); color: var(--canvas); }
 .icon-btn:disabled { opacity: 0.35; cursor: default; }
@@ -181,7 +192,7 @@ body::before {
   background: currentColor;
   transform: scaleX(0);
   transform-origin: right;
-  transition: transform 350ms var(--ease-out);
+  transition: transform var(--duration-fast) var(--ease-out);
 }
 .site-nav a:hover::after,
 .site-nav a[aria-current]::after { transform: scaleX(1); transform-origin: left; }
@@ -203,7 +214,7 @@ body::before {
   width: 20px;
   height: 1.5px;
   background: currentColor;
-  transition: transform 300ms var(--ease-out);
+  transition: transform var(--duration-fast) var(--ease-out);
 }
 .nav-toggle__bars { position: relative; transform: translateY(-3px); }
 .nav-toggle__bars::before { content: ''; position: absolute; top: 6px; }
@@ -227,9 +238,15 @@ body::before {
     visibility: hidden;
     opacity: 0;
     transform: translateY(-8px);
-    transition: opacity 250ms ease, transform 350ms var(--ease-out), visibility 0s linear 350ms;
+    transition: opacity var(--duration-quick) ease, transform var(--duration-quick) var(--ease-out), visibility 0s linear var(--duration-quick);
   }
-  .is-open .site-nav { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
+  .is-open .site-nav {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition-duration: var(--duration-fast), var(--duration-fast), 0s;
+    transition-delay: 0s;
+  }
   .site-nav a {
     font-family: var(--font-display);
     font-size: 32px;
@@ -240,8 +257,8 @@ body::before {
     border-bottom: 1px solid var(--line);
     opacity: 0;
     transform: translateY(12px);
-    transition: opacity 400ms ease, transform 500ms var(--ease-out);
-    transition-delay: calc(var(--i, 0) * 60ms);
+    transition: opacity var(--duration-very-slow) ease, transform var(--duration-very-slow) var(--ease-out);
+    transition-delay: calc(var(--i, 0) * var(--duration-stagger));
   }
   .is-open .site-nav a { opacity: 1; transform: none; }
   .site-nav a::after { display: none; }
@@ -311,7 +328,7 @@ body::before {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 1200ms var(--ease-out);
+  transition: transform var(--duration-medium) var(--ease-out);
 }
 .photo--placeholder {
   display: flex;
@@ -325,7 +342,7 @@ body::before {
     transparent 0 18px,
     color-mix(in srgb, var(--line) 70%, transparent) 18px 19px
   );
-  transition: background-position 1200ms var(--ease-out);
+  transition: background-position var(--duration-medium) var(--ease-out);
 }
 :root[data-theme='dark'] .photo,
 :root[data-theme='dark'] .photo--placeholder { background-color: var(--paper); }
@@ -509,7 +526,7 @@ body::before {
   background: transparent;
   border: 0;
   cursor: pointer;
-  transition: color 200ms ease;
+  transition: color var(--duration-fast) ease;
 }
 .tabs__tab::after {
   content: '';
@@ -520,7 +537,7 @@ body::before {
   height: 2px;
   background: var(--rust);
   transform: scaleX(0);
-  transition: transform 400ms var(--ease-out);
+  transition: transform var(--duration-fast) var(--ease-out);
 }
 .tabs__tab:hover { color: var(--espresso); }
 .tabs__tab[aria-selected='true'] { color: var(--espresso); }
@@ -528,9 +545,13 @@ body::before {
 .tabs__count { font-family: var(--font-mono); font-size: 13px; font-weight: 400; color: var(--rust); }
 
 .menu__subtitle { margin: var(--space-4) 0 var(--space-2); font-family: var(--font-display); font-style: italic; font-size: 18px; color: var(--ink-muted); }
-.menu__item { animation: rise 600ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 70ms); }
-.menu__item .kk-menuitem { transition: padding-left 300ms var(--ease-out); }
-.menu__item:hover .kk-menuitem { padding-left: var(--space-3); }
+.menu__item { animation: rise var(--duration-very-slow) var(--ease-out) both; animation-delay: calc(var(--i, 0) * var(--duration-stagger)); }
+.menu__item .kk-menuitem__name,
+.menu__item .kk-menuitem__kind,
+.menu__item .kk-menuitem__desc { transition: transform var(--duration-medium) var(--ease-out), color var(--duration-quick) ease; }
+.menu__item:hover .kk-menuitem__name,
+.menu__item:hover .kk-menuitem__kind,
+.menu__item:hover .kk-menuitem__desc { transform: translateX(8px); transition-duration: var(--duration-fast), var(--duration-quick); }
 .menu__item:hover .kk-menuitem__name { color: var(--rust); }
 .menu__panel > .menu__item:last-child { border-bottom: 1px solid var(--line); }
 /* The rule goes on the wrapper, so "Add to order" sits inside its drink, not on the next one's line. */
@@ -555,7 +576,7 @@ body::before {
   font: 700 13px var(--font-mono);
   letter-spacing: 1px;
   color: var(--rust);
-  transition: transform 300ms var(--ease-out);
+  transition: transform var(--duration-fast) var(--ease-out);
 }
 .menu__item.is-orderable .kk-menuitem__desc { padding-right: 7ch; }
 .menu__item.is-orderable:hover .menu__plus { transform: translateX(-4px); }
@@ -782,8 +803,8 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--space-5) var(--space-4);
 }
-.shirts__item .photo { transition: transform 500ms var(--ease-out); }
-.shirts__item:hover .photo { transform: translateY(-6px); }
+.shirts__item .photo { transition: transform var(--duration-medium) var(--ease-out); }
+.shirts__item:hover .photo { transform: translateY(-6px); transition-duration: var(--duration-fast); }
 .shirts__no {
   margin: var(--space-3) 0 0;
   font-family: var(--font-mono);
@@ -1052,11 +1073,11 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
   opacity: 0;
   visibility: hidden;
   transform: translateY(12px);
-  transition: opacity 250ms ease, transform 350ms var(--ease-out), visibility 0s linear 350ms, background-color 200ms ease;
+  transition: opacity 250ms ease, transform 350ms var(--ease-out), visibility 0s linear 350ms, background-color var(--duration-quick) ease, color var(--duration-quick) ease;
 }
 .to-top.is-shown { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
 .to-top:hover { background: var(--rust); color: var(--on-rust); }
-.to-top svg { transition: transform 300ms var(--ease-out); }
+.to-top svg { transition: transform var(--duration-fast) var(--ease-out); }
 .to-top:hover svg { transform: translateY(-3px); }
 /* Reading progress along the bottom edge. */
 .to-top::after {
@@ -1258,6 +1279,7 @@ html.lamp-vt::view-transition-new(root) { animation-duration: 700ms; animation-t
   font-weight: 600;
   letter-spacing: -0.01em;
 }
-.page-link:hover .page-link__visual .photo img { transform: scale(1.04); }
+.page-link:hover .page-link__visual .photo img { transform: scale(1.04); transition-duration: var(--duration-fast); }
+.page-link__title { transition: color var(--duration-quick) ease; }
 .page-link:hover .page-link__title { color: var(--rust); }
 .page-link:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }

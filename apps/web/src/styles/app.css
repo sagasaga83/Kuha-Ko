@@ -33,7 +33,7 @@ html.kk-app body::before { display: none; }
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
   padding-bottom: calc(var(--tabbar-h) + var(--safe-b) + var(--space-5));
-  animation: app-fade 220ms ease both;
+  animation: app-fade var(--duration-fast) ease both;
 }
 .app-screen[hidden] { display: none; }
 @keyframes app-fade { from { opacity: 0; } }
@@ -194,7 +194,7 @@ html.kk-app body::before { display: none; }
   background: var(--canvas);
   border: 1px solid var(--line);
   border-radius: calc(var(--radius-md) - 2px);
-  transition: transform 260ms var(--ease-out);
+  transition: transform var(--duration-fast) var(--ease-out);
 }
 .app-segmented__option {
   position: relative;
@@ -210,7 +210,7 @@ html.kk-app body::before { display: none; }
 }
 .app-segmented__option[aria-checked='true'] { font-weight: 700; }
 
-.app-menu-photo .photo { animation: app-fade 300ms ease both; }
+.app-menu-photo .photo { animation: app-fade var(--duration-fast) ease both; }
 
 /* Thrift */
 .app-rack {
@@ -311,7 +311,7 @@ html.kk-app body::before { display: none; }
   width: 100%;
   border: 0;
   background: color-mix(in srgb, var(--board) 50%, transparent);
-  animation: app-fade 220ms ease both;
+  animation: app-fade var(--duration-fast) ease both;
 }
 .app-sheet__panel {
   position: absolute;
@@ -324,7 +324,7 @@ html.kk-app body::before { display: none; }
   background: var(--canvas);
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
-  animation: app-sheet-up 380ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+  animation: app-sheet-up var(--duration-slow) var(--ease-out) both;
 }
 @keyframes app-sheet-up { from { transform: translateY(100%); } }
 /* Pulled past open (it rubber-bands) or bouncing back, the sheet's edge mustn't lift off the screen:
