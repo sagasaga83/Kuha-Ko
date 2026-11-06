@@ -6,3 +6,6 @@ dist
 coverage
 .vercel
 .env*
+
+# Impeccable's compiled engine (17 MB, per platform); its launcher downloads and checksum-verifies it on first use.
+.claude/skills/impeccable/scripts/bin/
