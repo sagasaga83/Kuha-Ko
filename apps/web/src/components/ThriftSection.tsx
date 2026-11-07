@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { shirtsFrom, useCatalog } from '../catalog/catalog';
 import { useShop } from '../shop/Shop';
-import { OnlineThrift } from '../shop/OnlineThrift';
 import { Photo } from './Photo';
 import { SectionHead } from './SectionHead';
 import { RackPiece } from './RackPiece';
@@ -96,7 +95,6 @@ export function ThriftSection() {
         </div>
       </div>
       <div className="container">
-        <OnlineThrift variant="site" />
         <section className="shirts" aria-labelledby="shirts-title">
           <header className="shirts__head">
             <h3 id="shirts-title" className="shirts__title">

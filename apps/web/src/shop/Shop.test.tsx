@@ -131,24 +131,6 @@ describe('claiming a thrift piece', () => {
   };
   const rack: Catalog = { ...open, ordering: { ...open.ordering, thrift: true }, products: [...open.products, jacket] };
 
-  /** The piece's card in "Shop online" (the rack hangs it too, as its own button). */
-  const onlineCard = () =>
-    screen.getAllByRole('button', { name: /Denim jacket/ }).find((b) => b.classList.contains('shop-pieces__card'))!;
-
-  it('stamps the piece once it is in the cart, and the basket shows it', () => {
-    window.history.replaceState(null, '', '/thrift');
-    withShop(rack, <App />);
-    const card = onlineCard();
-    expect(card.textContent).not.toMatch(/In your cart/);
-    fireEvent.click(card);
-    fireEvent.click(within(screen.getByRole('dialog', { name: 'Denim jacket' })).getByRole('button', { name: /Add to order/ }));
-    expect(onlineCard().textContent).toMatch(/In your cart/);
-    expect(screen.getByRole('status').textContent).toMatch(/Denim jacket added to your cart/);
-    expect(screen.getByRole('button', { name: /Cart 1/ })).toBeTruthy();
-    // Phones get the cart as a bar at the bottom instead (the header has no room); CSS picks one.
-    expect(screen.getByRole('button', { name: /View cart.*1 item/ })).toBeTruthy();
-  });
-
   it('picking the piece off the rack puts it in the cart, and picking it again puts it back', () => {
     window.history.replaceState(null, '', '/thrift');
     withShop(rack, <App />);
@@ -158,6 +140,10 @@ describe('claiming a thrift piece', () => {
     fireEvent.click(pick);
     expect(screen.getByRole('status').textContent).toMatch(/Denim jacket added to your cart/);
     expect(screen.getByRole('button', { name: /Cart 1/ })).toBeTruthy();
+    // Phones get the cart as a bar at the bottom instead (the header has no room); CSS picks one.
+    expect(screen.getByRole('button', { name: /View cart.*1 item/ })).toBeTruthy();
+    // The rack is the only list of pieces: no separate online grid.
+    expect(screen.queryByText(/Shop the rack online/)).toBeNull();
     const back = screen.getByRole('button', { name: /Put Denim jacket back/ });
     expect(back.getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(back);

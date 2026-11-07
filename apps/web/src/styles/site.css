@@ -875,8 +875,7 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
    Two classes, to win over .claim-stamp's own top: 50% (shop.css loads after this file). */
 .hang .hang__stamp { z-index: 3; top: calc((var(--off) + var(--mid, 600)) * var(--u)); font-size: 20px; }
 /* The punched hole, and the string up to the hanger. */
-.hang__tag::before,
-.shop-pieces__tag::before {
+.hang__tag::before {
   content: '';
   position: absolute;
   top: 4px;
@@ -887,8 +886,7 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
   border: 1px solid var(--espresso);
   background: var(--canvas);
 }
-.hang__tag::after,
-.shop-pieces__tag::after {
+.hang__tag::after {
   content: '';
   position: absolute;
   bottom: calc(100% - 7px);
@@ -898,8 +896,7 @@ html.is-splashing .app-rack.is-arriving > li { animation-play-state: paused; }
   background: var(--espresso);
 }
 .hang.is-swinging { animation: hang-swing 1600ms cubic-bezier(0.3, 0.7, 0.4, 1); }
-.is-swinging .hang__tag,
-.is-swinging .shop-pieces__tag { animation: tag-swing 1800ms cubic-bezier(0.3, 0.7, 0.4, 1) 80ms; }
+.is-swinging .hang__tag { animation: tag-swing 1800ms cubic-bezier(0.3, 0.7, 0.4, 1) 80ms; }
 @keyframes hang-swing {
   0% { transform: rotate(0); }
   15% { transform: rotate(2.2deg); }

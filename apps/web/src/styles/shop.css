@@ -240,48 +240,6 @@
   .shop-stepper button { transition: none; }
 }
 
-/* Thrift pieces for sale online */
-/* Same gap above as the shirts below it; the shirts section adds the gap after. */
-.shop-online { margin-top: var(--space-6); }
-.shop-pieces { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4) var(--space-3); }
-.shop-pieces--site { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
-.shop-pieces--app { grid-template-columns: repeat(2, 1fr); padding-inline: var(--app-gutter) var(--app-gutter-r); margin-bottom: var(--space-5); }
-.shop-pieces__card {
-  display: grid;
-  gap: 2px;
-  width: 100%;
-  padding: 0;
-  background: none;
-  border: 0;
-  text-align: left;
-  color: var(--espresso);
-  font: inherit;
-}
-button.shop-pieces__card { cursor: pointer; }
-.shop-pieces__card { position: relative; }
-.shop-pieces__photo { position: relative; display: block; aspect-ratio: 4 / 5; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: var(--space-1); }
-/* The price, on a kraft tag tied to the photo's corner (string and hole shared with the rack, in site.css). */
-.shop-pieces__tag {
-  --string: var(--space-2);
-  position: absolute;
-  z-index: 1;
-  top: var(--space-2);
-  right: var(--space-2);
-  padding: 13px 8px 5px;
-  background: var(--kraft);
-  color: var(--espresso);
-  border: 1px solid var(--espresso);
-  border-radius: var(--radius-sm);
-  font: 700 14px/1.2 var(--font-mono);
-  transform-origin: 50% calc(-1 * var(--space-2));
-}
-.shop-pieces__claimed { font: 700 13px var(--font-mono); color: var(--sage-ink); }
-.shop-pieces__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.shop-pieces__name { font-weight: 500; }
-.shop-pieces__detail { font-size: 13px; color: var(--ink-muted); }
-.shop-pieces [data-sold] .shop-pieces__photo img { filter: grayscale(1); opacity: 0.6; }
-.shop-pieces [data-sold] .shop-pieces__tag { color: var(--ink-muted); }
-
 /* KUHA KO! stamped on what's in the cart. Lands once, right after it's added. */
 .claim-stamp {
   position: absolute;

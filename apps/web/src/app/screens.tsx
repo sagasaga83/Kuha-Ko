@@ -5,7 +5,6 @@ import { photos } from '../data/photos';
 import type { Shirt } from '../data/shirts';
 import { menuFrom, shirtsFrom, useCatalog } from '../catalog/catalog';
 import { useShop } from '../shop/Shop';
-import { OnlineThrift } from '../shop/OnlineThrift';
 import { openingDayText, site } from '../data/site';
 import { googleCalendarUrl, useNextLive } from '../live';
 import { SignupForm } from '../components/SignupForm';
@@ -127,7 +126,6 @@ export function ThriftScreen() {
           </li>
         ))}
       </ul>
-      <OnlineThrift variant="app" />
       <h2 className="app-section-title">Our own shirts</h2>
       <ul className="app-shirts">
         {shirts.map((s) => (
