@@ -13,6 +13,10 @@ import { prefersReducedMotion } from './motion';
 import { stepSway, type Sway } from './useRackSway';
 
 const MAX = 4; // degrees: big words need only a little lean
+/** Motion blur per unit of swing speed (em per degree/ms), its cap, and the least worth drawing. */
+const BLUR_PER_SPEED = 1.6;
+const BLUR_MAX = 0.04; // em, the same as --blur-motion
+const BLUR_MIN = 0.004; // em: below this it would only soften the type
 
 export function useHeroMotion(ref: RefObject<HTMLElement>, active: boolean) {
   useEffect(() => {
@@ -39,10 +43,15 @@ export function useHeroMotion(ref: RefObject<HTMLElement>, active: boolean) {
         if (Math.abs(s.angle) > 0.02 || Math.abs(s.velocity) > 0.0005) {
           moving = true;
           word.style.setProperty('--sway', `${s.angle.toFixed(2)}deg`);
+          // Motion blur follows the swing's speed, fading as it slows.
+          const blur = Math.min(BLUR_MAX, Math.abs(s.velocity) * BLUR_PER_SPEED);
+          if (blur >= BLUR_MIN) word.style.setProperty('--mblur', `blur(${blur.toFixed(3)}em)`);
+          else word.style.removeProperty('--mblur');
         } else {
           s.angle = 0;
           s.velocity = 0;
           word.style.removeProperty('--sway');
+          word.style.removeProperty('--mblur');
         }
       });
       raf = moving ? requestAnimationFrame(frame) : 0;
@@ -86,7 +95,10 @@ export function useHeroMotion(ref: RefObject<HTMLElement>, active: boolean) {
       hero.removeEventListener('pointermove', onPointer);
       hero.removeEventListener('pointerleave', onLeave);
       cancelAnimationFrame(raf);
-      words.forEach((w) => w.style.removeProperty('--sway'));
+      words.forEach((w) => {
+        w.style.removeProperty('--sway');
+        w.style.removeProperty('--mblur');
+      });
       onLeave();
     };
   }, [ref, active]);

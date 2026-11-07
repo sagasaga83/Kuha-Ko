@@ -24,6 +24,12 @@
   --stagger-stagger: 40ms;
   --stagger-blur: 3px;
   --stagger-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* transitions.dev easings: surface motion and hover in; the springy hover out. */
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-bounce-strong: cubic-bezier(0.34, 3.85, 0.64, 1);
+  /* Motion blur on big moving type, in em so it scales with the type
+     (about 6px on the 160px hero, as --blur-medium's 3px is to body text). */
+  --blur-motion: 0.04em;
   --header-h: 76px;
   /* Screen-edge insets (notch, status bar, home bar). */
   --safe-t: env(safe-area-inset-top, 0px);
@@ -468,8 +474,10 @@ body::before {
   animation: hang-word 800ms var(--ease-out) both;
   animation-delay: calc(200ms + var(--w, 0) * var(--duration-micro));
 }
+/* It blurs while it rises fastest and is sharp before it settles. */
 @keyframes hang-word {
-  0% { transform: translateY(105%) rotate(6deg); }
+  0% { transform: translateY(105%) rotate(6deg); filter: blur(var(--blur-motion)); }
+  45% { filter: blur(0); }
   55% { transform: translateY(0) rotate(-1.5deg); }
   80% { transform: rotate(0.6deg); }
   100% { transform: none; }
@@ -495,9 +503,9 @@ body::before {
   animation: dot-stamp 340ms cubic-bezier(0.2, 1.4, 0.4, 1) 1300ms both;
 }
 @keyframes dot-stamp {
-  from { transform: scale(2.4); opacity: 0; }
+  from { transform: scale(2.4); opacity: 0; filter: blur(var(--blur-motion)); }
   50% { opacity: 1; }
-  to { transform: none; opacity: 1; }
+  to { transform: none; opacity: 1; filter: blur(0); }
 }
 /* The lede and links: the texts reveal (12px rise, 3px blur, 500ms), once the title lands. */
 .hero__in {
@@ -514,19 +522,29 @@ body::before {
    settled so a swaying word isn't cut. */
 .hero__word,
 .hero__write { rotate: var(--sway, 0deg); }
+/* A swing blurs with its speed (--mblur, set only while a word is moving fast enough to
+   show it), so a word at rest has no filter and its type stays crisp. */
+.hero__word,
+.hero__write { filter: var(--mblur, none); }
 .hero__write { transform-origin: 50% 0; }
 .hero.is-settled .hero__line { overflow: visible; }
 .hero__line { transition: translate 700ms var(--ease-out); }
 .hero__line:first-child { translate: calc(var(--px, 0) * 6px) calc(var(--py, 0) * 4px); }
 .hero__line:last-child { translate: calc(var(--px, 0) * 12px) calc(var(--py, 0) * 7px); }
-/* A word under the pointer gives the small nudge of a claim: quick in, soft out. */
+/* Once landed, the entrance is done for good: a hover must never restart it. */
+.hero.is-settled .hero__word { animation: none; }
+/* A word under the pointer lifts like a piece taken off the rail: quick in, and a softer,
+   springy settle back when the pointer leaves. The inner .hero__lift moves, so the box
+   being hovered stays still and the hover can't flicker at its edge. */
+.hero__lift { display: inline-block; transform-origin: 50% 0; }
 @media (hover: hover) {
-  .hero.is-settled .hero__word:hover,
-  .hero.is-settled .hero__write:hover { animation: word-nudge var(--duration-medium) var(--ease-out); }
-}
-@keyframes word-nudge {
-  30% { transform: translateY(-0.04em) rotate(-1.5deg) scale(1.02); }
-  100% { transform: none; }
+  .hero.is-settled .hero__lift { transition: transform var(--duration-medium) var(--ease-bounce-strong); }
+  .hero.is-settled .hero__word:hover .hero__lift,
+  .hero.is-settled .hero__write:hover .hero__lift {
+    transform: translateY(-0.04em) rotate(-1.5deg) scale(1.02);
+    transition-duration: var(--duration-fast);
+    transition-timing-function: var(--ease-smooth-out);
+  }
 }
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
 @keyframes rise-line { from { transform: translateY(105%); } }

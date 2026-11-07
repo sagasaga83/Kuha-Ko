@@ -11,9 +11,12 @@ import { useHeroMotion } from '../useHeroMotion';
  * The hero. Its words arrive the way each typeface works in the shop: the Courier label
  * types itself out, the painted serif "Kape ko." is hung word by word (each rises from
  * the line and settles from a tilt), the italic "Kuha ko." is written in behind a soft
- * ink edge, and its full stop lands last like a stamp. Once settled the words keep
- * hanging: scrolling sways them, the lines drift toward a mouse pointer, and a word under
- * the pointer gives the little nudge of a claim. Scroll away and back and it plays again.
+ * ink edge, and its full stop lands last like a stamp. Fast movement carries a motion
+ * blur. Once settled the words keep hanging: scrolling sways them (blurring as they
+ * swing), the lines drift toward a mouse pointer, and a word under the pointer lifts like
+ * a piece taken off the rail, springing back when the pointer leaves. The lift moves the
+ * inner `hero__lift`, so the hovered box itself stays put and the hover can't flicker.
+ * Scroll away and back and it plays again.
  */
 export function Hero() {
   const label = `Coffee & thrift · ${site.city}`;
@@ -52,15 +55,17 @@ export function Hero() {
           <h1 id="hero-title" className="hero__title">
             <span className="hero__line">
               <span className="hero__word" style={{ '--w': 0 } as CSSProperties}>
-                Kape
+                <span className="hero__lift">Kape</span>
               </span>{' '}
               <span className="hero__word" style={{ '--w': 1 } as CSSProperties}>
-                ko.
+                <span className="hero__lift">ko.</span>
               </span>
             </span>
             <span className="hero__line">
               <em className="hero__write">
-                Kuha ko<span className="hero__dot">.</span>
+                <span className="hero__lift">
+                  Kuha ko<span className="hero__dot">.</span>
+                </span>
               </em>
             </span>
           </h1>
