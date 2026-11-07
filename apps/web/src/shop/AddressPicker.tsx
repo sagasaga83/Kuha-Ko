@@ -90,8 +90,20 @@ export function AddressPicker({
     return () => {
       cancelled = true;
     };
-    // Set up once; the pin is kept in sync through the marker itself.
+    // Set up once; the effect below keeps the marker on the pin.
   }, []);
+
+  // A pin set from outside the map (a signed-in customer's saved spot arriving after the
+  // map loaded, or "Use my current location") moves the marker there, so the map always
+  // shows where the order will go.
+  useEffect(() => {
+    if (!pin || mapsState !== 'ready' || !marker.current) return;
+    const at = toLatLng(marker.current.position);
+    if (at && at.lat === pin.lat && at.lng === pin.lng) return; // the marker set it
+    marker.current.position = pin;
+    map.current?.setCenter(pin);
+    map.current?.setZoom(17);
+  }, [pin, mapsState]);
 
   const [locating, setLocating] = useState(false);
   const [locError, setLocError] = useState('');
@@ -105,13 +117,7 @@ export function AddressPicker({
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setLocating(false);
-        const p = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-        if (marker.current) {
-          marker.current.position = p;
-          map.current?.setCenter(p);
-          map.current?.setZoom(17);
-        }
-        onPin(p);
+        onPin({ lat: pos.coords.latitude, lng: pos.coords.longitude });
       },
       () => {
         setLocating(false);
@@ -127,9 +133,9 @@ export function AddressPicker({
     <div className="shop-address">
       {withMap ? (
         <>
-          <div className="shop-address__search" ref={searchBox}>
-            {mapsState === 'loading' ? <p className="shop-note">Loading the map…</p> : null}
-          </div>
+          {mapsState === 'loading' ? <p className="shop-note">Loading the map…</p> : null}
+          {/* Google's search box goes in here: React must not render anything inside it. */}
+          <div className="shop-address__search" ref={searchBox} />
           <div className="shop-address__map" ref={mapBox} aria-label="Map: drag the pin to your door" />
           <p className="shop-note">Search for your place, then drag the pin (or tap the map) to your exact door.</p>
         </>

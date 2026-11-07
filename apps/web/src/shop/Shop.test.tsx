@@ -1,5 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { CatalogContext, fallbackCatalog } from '../catalog/catalog';
 import type { Catalog } from '../../shared/catalog';
@@ -52,6 +52,28 @@ describe('ordering in the app layout', () => {
     expect(JSON.parse(localStorage.getItem('kuhako-cart')!)).toEqual([
       { productId: 'the-kuha', quantity: 1, choices: { temperature: ['iced'], 'add-ons': [] } },
     ]);
+  });
+
+  it('keeps the toast for each add its full time, even right after another add', () => {
+    vi.useFakeTimers();
+    try {
+      withShop(open, <MobileApp />);
+      fireEvent.click(screen.getByRole('tab', { name: 'Menu' }));
+      const addOne = () => {
+        fireEvent.click(screen.getByRole('button', { name: /The Kuha/ }));
+        fireEvent.click(within(screen.getByRole('dialog', { name: 'The Kuha' })).getByRole('button', { name: /Add to order/ }));
+      };
+      addOne();
+      act(() => vi.advanceTimersByTime(1000));
+      addOne();
+      // 2.6s after the first add, 1.6s after the second: the second's toast is still up.
+      act(() => vi.advanceTimersByTime(1600));
+      expect(screen.getByRole('status').textContent).toMatch(/The Kuha added to your cart/);
+      act(() => vi.advanceTimersByTime(1000));
+      expect(screen.getByRole('status').textContent).toBe('');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('offers only the ways to pay that are set up', () => {

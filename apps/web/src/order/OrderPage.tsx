@@ -13,20 +13,29 @@ const FINAL = ['delivered', 'cancelled', 'expired'];
 
 export default function OrderPage({ id }: { id: string }) {
   const [order, setOrder] = useState<OrderView | null>(null);
+  /** Why the order couldn't be loaded; shown only until it has been. */
+  const [loadError, setLoadError] = useState('');
+  /** Why sending the reference or cancelling didn't work. */
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [reference, setReference] = useState('');
   const [, tick] = useState(0);
 
-  const load = useCallback(async () => {
+  /** The order; 'missing' if there's no such order; null if it couldn't be checked just now. */
+  const load = useCallback(async (): Promise<OrderView | 'missing' | null> => {
     try {
       const res = await fetch(`/api/order?id=${encodeURIComponent(id)}`, { headers: { accept: 'application/json' } });
       const data = await res.json().catch(() => null);
-      if (!res.ok || !data) throw new Error(data?.error ?? 'We can’t find that order.');
+      if (res.status === 404) {
+        setLoadError(data?.error ?? 'We can’t find that order.');
+        return 'missing';
+      }
+      if (!res.ok || !data) throw new Error(data?.error);
       setOrder(data);
+      setLoadError('');
       return data as OrderView;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Check your connection.');
+      setLoadError((err instanceof Error && err.message) || 'We can’t reach Kuha Ko just now. Check your connection: this page keeps trying.');
       return null;
     }
   }, [id]);
@@ -34,17 +43,19 @@ export default function OrderPage({ id }: { id: string }) {
   useEffect(() => {
     document.title = 'Your order · Kuha Ko';
     let stop = false;
+    let next = 0;
     const poll = async () => {
       const o = await load();
-      if (stop || !o || FINAL.includes(o.status)) return;
-      // Waiting on the shop: check often. Otherwise now and then.
-      window.setTimeout(poll, o.status === 'awaiting_confirmation' ? 10000 : 30000);
+      if (stop || o === 'missing' || (o && FINAL.includes(o.status))) return;
+      // Waiting on the shop: check often. Otherwise, or after a check that didn't get through, now and then.
+      next = window.setTimeout(poll, o?.status === 'awaiting_confirmation' ? 10000 : 30000);
     };
     poll();
     // Keep the "held for N minutes" line current.
     const t = window.setInterval(() => tick((n) => n + 1), 30000);
     return () => {
       stop = true;
+      window.clearTimeout(next);
       window.clearInterval(t);
     };
   }, [load]);
@@ -94,10 +105,10 @@ export default function OrderPage({ id }: { id: string }) {
           <Wordmark size={30} />
         </a>
       </header>
-      {!order && !error ? <p className="shop-note">Loading your order…</p> : null}
-      {error && !order ? (
+      {!order && !loadError ? <p className="shop-note">Loading your order…</p> : null}
+      {loadError && !order ? (
         <p className="shop-error" role="alert">
-          {error}
+          {loadError}
         </p>
       ) : null}
       {order ? (

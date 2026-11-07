@@ -1,6 +1,6 @@
 // Online ordering: the cart, the product sheet and the cart/checkout sheet, shared
 // by the one-page site and the app layout. Components call useShop().
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { formatPeso, type Product } from '../../shared/catalog';
 import { MAX_QUANTITY, defaultChoices } from '../../shared/order';
 import { useCatalog } from '../catalog/catalog';
@@ -49,13 +49,26 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const closeProduct = useCallback(() => setProduct(null), []);
   const closeCart = useCallback(() => setCartStep('closed'), []);
 
-  /** What happens after anything goes in the cart: the toast, one stamp landing, a basket nod. */
+  /**
+   * What happens after anything goes in the cart: the toast, one stamp landing, a basket nod.
+   * Each add restarts the timers, so an earlier add's can't cut a later toast or stamp short.
+   */
+  const timers = useRef({ toast: 0, stamp: 0 });
   const announce = useCallback((p: Product) => {
     setAdded(`${p.name} added to your cart`);
     setJustAdded(p.id);
     setToastKey((k) => k + 1);
-    window.setTimeout(() => setAdded(''), 2500);
-    window.setTimeout(() => setJustAdded(null), 1200);
+    window.clearTimeout(timers.current.toast);
+    window.clearTimeout(timers.current.stamp);
+    timers.current.toast = window.setTimeout(() => setAdded(''), 2500);
+    timers.current.stamp = window.setTimeout(() => setJustAdded(null), 1200);
+  }, []);
+  useEffect(() => {
+    const t = timers.current;
+    return () => {
+      window.clearTimeout(t.toast);
+      window.clearTimeout(t.stamp);
+    };
   }, []);
 
   const value = useMemo<Shop>(

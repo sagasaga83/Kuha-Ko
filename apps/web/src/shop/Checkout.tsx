@@ -83,7 +83,8 @@ export function Checkout({ cart, onBack }: { cart: Cart; onBack: () => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account.status]);
 
-  // Remember details on this device for next time (not the pin: people order from different places).
+  // Remember details on this device for next time, pin included (as an account does); a new
+  // spot is a drag or a "Use my current location" away.
   useEffect(() => {
     try {
       localStorage.setItem(DETAILS, JSON.stringify({ name: d.name, phone: d.phone, email: d.email, address: d.address, notes: d.notes, pin: d.pin, paymentMethod: d.paymentMethod }));
